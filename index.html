@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Image to PDF Converter</title>
+<title>Advanced Image to PDF Tool</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
 <style>
 :root{
     --bg:#f3f4f6;
-    --card:#ffffff;
-    --text:#111827;
+    --card:#fff;
+    --text:#111;
 }
 
 body.dark{
@@ -21,64 +21,44 @@ body.dark{
 }
 
 body{
+    margin:0;
     font-family:Arial;
     background:var(--bg);
     color:var(--text);
-    margin:0;
-    padding:20px;
     display:flex;
     justify-content:center;
+    padding:20px;
 }
 
 .container{
     width:100%;
     max-width:950px;
     background:var(--card);
-    padding:25px;
-    border-radius:16px;
+    padding:20px;
+    border-radius:15px;
 }
 
-/* TOP BAR */
-.topbar{
+.top{
     display:flex;
     justify-content:space-between;
     align-items:center;
 }
 
-h1{
-    font-size:24px;
-}
-
-/* BUTTONS */
 button{
-    padding:10px 14px;
+    padding:8px 12px;
     border:none;
     border-radius:8px;
-    cursor:pointer;
     background:#2563eb;
     color:white;
-}
-
-/* DROPZONE */
-.dropzone{
-    margin-top:15px;
-    padding:25px;
-    border:2px dashed #3b82f6;
-    border-radius:10px;
-    text-align:center;
     cursor:pointer;
 }
 
 /* GRID */
 .grid{
-    margin-top:20px;
     display:grid;
     grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
     gap:10px;
-}
-
-.item{
-    position:relative;
+    margin-top:15px;
 }
 
 .item img{
@@ -86,6 +66,7 @@ button{
     height:110px;
     object-fit:cover;
     border-radius:8px;
+    cursor:pointer;
 }
 
 /* CONTROLS */
@@ -95,31 +76,39 @@ button{
     gap:10px;
 }
 
-select,input{
-    width:100%;
-    padding:8px;
+/* CROP MODAL */
+.modal{
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    background:rgba(0,0,0,0.7);
+    display:none;
+    justify-content:center;
+    align-items:center;
 }
 
-/* PROGRESS */
-.progress{
+.modal-content{
+    background:white;
+    padding:15px;
+    border-radius:10px;
+}
+
+canvas{
+    max-width:100%;
+}
+
+/* BAR */
+.bar{
     width:100%;
     height:10px;
     background:#ddd;
-    border-radius:10px;
     margin-top:10px;
-    overflow:hidden;
 }
 
-.bar{
-    height:100%;
+.fill{
+    height:10px;
     width:0%;
-    background:#22c55e;
-    transition:.2s;
-}
-
-/* DARK MODE */
-.dark-toggle{
-    background:#111827;
+    background:green;
 }
 </style>
 </head>
@@ -128,18 +117,13 @@ select,input{
 
 <div class="container">
 
-<div class="topbar">
-    <h1>Image → PDF Pro</h1>
+<div class="top">
+    <h2>Image → PDF Pro</h2>
     <button onclick="toggleDark()">🌙</button>
 </div>
 
-<div class="dropzone" id="dropzone">
-    Drop or Click Images
-</div>
+<input type="file" id="input" multiple accept="image/*">
 
-<input type="file" id="input" multiple accept="image/*" hidden>
-
-<!-- CONTROLS -->
 <div class="controls">
 
 <select id="layout">
@@ -148,51 +132,40 @@ select,input{
     <option value="4">4 per page</option>
 </select>
 
-<label>Compression</label>
-<input type="range" id="quality" min="0.3" max="1" step="0.1" value="0.9">
-
-<button onclick="rotateAll()">Rotate 90°</button>
+<button onclick="generatePDF()">Convert PDF</button>
 
 </div>
 
-<!-- PROGRESS -->
-<div class="progress"><div class="bar" id="bar"></div></div>
+<div class="bar"><div class="fill" id="fill"></div></div>
 
-<!-- GRID -->
 <div class="grid" id="grid"></div>
 
-<button onclick="generatePDF()" style="margin-top:15px;width:100%;">
-Convert PDF
-</button>
+</div>
 
+<!-- CROP MODAL -->
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <canvas id="canvas"></canvas>
+        <br>
+        <button onclick="applyCrop()">Apply Crop</button>
+        <button onclick="closeCrop()">Close</button>
+    </div>
 </div>
 
 <script>
 
 let files = [];
-let rotation = 0;
+let croppedImage = null;
+let currentIndex = null;
 
 /* DARK MODE */
 function toggleDark(){
     document.body.classList.toggle("dark");
 }
 
-/* OPEN FILE */
-document.getElementById("dropzone").onclick = () =>
-document.getElementById("input").click();
-
 /* INPUT */
 document.getElementById("input").onchange = e=>{
     files.push(...e.target.files);
-    render();
-};
-
-/* DROP */
-document.getElementById("dropzone").ondragover = e=>e.preventDefault();
-
-document.getElementById("dropzone").ondrop = e=>{
-    e.preventDefault();
-    files.push(...e.dataTransfer.files);
     render();
 };
 
@@ -208,8 +181,8 @@ function render(){
             const div = document.createElement("div");
             div.className="item";
 
-            div.innerHTML=`
-                <img src="${e.target.result}">
+            div.innerHTML = `
+                <img src="${e.target.result}" onclick="openCrop(${i})">
             `;
 
             grid.appendChild(div);
@@ -219,9 +192,40 @@ function render(){
     });
 }
 
-/* ROTATE */
-function rotateAll(){
-    rotation += 90;
+/* CROP */
+function openCrop(index){
+    currentIndex = index;
+
+    const file = files[index];
+    const reader = new FileReader();
+
+    reader.onload = e=>{
+        const img = new Image();
+        img.onload = ()=>{
+
+            const canvas = document.getElementById("canvas");
+            canvas.width = 300;
+            canvas.height = 300;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img,0,0,300,300);
+        };
+
+        img.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+
+    document.getElementById("modal").style.display="flex";
+}
+
+function applyCrop(){
+    document.getElementById("modal").style.display="none";
+}
+
+/* CLOSE */
+function closeCrop(){
+    document.getElementById("modal").style.display="none";
 }
 
 /* PDF */
@@ -230,51 +234,93 @@ async function generatePDF(){
     const pdf = await PDFLib.PDFDocument.create();
 
     const layout = Number(document.getElementById("layout").value);
-    const quality = Number(document.getElementById("quality").value);
 
-    let progress = document.getElementById("bar");
+    let pages = [];
 
     for(let i=0;i<files.length;i++){
-
-        progress.style.width =
-            ((i+1)/files.length)*100 + "%";
 
         const bytes = await files[i].arrayBuffer();
         const img = await pdf.embedJpg(bytes);
 
-        const page = pdf.addPage([595,842]);
+        pages.push(img);
 
-        let scale = Math.min(
-            595/img.width,
-            842/img.height
-        );
-
-        page.drawImage(img,{
-            x:100,
-            y:200,
-            width:img.width*scale,
-            height:img.height*scale
-        });
-
-        // PAGE NUMBER
-        page.drawText(`Page ${i+1}`,{
-            x:280,
-            y:20,
-            size:12
-        });
+        document.getElementById("fill").style.width =
+            ((i+1)/files.length)*100 + "%";
     }
 
-    const pdfBytes = await pdf.save();
+    let index = 0;
+    let pageNumber = 1;
 
-    const blob = new Blob([pdfBytes],{type:"application/pdf"});
+    while(index < pages.length){
+
+        const page = pdf.addPage([595,842]);
+
+        if(layout === 1){
+
+            drawImage(page, pages[index]);
+            drawPageNumber(page, pageNumber++);
+            index++;
+
+        } else if(layout === 2){
+
+            for(let i=0;i<2 && index<pages.length;i++){
+                drawImage(page, pages[index], i);
+                index++;
+            }
+            drawPageNumber(page, pageNumber++);
+
+        } else if(layout === 4){
+
+            for(let i=0;i<4 && index<pages.length;i++){
+                drawImage(page, pages[index], i);
+                index++;
+            }
+            drawPageNumber(page, pageNumber++);
+        }
+    }
+
+    const bytes = await pdf.save();
+
+    const blob = new Blob([bytes],{type:"application/pdf"});
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = "pro.pdf";
+    a.download = "output.pdf";
     a.click();
 
     URL.revokeObjectURL(url);
+}
+
+/* DRAW IMAGE */
+function drawImage(page,img,i=0){
+
+    const positions = [
+        [0,400],
+        [0,0],
+        [300,400],
+        [300,0]
+    ];
+
+    const pos = positions[i] || [0,0];
+
+    const scale = 0.5;
+
+    page.drawImage(img,{
+        x:pos[0],
+        y:pos[1],
+        width:250,
+        height:300
+    });
+}
+
+/* PAGE NUMBER */
+function drawPageNumber(page,num){
+    page.drawText("Page " + num,{
+        x:270,
+        y:20,
+        size:12
+    });
 }
 
 </script>

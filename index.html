@@ -78,6 +78,7 @@ body{
     box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
+/* TITLE */
 h1{
     text-align:center;
     margin-bottom:30px;
@@ -100,10 +101,35 @@ h1{
 
 .dropzone.dragover{
     background:#bfdbfe;
-    transform:scale(1.01);
 }
 
-/* FILE INPUT HIDDEN */
+/* FORMAT TEXT */
+.formats{
+    margin-top:10px;
+    font-size:13px;
+    color:#6b7280;
+}
+
+/* OPTIONS */
+.options{
+    margin-top:15px;
+    margin-bottom:10px;
+}
+
+.options label{
+    font-weight:bold;
+    display:block;
+    margin-bottom:6px;
+}
+
+.options select{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+/* FILE INPUT */
 input[type="file"]{
     display:none;
 }
@@ -177,6 +203,10 @@ input[type="file"]{
     background:#1e3a8a;
 }
 
+.dark-mode .formats{
+    color:#cbd5e1;
+}
+
 </style>
 </head>
 
@@ -201,16 +231,28 @@ input[type="file"]{
 
 <h1>Image → PDF Converter</h1>
 
+<!-- DROPZONE -->
 <div class="dropzone" id="dropzone">
     <h3>Upload Images</h3>
     <p>Click or drag & drop images here</p>
 
     <div class="formats">
-        Supported: JPG, PNG, WEBP, GIF, BMP, AVIF
+        Supported: JPG, JPEG, PNG, WEBP, GIF, BMP, AVIF
     </div>
 </div>
 
+<!-- FILE INPUT -->
 <input type="file" id="images" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.avif">
+
+<!-- PAGE SIZE -->
+<div class="options">
+    <label>PDF Page Size</label>
+    <select id="pageSize">
+        <option value="A4">A4 (Standard)</option>
+        <option value="LETTER">Letter (US)</option>
+        <option value="A3">A3 (Large)</option>
+    </select>
+</div>
 
 <div id="fileList"></div>
 
@@ -240,6 +282,7 @@ Convert & Download PDF
 const input=document.getElementById("images");
 const dropzone=document.getElementById("dropzone");
 const fileList=document.getElementById("fileList");
+const pageSize=document.getElementById("pageSize");
 
 let selectedFiles=[];
 
@@ -273,7 +316,7 @@ input.addEventListener("change",()=>{
     renderFiles();
 });
 
-/* 🔥 FIXED DRAG & DROP (IMPORTANT) */
+/* DRAG & DROP FIX */
 dropzone.addEventListener("dragover",(e)=>{
     e.preventDefault();
     dropzone.classList.add("dragover");
@@ -288,11 +331,9 @@ dropzone.addEventListener("drop",(e)=>{
     dropzone.classList.remove("dragover");
 
     const files=[...e.dataTransfer.files];
-
     const images=files.filter(f=>f.type.startsWith("image/"));
 
     selectedFiles=[...selectedFiles,...images];
-
     renderFiles();
 });
 
@@ -320,7 +361,7 @@ function removeFile(i){
     renderFiles();
 }
 
-/* PDF GENERATION */
+/* PDF CREATE */
 document.getElementById("convertBtn")
 .addEventListener("click",createPDF);
 
@@ -333,6 +374,21 @@ async function createPDF(){
 
     const pdfDoc=await PDFLib.PDFDocument.create();
 
+    let pageWidth=595;
+    let pageHeight=842;
+
+    const size=pageSize.value;
+
+    if(size==="LETTER"){
+        pageWidth=612;
+        pageHeight=792;
+    }
+
+    if(size==="A3"){
+        pageWidth=842;
+        pageHeight=1191;
+    }
+
     for(const file of selectedFiles){
 
         const blob=await resizeImage(file);
@@ -340,32 +396,30 @@ async function createPDF(){
 
         const image=await pdfDoc.embedJpg(bytes);
 
-        const page=pdfDoc.addPage([595,842]);
+        const page=pdfDoc.addPage([pageWidth,pageHeight]);
 
         const scale=Math.min(
-            595/image.width,
-            842/image.height
+            pageWidth/image.width,
+            pageHeight/image.height
         );
 
         page.drawImage(image,{
-            x:(595-image.width*scale)/2,
-            y:(842-image.height*scale)/2,
+            x:(pageWidth-image.width*scale)/2,
+            y:(pageHeight-image.height*scale)/2,
             width:image.width*scale,
             height:image.height*scale
         });
     }
 
-    /* PAGE NUMBERS FIXED */
+    /* PAGE NUMBERS */
     const pages=pdfDoc.getPages();
 
     pages.forEach((p,i)=>{
-
         p.drawText(`Page ${i+1} of ${pages.length}`,{
             x:p.getWidth()/2-40,
             y:20,
             size:10
         });
-
     });
 
     const pdfBytes=await pdfDoc.save();
@@ -382,7 +436,7 @@ async function createPDF(){
     URL.revokeObjectURL(url);
 }
 
-/* RESIZE IMAGE */
+/* RESIZE */
 async function resizeImage(file){
 
     return new Promise(resolve=>{

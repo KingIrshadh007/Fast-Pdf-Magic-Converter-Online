@@ -51,15 +51,6 @@ body{
     color:#374151;
 }
 
-#themeToggle{
-    border:none;
-    padding:10px 15px;
-    border-radius:8px;
-    cursor:pointer;
-    background:#2563eb;
-    color:white;
-}
-
 /* ===== LAYOUT ===== */
 .page-wrapper{
     min-height:calc(100vh - 140px);
@@ -103,7 +94,6 @@ h1{
     background:#bfdbfe;
 }
 
-/* FORMAT TEXT */
 .formats{
     margin-top:10px;
     font-size:13px;
@@ -129,12 +119,10 @@ h1{
     border:1px solid #ccc;
 }
 
-/* FILE INPUT */
 input[type="file"]{
     display:none;
 }
 
-/* FILE LIST */
 #fileList{
     margin-top:15px;
 }
@@ -216,10 +204,10 @@ input[type="file"]{
     <div class="logo">⚡ Fast Magic PDF</div>
 
     <nav>
-        <a href="#" onclick="location.reload(); return false;">Home</a>
-        <a href="#">Tools</a>
-        <a href="#">Features</a>
-        <a href="#">Contact</a>
+        <a href="#" onclick="showSection('home')">Home</a>
+        <a href="#" onclick="showSection('tools')">Tools</a>
+        <a href="#" onclick="showSection('features')">Features</a>
+        <a href="#" onclick="showSection('contact')">Contact</a>
     </nav>
 
     <button id="themeToggle">🌙 Dark Mode</button>
@@ -229,9 +217,11 @@ input[type="file"]{
 
 <div class="container">
 
+<!-- DYNAMIC CONTENT AREA -->
+<div id="dynamicContent">
+
 <h1>Image → PDF Converter</h1>
 
-<!-- DROPZONE -->
 <div class="dropzone" id="dropzone">
     <h3>Upload Images</h3>
     <p>Click or drag & drop images here</p>
@@ -241,10 +231,8 @@ input[type="file"]{
     </div>
 </div>
 
-<!-- FILE INPUT -->
 <input type="file" id="images" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.avif">
 
-<!-- PAGE SIZE -->
 <div class="options">
     <label>PDF Page Size</label>
     <select id="pageSize">
@@ -266,12 +254,14 @@ Convert & Download PDF
 
 </div>
 
+</div>
+
 <footer class="site-footer">
     <div class="footer-links">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms</a>
-        <a href="#">Cookies</a>
-        <a href="#">Contact</a>
+        <a href="#" onclick="showSection('privacy')">Privacy Policy</a>
+        <a href="#" onclick="showSection('terms')">Terms</a>
+        <a href="#" onclick="showSection('cookies')">Cookies</a>
+        <a href="#" onclick="showSection('contact')">Contact</a>
     </div>
 
     <p>© 2026 Fast Magic PDF</p>
@@ -307,16 +297,79 @@ themeToggle.addEventListener("click",()=>{
     }
 });
 
+/* HEADER + FOOTER PAGE SWITCH */
+function showSection(section){
+
+    const content=document.getElementById("dynamicContent");
+
+    let html="";
+
+    switch(section){
+
+        case "home":
+            location.reload();
+            return;
+
+        case "tools":
+            html=`
+                <h2>🧰 Tools</h2>
+                <p>Image to PDF Converter (current)</p>
+                <p>More tools coming soon like PDF merge and compression.</p>
+            `;
+            break;
+
+        case "features":
+            html=`
+                <h2>⚡ Features</h2>
+                <ul>
+                    <li>Fast browser-based conversion</li>
+                    <li>No file upload (fully secure)</li>
+                    <li>High-quality PDF output</li>
+                    <li>Mobile friendly design</li>
+                </ul>
+            `;
+            break;
+
+        case "contact":
+            html=`
+                <h2>📩 Contact</h2>
+                <p>Email: support@fastmagicpdf.com</p>
+            `;
+            break;
+
+        case "privacy":
+            html=`
+                <h2>🔒 Privacy Policy</h2>
+                <p>Your files are processed locally and never uploaded.</p>
+            `;
+            break;
+
+        case "terms":
+            html=`
+                <h2>📜 Terms</h2>
+                <p>Use this tool responsibly. No misuse allowed.</p>
+            `;
+            break;
+
+        case "cookies":
+            html=`
+                <h2>🍪 Cookies</h2>
+                <p>We only use localStorage for theme settings.</p>
+            `;
+            break;
+    }
+
+    content.innerHTML=html;
+}
+
 /* CLICK UPLOAD */
 dropzone.onclick=()=>input.click();
 
-/* FILE SELECT */
 input.addEventListener("change",()=>{
     selectedFiles=[...selectedFiles,...input.files];
     renderFiles();
 });
 
-/* DRAG & DROP FIX */
 dropzone.addEventListener("dragover",(e)=>{
     e.preventDefault();
     dropzone.classList.add("dragover");
@@ -337,7 +390,6 @@ dropzone.addEventListener("drop",(e)=>{
     renderFiles();
 });
 
-/* RENDER FILES */
 function renderFiles(){
 
     fileList.innerHTML="";
@@ -361,7 +413,7 @@ function removeFile(i){
     renderFiles();
 }
 
-/* PDF CREATE */
+/* PDF CREATE (UNCHANGED LOGIC) */
 document.getElementById("convertBtn")
 .addEventListener("click",createPDF);
 
@@ -411,7 +463,6 @@ async function createPDF(){
         });
     }
 
-    /* PAGE NUMBERS */
     const pages=pdfDoc.getPages();
 
     pages.forEach((p,i)=>{

@@ -151,6 +151,7 @@ footer{
     <h1>All-in-One PDF Tools</h1>
     <p>Convert, merge, split and edit PDFs instantly in your browser</p>
 </div>
+    <div id="app"></div>
 
 <!-- TOOL GRID -->
 <div class="tools">
@@ -218,7 +219,7 @@ function toggleTheme(){
 ==================================================*/
 function openTool(tool){
 
-    const container = document.querySelector(".hero").nextElementSibling;
+    const container = document.getElementById("app");
 
     if(tool === "imagepdf"){
         loadImageToPDF(container);
@@ -410,7 +411,20 @@ function loadSplitPDF(container){
 
         if(!file) return alert("Select file");
 
-        let [s,e] = range.value.split("-").map(n=>+n);
+        const parts = range.value.split("-");
+
+if(parts.length !== 2){
+    alert("Enter range like 1-3");
+    return;
+}
+
+let s = parseInt(parts[0]);
+let e = parseInt(parts[1]);
+
+if(isNaN(s) || isNaN(e) || s > e){
+    alert("Invalid range");
+    return;
+}
 
         let bytes = await file.arrayBuffer();
 
@@ -506,7 +520,7 @@ function loadRotatePDF(container){
 
         pages.forEach(p=>{
             let angle = p.getRotation().angle + 90;
-            p.setRotation(PDFLib.degrees(angle));
+            p.setRotation({ angle });
         });
 
         download(await pdf.save(),"rotated.pdf");

@@ -283,6 +283,55 @@ input[type="file"]{
         justify-content: center;
     }
 }
+
+/* ===== DROPDOWN TOOLS MENU ===== */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    text-decoration: none;
+    color: #374151;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 220px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 9999;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 12px;
+    text-decoration: none;
+    color: #111827;
+    cursor: pointer;
+}
+
+.dropdown-content a:hover {
+    background: #f3f4f6;
+}
+
+/* SHOW ON HOVER */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* TOOL COUNT BADGE */
+.dropbtn::after {
+    content: " (8)";
+    font-size: 12px;
+    color: #2563eb;
+}
+   
 </style>
 </head>
 

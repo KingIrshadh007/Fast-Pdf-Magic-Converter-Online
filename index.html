@@ -316,11 +316,10 @@ dropzone.ondrop = (e)=>{
     }
 
    btn.onclick = async ()=>{
-
-    if(files.length === 0){
-        alert("Please select images first");
-        return;
-    }
+       if(files.length === 0){
+    alert("Please select images first");
+    return;
+}
         const pdf = await PDFLib.PDFDocument.create();
 
         for(let f of files){
@@ -365,7 +364,11 @@ function loadMergePDF(container){
 
     btn.onclick = async ()=>{
 
-        const merged = await PDFLib.PDFDocument.create();
+        if(files.length === 0){
+    alert("Please select images first");
+    return;
+}
+       const merged = await PDFLib.PDFDocument.create();
 
         for(let f of files){
             let bytes = await f.arrayBuffer();
@@ -407,8 +410,11 @@ function loadSplitPDF(container){
     };
 
     btn.onclick = async ()=>{
-
-        if(!file) return alert("Select file");
+        
+        if(files.length === 0){
+    alert("Please select images first");
+    return;
+}
 
         const parts = range.value.split("-");
 
@@ -471,7 +477,10 @@ function loadCompressPDF(container){
 
     btn.onclick = async ()=>{
 
-        if(!file) return alert("Select PDF");
+        if(files.length === 0){
+    alert("Please select images first");
+    return;
+}
 
         let bytes = await file.arrayBuffer();
         let pdf = await PDFLib.PDFDocument.load(bytes);
@@ -510,7 +519,10 @@ function loadRotatePDF(container){
 
     btn.onclick = async ()=>{
 
-        if(!file) return alert("Select PDF");
+        if(files.length === 0){
+    alert("Please select images first");
+    return;
+}
 
         let bytes = await file.arrayBuffer();
         let pdf = await PDFLib.PDFDocument.load(bytes);
@@ -555,7 +567,10 @@ function loadDeletePDF(container){
 
     btn.onclick = async ()=>{
 
-        if(!file) return alert("Select file");
+        if(files.length === 0){
+    alert("Please select images first");
+    return;
+}
 
         let bytes = await file.arrayBuffer();
         let pdf = await PDFLib.PDFDocument.load(bytes);

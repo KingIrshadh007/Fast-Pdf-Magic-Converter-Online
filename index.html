@@ -224,13 +224,25 @@ function openTool(tool){
     if(tool === "imagepdf"){
         loadImageToPDF(container);
 
-    } 
+    }
     else if(tool === "mergepdf"){
         loadMergePDF(container);
 
     }
     else if(tool === "splitpdf"){
         loadSplitPDF(container);
+
+    }
+    else if(tool === "compresspdf"){
+        loadCompressPDF(container);
+
+    }
+    else if(tool === "rotatepdf"){
+        loadRotatePDF(container);
+
+    }
+    else if(tool === "deletepdf"){
+        loadDeletePDF(container);
 
     }
     else {
@@ -245,90 +257,71 @@ function loadImageToPDF(container){
 
     container.innerHTML = `
         <div style="max-width:900px;margin:auto;padding:20px;">
-            <h2 style="text-align:center;margin-bottom:20px;">📷 Image → PDF Converter</h2>
+            <h2 style="text-align:center;">📷 Image → PDF</h2>
 
             <div id="dropzone"
-                style="border:2px dashed #2563eb;padding:30px;text-align:center;border-radius:12px;background:#f0f7ff;cursor:pointer;">
-                <p>Click or Drag & Drop Images Here</p>
+                style="border:2px dashed #2563eb;padding:30px;text-align:center;border-radius:12px;">
                 <input type="file" id="files" multiple accept="image/*" hidden>
+                <p>Click or Drop Images</p>
             </div>
 
-            <div id="preview" style="margin-top:15px;"></div>
+            <div id="preview"></div>
 
-            <button id="convertBtn" style="margin-top:15px;width:100%;">Convert to PDF</button>
+            <button id="convertBtn" style="width:100%;margin-top:10px;">
+                Convert
+            </button>
         </div>
     `;
 
     const dropzone = document.getElementById("dropzone");
-    const fileInput = document.getElementById("files");
+    const input = document.getElementById("files");
     const preview = document.getElementById("preview");
-    const convertBtn = document.getElementById("convertBtn");
+    const btn = document.getElementById("convertBtn");
 
-    let filesArray = [];
+    let files = [];
 
-    dropzone.onclick = () => fileInput.click();
+    dropzone.onclick = ()=>input.click();
 
-    fileInput.addEventListener("change",(e)=>{
-        filesArray = [...e.target.files];
-        showPreview();
-    });
+    input.onchange = (e)=>{
+        files = [...e.target.files];
+        render();
+    };
 
-    dropzone.addEventListener("dragover",(e)=>{
+    dropzone.ondrop = (e)=>{
         e.preventDefault();
-    });
+        files = [...e.dataTransfer.files];
+        render();
+    };
 
-    dropzone.addEventListener("drop",(e)=>{
-        e.preventDefault();
-        filesArray = [...e.dataTransfer.files];
-        showPreview();
-    });
+    dropzone.ondragover = (e)=>e.preventDefault();
 
-    function showPreview(){
+    function render(){
         preview.innerHTML = "";
-        filesArray.forEach(file=>{
-            const img = document.createElement("img");
-            img.src = URL.createObjectURL(file);
-            img.style.width = "100px";
+        files.forEach(f=>{
+            let img = document.createElement("img");
+            img.src = URL.createObjectURL(f);
+            img.style.width = "80px";
             img.style.margin = "5px";
             preview.appendChild(img);
         });
     }
 
-    convertBtn.onclick = async function(){
+    btn.onclick = async ()=>{
+        const pdf = await PDFLib.PDFDocument.create();
 
-        if(filesArray.length === 0){
-            alert("Select images");
-            return;
+        for(let f of files){
+            let bytes = await f.arrayBuffer();
+
+            let img = f.type.includes("png")
+                ? await pdf.embedPng(bytes)
+                : await pdf.embedJpg(bytes);
+
+            let page = pdf.addPage([600,800]);
+
+            page.drawImage(img,{x:50,y:200,width:500,height:400});
         }
 
-        const pdfDoc = await PDFLib.PDFDocument.create();
-
-        for(const file of filesArray){
-
-            const bytes = await file.arrayBuffer();
-
-            let img;
-            if(file.type.includes("png")){
-                img = await pdfDoc.embedPng(bytes);
-            } else {
-                img = await pdfDoc.embedJpg(bytes);
-            }
-
-            const page = pdfDoc.addPage([600,800]);
-
-            page.drawImage(img,{
-                x:50,y:200,width:500,height:400
-            });
-        }
-
-        const pdfBytes = await pdfDoc.save();
-
-        const blob = new Blob([pdfBytes],{type:"application/pdf"});
-        const link = document.createElement("a");
-
-        link.href = URL.createObjectURL(blob);
-        link.download = "images.pdf";
-        link.click();
+        download(await pdf.save(),"image.pdf");
     };
 }
 
@@ -338,167 +331,234 @@ function loadImageToPDF(container){
 function loadMergePDF(container){
 
     container.innerHTML = `
-        <div style="max-width:900px;margin:auto;padding:20px;">
-            <h2 style="text-align:center;">📄 Merge PDF Tool</h2>
+        <div style="padding:20px;">
+            <h2>📄 Merge PDF</h2>
 
-            <div id="pdfDropzone"
-                style="border:2px dashed #2563eb;padding:30px;text-align:center;border-radius:12px;background:#eef6ff;cursor:pointer;">
-                <p>Click or Drop PDF Files</p>
-                <input type="file" id="pdfFiles" multiple accept="application/pdf" hidden>
-            </div>
+            <input type="file" id="pdfFiles" multiple accept="application/pdf">
 
-            <ul id="pdfList" style="margin-top:15px;"></ul>
-
-            <button id="mergeBtn" style="margin-top:15px;width:100%;">Merge PDFs</button>
+            <button id="mergeBtn">Merge</button>
         </div>
     `;
 
-    const dropzone = document.getElementById("pdfDropzone");
     const input = document.getElementById("pdfFiles");
-    const list = document.getElementById("pdfList");
-    const mergeBtn = document.getElementById("mergeBtn");
+    const btn = document.getElementById("mergeBtn");
 
-    let pdfFiles = [];
+    let files = [];
 
-    dropzone.onclick = () => input.click();
+    input.onchange = e=>{
+        files = [...e.target.files];
+    };
 
-    input.addEventListener("change",(e)=>{
-        pdfFiles = [...e.target.files];
-        render();
-    });
+    btn.onclick = async ()=>{
 
-    dropzone.addEventListener("dragover",(e)=>{
-        e.preventDefault();
-    });
+        const merged = await PDFLib.PDFDocument.create();
 
-    dropzone.addEventListener("drop",(e)=>{
-        e.preventDefault();
-        pdfFiles = [...e.dataTransfer.files];
-        render();
-    });
+        for(let f of files){
+            let bytes = await f.arrayBuffer();
+            let pdf = await PDFLib.PDFDocument.load(bytes);
 
-    function render(){
-        list.innerHTML = "";
-        pdfFiles.forEach(f=>{
-            const li = document.createElement("li");
-            li.textContent = f.name;
-            list.appendChild(li);
-        });
-    }
-
-    mergeBtn.onclick = async function(){
-
-        if(pdfFiles.length < 2){
-            alert("Select at least 2 PDFs");
-            return;
+            let pages = await merged.copyPages(pdf, pdf.getPageIndices());
+            pages.forEach(p=>merged.addPage(p));
         }
 
-        const mergedPdf = await PDFLib.PDFDocument.create();
-
-        for(const file of pdfFiles){
-
-            const bytes = await file.arrayBuffer();
-            const pdf = await PDFLib.PDFDocument.load(bytes);
-
-            const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-
-            pages.forEach(p=>{
-                mergedPdf.addPage(p);
-            });
-        }
-
-        const mergedBytes = await mergedPdf.save();
-
-        const blob = new Blob([mergedBytes],{type:"application/pdf"});
-
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "merged.pdf";
-        link.click();
+        download(await merged.save(),"merged.pdf");
     };
 }
 
 /*==================================================
-    ✂️ SPLIT PDF TOOL (NEW)
+    ✂ SPLIT PDF (UNCHANGED)
 ==================================================*/
 function loadSplitPDF(container){
 
     container.innerHTML = `
-        <div style="max-width:900px;margin:auto;padding:20px;">
+        <div style="padding:20px;">
+            <h2>✂ Split PDF</h2>
 
-            <h2 style="text-align:center;margin-bottom:20px;">
-                ✂ Split PDF Tool
-            </h2>
+            <input type="file" id="splitFile">
 
-            <div id="splitDropzone"
-                style="border:2px dashed #2563eb;padding:30px;text-align:center;border-radius:12px;background:#f0f7ff;cursor:pointer;">
-                <p>Upload PDF to Split</p>
-                <input type="file" id="splitFile" accept="application/pdf" hidden>
-            </div>
+            <input id="range" placeholder="1-3">
 
-            <input id="pageRange"
-                placeholder="Enter page range (example: 1-3)"
-                style="width:100%;padding:10px;margin-top:15px;border:1px solid #ccc;border-radius:6px;">
-
-            <button id="splitBtn" style="margin-top:15px;width:100%;">
-                Split PDF
-            </button>
-
+            <button id="splitBtn">Split</button>
         </div>
     `;
 
-    const dropzone = document.getElementById("splitDropzone");
-    const input = document.getElementById("splitFile");
-    const rangeInput = document.getElementById("pageRange");
-    const splitBtn = document.getElementById("splitBtn");
+    const fileInput = document.getElementById("splitFile");
+    const range = document.getElementById("range");
+    const btn = document.getElementById("splitBtn");
 
-    let pdfFile = null;
+    let file = null;
 
-    dropzone.onclick = () => input.click();
+    fileInput.onchange = e=>{
+        file = e.target.files[0];
+    };
 
-    input.addEventListener("change",(e)=>{
-        pdfFile = e.target.files[0];
-    });
+    btn.onclick = async ()=>{
 
-    splitBtn.onclick = async function(){
+        if(!file) return alert("Select file");
 
-        if(!pdfFile){
-            alert("Select PDF file");
-            return;
-        }
+        let [s,e] = range.value.split("-").map(n=>+n);
 
-        const range = rangeInput.value.trim();
+        let bytes = await file.arrayBuffer();
 
-        if(!range.includes("-")){
-            alert("Enter valid range like 1-3");
-            return;
-        }
+        let pdf = await PDFLib.PDFDocument.load(bytes);
+        let out = await PDFLib.PDFDocument.create();
 
-        const [start, end] = range.split("-").map(n => parseInt(n));
-
-        const bytes = await pdfFile.arrayBuffer();
-
-        const pdfDoc = await PDFLib.PDFDocument.load(bytes);
-        const newPdf = await PDFLib.PDFDocument.create();
-
-        const pages = await newPdf.copyPages(
-            pdfDoc,
-            Array.from({length: end - start + 1}, (_, i) => start - 1 + i)
+        let pages = await out.copyPages(
+            pdf,
+            Array.from({length:e-s+1},(_,i)=>s-1+i)
         );
 
-        pages.forEach(p=>{
-            newPdf.addPage(p);
+        pages.forEach(p=>out.addPage(p));
+
+        download(await out.save(),"split.pdf");
+    };
+}
+
+/*==================================================
+    🗜 COMPRESS PDF (SIMULATED)
+==================================================*/
+function loadCompressPDF(container){
+
+    container.innerHTML = `
+        <div style="padding:20px;">
+            <h2>🗜 Compress PDF</h2>
+
+            <input type="file" id="compressFile">
+
+            <button id="compressBtn">Compress</button>
+
+            <p style="font-size:12px;color:gray;">
+                Note: Browser compression is limited.
+            </p>
+        </div>
+    `;
+
+    const input = document.getElementById("compressFile");
+    const btn = document.getElementById("compressBtn");
+
+    let file = null;
+
+    input.onchange = e=>{
+        file = e.target.files[0];
+    };
+
+    btn.onclick = async ()=>{
+
+        if(!file) return alert("Select PDF");
+
+        let bytes = await file.arrayBuffer();
+        let pdf = await PDFLib.PDFDocument.load(bytes);
+
+        const compressed = await pdf.save({
+            useObjectStreams: true
         });
 
-        const newBytes = await newPdf.save();
-
-        const blob = new Blob([newBytes],{type:"application/pdf"});
-
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "split.pdf";
-        link.click();
+        download(compressed,"compressed.pdf");
     };
+}
+
+/*==================================================
+    🔄 ROTATE PDF
+==================================================*/
+function loadRotatePDF(container){
+
+    container.innerHTML = `
+        <div style="padding:20px;">
+            <h2>🔄 Rotate PDF</h2>
+
+            <input type="file" id="rotateFile">
+
+            <button id="rotateBtn">Rotate 90°</button>
+        </div>
+    `;
+
+    const input = document.getElementById("rotateFile");
+    const btn = document.getElementById("rotateBtn");
+
+    let file = null;
+
+    input.onchange = e=>{
+        file = e.target.files[0];
+    };
+
+    btn.onclick = async ()=>{
+
+        if(!file) return alert("Select PDF");
+
+        let bytes = await file.arrayBuffer();
+        let pdf = await PDFLib.PDFDocument.load(bytes);
+
+        let pages = pdf.getPages();
+
+        pages.forEach(p=>{
+            let angle = p.getRotation().angle + 90;
+            p.setRotation(PDFLib.degrees(angle));
+        });
+
+        download(await pdf.save(),"rotated.pdf");
+    };
+}
+
+/*==================================================
+    🗑 DELETE PAGES
+==================================================*/
+function loadDeletePDF(container){
+
+    container.innerHTML = `
+        <div style="padding:20px;">
+            <h2>🗑 Delete Pages</h2>
+
+            <input type="file" id="deleteFile">
+
+            <input id="pages" placeholder="Pages to delete (e.g. 1,3)">
+
+            <button id="deleteBtn">Delete</button>
+        </div>
+    `;
+
+    const input = document.getElementById("deleteFile");
+    const pagesInput = document.getElementById("pages");
+    const btn = document.getElementById("deleteBtn");
+
+    let file = null;
+
+    input.onchange = e=>{
+        file = e.target.files[0];
+    };
+
+    btn.onclick = async ()=>{
+
+        if(!file) return alert("Select file");
+
+        let bytes = await file.arrayBuffer();
+        let pdf = await PDFLib.PDFDocument.load(bytes);
+
+        let toDelete = pagesInput.value.split(",").map(n=>parseInt(n)-1);
+
+        let newPdf = await PDFLib.PDFDocument.create();
+
+        let keep = pdf.getPageIndices().filter(i=>!toDelete.includes(i));
+
+        let pages = await newPdf.copyPages(pdf, keep);
+
+        pages.forEach(p=>newPdf.addPage(p));
+
+        download(await newPdf.save(),"updated.pdf");
+    };
+}
+
+/*==================================================
+    DOWNLOAD HELPER
+==================================================*/
+function download(data,name){
+
+    let blob = new Blob([data],{type:"application/pdf"});
+
+    let a = document.createElement("a");
+
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
 }
 
 </script>

@@ -152,6 +152,8 @@ footer{
     <p>Convert, merge, split and edit PDFs instantly in your browser</p>
 </div>
 
+    <div id="app"></div>
+
 <!-- TOOL GRID -->
 <div class="tools">
 
@@ -218,8 +220,7 @@ function toggleTheme(){
 ==================================================*/
 function openTool(tool){
 
-    const container = document.querySelector(".hero");
-
+   const container = document.getElementById("app");
     if(tool === "imagepdf"){
         loadImageToPDF(container);
 
@@ -300,17 +301,7 @@ function loadImageToPDF(container){
         files = [...e.target.files];
         render();
     };
-
-   dropzone.ondrop = (e)=>{
-    e.preventDefault();
-    files = [...e.dataTransfer.files];
-    render();
-};
-        e.preventDefault();
-        files = [...e.dataTransfer.files];
-        render();
-    };
-
+dropzone.ondrop = (e)=>{
     dropzone.ondragover = (e)=>e.preventDefault();
 
     function render(){
@@ -528,7 +519,7 @@ function loadRotatePDF(container){
 
         pages.forEach(p=>{
             let angle = p.getRotation().angle + 90;
-            p.setRotation({ angle });
+            p.setRotation(PDFLib.degrees(angle));
         });
 
         download(await pdf.save(),"rotated.pdf");

@@ -574,7 +574,172 @@ function download(data,name){
     a.download = name;
     a.click();
 }
+function loadProtectPDF(container){
 
+container.innerHTML = `
+<div style="padding:20px;">
+<h2>🔒 Protect PDF</h2>
+
+<input type="file" id="protectFile">
+<input type="password" id="pdfPass" placeholder="Enter password" style="width:100%;padding:10px;margin-top:10px;">
+
+<button id="protectBtn" style="margin-top:10px;width:100%;">Protect PDF</button>
+</div>
+`;
+
+const input = document.getElementById("protectFile");
+const pass = document.getElementById("pdfPass");
+const btn = document.getElementById("protectBtn");
+
+let file = null;
+
+input.onchange = e => file = e.target.files[0];
+
+btn.onclick = async () => {
+
+if(!file) return alert("Select PDF");
+
+await file.arrayBuffer(); // placeholder (true encryption needs backend)
+
+alert("PDF protection requires server-side encryption. This is UI-ready.");
+};
+}
+    function loadUnlockPDF(container){
+
+container.innerHTML = `
+<div style="padding:20px;">
+<h2>🔓 Unlock PDF</h2>
+
+<input type="file" id="unlockFile">
+<input type="password" id="unlockPass" placeholder="Enter password" style="width:100%;padding:10px;margin-top:10px;">
+
+<button id="unlockBtn" style="margin-top:10px;width:100%;">Unlock PDF</button>
+</div>
+`;
+
+const input = document.getElementById("unlockFile");
+const btn = document.getElementById("unlockBtn");
+
+let file = null;
+
+input.onchange = e => file = e.target.files[0];
+
+btn.onclick = async () => {
+
+if(!file) return alert("Select PDF");
+
+alert("Browser cannot decrypt PDFs without backend. UI ready only.");
+};
+}
+    function loadWatermarkPDF(container){
+
+container.innerHTML = `
+<div style="padding:20px;">
+<h2>📝 Watermark PDF</h2>
+
+<input type="file" id="wmFile">
+<input type="text" id="wmText" placeholder="Enter watermark text" style="width:100%;padding:10px;margin-top:10px;">
+
+<button id="wmBtn" style="margin-top:10px;width:100%;">Add Watermark</button>
+</div>
+`;
+
+const input = document.getElementById("wmFile");
+const text = document.getElementById("wmText");
+const btn = document.getElementById("wmBtn");
+
+let file = null;
+
+input.onchange = e => file = e.target.files[0];
+
+btn.onclick = async () => {
+
+if(!file) return alert("Select PDF");
+
+const bytes = await file.arrayBuffer();
+const pdf = await PDFLib.PDFDocument.load(bytes);
+
+const pages = pdf.getPages();
+
+pages.forEach(p=>{
+p.drawText(text.value || "WATERMARK", {
+x: 150,
+y: 400,
+size: 50,
+opacity: 0.3
+});
+});
+
+download(await pdf.save(), "watermarked.pdf");
+};
+}
+    function loadSignPDF(container){
+
+container.innerHTML = `
+<div style="padding:20px;">
+<h2>✍ Sign PDF</h2>
+
+<input type="file" id="signFile">
+<input type="text" id="signText" placeholder="Your Name / Signature" style="width:100%;padding:10px;margin-top:10px;">
+
+<button id="signBtn" style="margin-top:10px;width:100%;">Add Signature</button>
+</div>
+`;
+
+const input = document.getElementById("signFile");
+const text = document.getElementById("signText");
+const btn = document.getElementById("signBtn");
+
+let file = null;
+
+input.onchange = e => file = e.target.files[0];
+
+btn.onclick = async () => {
+
+if(!file) return alert("Select PDF");
+
+const bytes = await file.arrayBuffer();
+const pdf = await PDFLib.PDFDocument.load(bytes);
+
+const pages = pdf.getPages();
+
+pages[0].drawText(text.value || "SIGNED", {
+x: 100,
+y: 100,
+size: 30
+});
+
+download(await pdf.save(), "signed.pdf");
+};
+}
+    function loadPDFToJPG(container){
+
+container.innerHTML = `
+<div style="padding:20px;">
+<h2>📷 PDF → JPG</h2>
+
+<input type="file" id="jpgFile">
+
+<button id="jpgBtn" style="margin-top:10px;width:100%;">Convert</button>
+</div>
+`;
+
+const input = document.getElementById("jpgFile");
+const btn = document.getElementById("jpgBtn");
+
+let file = null;
+
+input.onchange = e => file = e.target.files[0];
+
+btn.onclick = async () => {
+
+if(!file) return alert("Select PDF");
+
+alert("True PDF → Image conversion needs backend or pdf.js rendering.
+Frontend-only basic version coming next upgrade.");
+};
+}
+    
 </script>
 
 </body>

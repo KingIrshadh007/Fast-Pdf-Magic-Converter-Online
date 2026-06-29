@@ -736,6 +736,63 @@ async function resizeImage(file){
     content.innerHTML = html;
 }
 
+    function mergePDFUI(){
+return `
+<h1>Merge PDF</h1>
+<input type="file" id="mergeFiles" multiple />
+<button onclick="mergePDF()">Merge</button>
+<div id="mergeStatus"></div>
+`;
+}
+
+function splitPDFUI(){
+return `
+<h1>Split PDF</h1>
+<input type="file" id="splitFile" />
+<button onclick="splitPDF()">Split</button>
+`;
+}
+
+function rotatePDFUI(){
+return `
+<h1>Rotate PDF</h1>
+<input type="file" id="rotateFile" />
+<button onclick="rotatePDF()">Rotate</button>
+`;
+}
+
+function compressPDFUI(){
+return `
+<h1>Compress PDF</h1>
+<input type="file" id="compressFile" />
+<button onclick="compressPDF()">Compress</button>
+`;
+}
+
+function pdfToImageUI(){
+return `
+<h1>PDF → Images</h1>
+<input type="file" id="pdfImgFile" />
+<button onclick="pdfToImages()">Convert</button>
+`;
+}
+
+function unlockPDFUI(){
+return `
+<h1>Unlock PDF</h1>
+<input type="file" id="unlockFile" />
+<button onclick="unlockPDF()">Unlock</button>
+`;
+}
+
+function protectPDFUI(){
+return `
+<h1>Protect PDF</h1>
+<input type="file" id="protectFile" />
+<input type="text" id="password" placeholder="Set password"/>
+<button onclick="protectPDF()">Protect</button>
+`;
+}
 </script>
 
 </body>

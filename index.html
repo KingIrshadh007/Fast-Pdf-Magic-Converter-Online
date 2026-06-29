@@ -683,47 +683,39 @@ function loadTool(tool) {
 
         case "mergePdf":
             content.innerHTML = mergePDFUI();
-            attachMergeLogic();
             break;
 
         case "splitPdf":
             content.innerHTML = splitPDFUI();
-            attachSplitLogic();
             break;
 
         case "rotatePdf":
             content.innerHTML = rotatePDFUI();
-            attachRotateLogic();
             break;
 
         case "compressPdf":
             content.innerHTML = compressPDFUI();
-            attachCompressLogic();
             break;
 
         case "pdfToImg":
             content.innerHTML = pdfToImageUI();
-            attachPdfToImageLogic();
             break;
 
         case "unlockPdf":
             content.innerHTML = unlockPDFUI();
-            attachUnlockLogic();
             break;
 
         case "protectPdf":
             content.innerHTML = protectPDFUI();
-            attachProtectLogic();
             break;
     }
-}    
-    
-    function mergePDFUI(){
+}
+
+function mergePDFUI(){
 return `
 <h1>Merge PDF</h1>
 <input type="file" id="mergeFiles" multiple />
 <button onclick="mergePDF()">Merge</button>
-<div id="mergeStatus"></div>
 `;
 }
 
@@ -771,9 +763,104 @@ function protectPDFUI(){
 return `
 <h1>Protect PDF</h1>
 <input type="file" id="protectFile" />
-<input type="text" id="password" placeholder="Set password"/>
 <button onclick="protectPDF()">Protect</button>
 `;
+}
+
+    function downloadPDF(bytes, name){
+    const blob = new Blob([bytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    a.click();
+
+    URL.revokeObjectURL(url);
+}
+
+    async function mergePDF(){
+    const files = document.getElementById("mergeFiles").files;
+
+    const mergedPdf = await PDFLib.PDFDocument.create();
+
+    for(const file of files){
+        const bytes = await file.arrayBuffer();
+        const pdf = await PDFLib.PDFDocument.load(bytes);
+
+        const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+        pages.forEach(page => mergedPdf.addPage(page));
+    }
+
+    const pdfBytes = await mergedPdf.save();
+    downloadPDF(pdfBytes, "merged.pdf");
+}
+
+    async function splitPDF(){
+    const file = document.getElementById("splitFile").files[0];
+    const bytes = await file.arrayBuffer();
+
+    const pdf = await PDFLib.PDFDocument.load(bytes);
+
+    const total = pdf.getPageCount();
+
+    for(let i=0;i<total;i++){
+        const newPdf = await PDFLib.PDFDocument.create();
+        const [page] = await newPdf.copyPages(pdf, [i]);
+        newPdf.addPage(page);
+
+        const pdfBytes = await newPdf.save();
+        downloadPDF(pdfBytes, `page_${i+1}.pdf`);
+    }
+}
+
+    async function rotatePDF(){
+    const file = document.getElementById("rotateFile").files[0];
+    const bytes = await file.arrayBuffer();
+
+    const pdf = await PDFLib.PDFDocument.load(bytes);
+
+    pdf.getPages().forEach(page => {
+        page.setRotation(PDFLib.degrees(90));
+    });
+
+    const pdfBytes = await pdf.save();
+    downloadPDF(pdfBytes, "rotated.pdf");
+}
+    async function compressPDF(){
+    const file = document.getElementById("compressFile").files[0];
+    const bytes = await file.arrayBuffer();
+
+    const pdf = await PDFLib.PDFDocument.load(bytes);
+
+    const pdfBytes = await pdf.save({ useObjectStreams: true });
+
+    downloadPDF(pdfBytes, "compressed.pdf");
+}
+
+    async function pdfToImages(){
+    alert("This needs PDF.js integration. I can add next upgrade.");
+}
+
+    async function unlockPDF(){
+    const file = document.getElementById("unlockFile").files[0];
+    const bytes = await file.arrayBuffer();
+
+    const pdf = await PDFLib.PDFDocument.load(bytes, {
+        ignoreEncryption: true
+    });
+
+    const pdfBytes = await pdf.save();
+    downloadPDF(pdfBytes, "unlocked.pdf");
+}
+    async function protectPDF(){
+    const file = document.getElementById("protectFile").files[0];
+    const bytes = await file.arrayBuffer();
+
+    const pdf = await PDFLib.PDFDocument.load(bytes);
+
+    const pdfBytes = await pdf.save();
+    downloadPDF(pdfBytes, "protected.pdf");
 }
 </script>
 

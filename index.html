@@ -672,6 +672,70 @@ async function resizeImage(file){
     });
 }
 
+    function loadTool(tool) {
+    const content = document.getElementById("dynamicContent");
+
+    let html = "";
+
+    switch(tool) {
+
+        case "imgToPdf":
+            location.reload(); // your current tool
+            return;
+
+        case "pdfToImg":
+            html = `
+                <h1>PDF → Images Converter</h1>
+                <p>Upload PDF and extract images (coming soon)</p>
+            `;
+            break;
+
+        case "mergePdf":
+            html = `
+                <h1>Merge PDF</h1>
+                <p>Select multiple PDFs and combine into one file.</p>
+            `;
+            break;
+
+        case "splitPdf":
+            html = `
+                <h1>Split PDF</h1>
+                <p>Split pages from a PDF into separate files.</p>
+            `;
+            break;
+
+        case "compressPdf":
+            html = `
+                <h1>Compress PDF</h1>
+                <p>Reduce PDF size without losing quality.</p>
+            `;
+            break;
+
+        case "rotatePdf":
+            html = `
+                <h1>Rotate PDF</h1>
+                <p>Rotate pages in any direction.</p>
+            `;
+            break;
+
+        case "unlockPdf":
+            html = `
+                <h1>Unlock PDF</h1>
+                <p>Remove PDF password protection.</p>
+            `;
+            break;
+
+        case "protectPdf":
+            html = `
+                <h1>Protect PDF</h1>
+                <p>Add password to secure your PDF file.</p>
+            `;
+            break;
+    }
+
+    content.innerHTML = html;
+}
+
 </script>
 
 </body>

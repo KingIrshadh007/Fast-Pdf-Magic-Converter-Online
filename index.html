@@ -151,7 +151,6 @@ footer{
     <h1>All-in-One PDF Tools</h1>
     <p>Convert, merge, split and edit PDFs instantly in your browser</p>
 </div>
-    <div id="app"></div>
 
 <!-- TOOL GRID -->
 <div class="tools">
@@ -219,7 +218,7 @@ function toggleTheme(){
 ==================================================*/
 function openTool(tool){
 
-    const container = document.getElementById("app");
+    const container = document.querySelector(".hero");
 
     if(tool === "imagepdf"){
         loadImageToPDF(container);
@@ -302,7 +301,11 @@ function loadImageToPDF(container){
         render();
     };
 
-    dropzone.ondrop = (e)=>{
+   dropzone.ondrop = (e)=>{
+    e.preventDefault();
+    files = [...e.dataTransfer.files];
+    render();
+};
         e.preventDefault();
         files = [...e.dataTransfer.files];
         render();
@@ -321,7 +324,12 @@ function loadImageToPDF(container){
         });
     }
 
-    btn.onclick = async ()=>{
+   btn.onclick = async ()=>{
+
+    if(files.length === 0){
+        alert("Please select images first");
+        return;
+    }
         const pdf = await PDFLib.PDFDocument.create();
 
         for(let f of files){

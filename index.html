@@ -735,6 +735,13 @@ async function resizeImage(file){
 
     content.innerHTML = html;
 }
+    window.addEventListener("DOMContentLoaded", () => {
+    const toolCount = 8;
+    const btn = document.querySelector(".dropbtn");
+    if (btn) {
+        btn.innerHTML = `Tools ▼ <span style="color:#2563eb;">(${toolCount})</span>`;
+    }
+});
 
 </script>
 

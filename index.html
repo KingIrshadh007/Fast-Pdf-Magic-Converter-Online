@@ -207,7 +207,6 @@ footer{
 </footer>
 
 <script>
-<script>
 
 /*==================================================
     THEME TOGGLE
@@ -225,43 +224,37 @@ function openTool(tool){
 
     if(tool === "imagepdf"){
         loadImageToPDF(container);
-    } else {
+
+    } 
+    else if(tool === "mergepdf"){
+        loadMergePDF(container);
+
+    } 
+    else {
         container.innerHTML = "<h2 style='text-align:center;padding:40px;'>🚧 Coming Soon</h2>";
     }
 }
 
+let activeFiles = [];
+
 /*==================================================
-    IMAGE → PDF TOOL UI
+    IMAGE → PDF (KEEP FROM PHASE 2)
 ==================================================*/
 function loadImageToPDF(container){
 
     container.innerHTML = `
         <div style="max-width:900px;margin:auto;padding:20px;">
-
-            <h2 style="text-align:center;margin-bottom:20px;">
-                📷 Image → PDF Converter
-            </h2>
+            <h2 style="text-align:center;margin-bottom:20px;">📷 Image → PDF Converter</h2>
 
             <div id="dropzone"
-                style="
-                    border:2px dashed #2563eb;
-                    padding:30px;
-                    text-align:center;
-                    border-radius:12px;
-                    background:#f0f7ff;
-                    cursor:pointer;
-                ">
-
+                style="border:2px dashed #2563eb;padding:30px;text-align:center;border-radius:12px;background:#f0f7ff;cursor:pointer;">
                 <p>Click or Drag & Drop Images Here</p>
                 <input type="file" id="files" multiple accept="image/*" hidden>
             </div>
 
             <div id="preview" style="margin-top:15px;"></div>
 
-            <button id="convertBtn" style="margin-top:15px;width:100%;">
-                Convert to PDF
-            </button>
-
+            <button id="convertBtn" style="margin-top:15px;width:100%;">Convert to PDF</button>
         </div>
     `;
 
@@ -274,18 +267,13 @@ function loadImageToPDF(container){
 
     dropzone.onclick = () => fileInput.click();
 
-    fileInput.addEventListener("change", (e)=>{
+    fileInput.addEventListener("change",(e)=>{
         filesArray = [...e.target.files];
         showPreview();
     });
 
     dropzone.addEventListener("dragover",(e)=>{
         e.preventDefault();
-        dropzone.style.background = "#dbeafe";
-    });
-
-    dropzone.addEventListener("dragleave",()=>{
-        dropzone.style.background = "#f0f7ff";
     });
 
     dropzone.addEventListener("drop",(e)=>{
@@ -296,12 +284,11 @@ function loadImageToPDF(container){
 
     function showPreview(){
         preview.innerHTML = "";
-
         filesArray.forEach(file=>{
             const img = document.createElement("img");
+            img.src = URL.createObjectURL(file);
             img.style.width = "100px";
             img.style.margin = "5px";
-            img.src = URL.createObjectURL(file);
             preview.appendChild(img);
         });
     }
@@ -309,7 +296,7 @@ function loadImageToPDF(container){
     convertBtn.onclick = async function(){
 
         if(filesArray.length === 0){
-            alert("Please select images");
+            alert("Select images");
             return;
         }
 
@@ -317,38 +304,133 @@ function loadImageToPDF(container){
 
         for(const file of filesArray){
 
-            const imgBytes = await file.arrayBuffer();
+            const bytes = await file.arrayBuffer();
 
             let img;
-
             if(file.type.includes("png")){
-                img = await pdfDoc.embedPng(imgBytes);
+                img = await pdfDoc.embedPng(bytes);
             } else {
-                img = await pdfDoc.embedJpg(imgBytes);
+                img = await pdfDoc.embedJpg(bytes);
             }
 
             const page = pdfDoc.addPage([600,800]);
 
             page.drawImage(img,{
-                x:50,
-                y:200,
-                width:500,
-                height:400
+                x:50,y:200,width:500,height:400
             });
         }
 
         const pdfBytes = await pdfDoc.save();
 
-        const blob = new Blob([pdfBytes], {type:"application/pdf"});
+        const blob = new Blob([pdfBytes],{type:"application/pdf"});
+        const link = document.createElement("a");
+
+        link.href = URL.createObjectURL(blob);
+        link.download = "images.pdf";
+        link.click();
+    };
+}
+
+/*==================================================
+    📄 MERGE PDF TOOL (NEW)
+==================================================*/
+function loadMergePDF(container){
+
+    container.innerHTML = `
+        <div style="max-width:900px;margin:auto;padding:20px;">
+
+            <h2 style="text-align:center;margin-bottom:20px;">
+                📄 Merge PDF Tool
+            </h2>
+
+            <div id="pdfDropzone"
+                style="
+                    border:2px dashed #2563eb;
+                    padding:30px;
+                    text-align:center;
+                    border-radius:12px;
+                    background:#eef6ff;
+                    cursor:pointer;
+                ">
+
+                <p>Click or Drag & Drop PDF Files</p>
+                <input type="file" id="pdfFiles" multiple accept="application/pdf" hidden>
+            </div>
+
+            <ul id="pdfList" style="margin-top:15px;"></ul>
+
+            <button id="mergeBtn" style="margin-top:15px;width:100%;">
+                Merge PDFs
+            </button>
+
+        </div>
+    `;
+
+    const dropzone = document.getElementById("pdfDropzone");
+    const input = document.getElementById("pdfFiles");
+    const list = document.getElementById("pdfList");
+    const mergeBtn = document.getElementById("mergeBtn");
+
+    let pdfFiles = [];
+
+    dropzone.onclick = () => input.click();
+
+    input.addEventListener("change",(e)=>{
+        pdfFiles = [...e.target.files];
+        render();
+    });
+
+    dropzone.addEventListener("dragover",(e)=>{
+        e.preventDefault();
+    });
+
+    dropzone.addEventListener("drop",(e)=>{
+        e.preventDefault();
+        pdfFiles = [...e.dataTransfer.files];
+        render();
+    });
+
+    function render(){
+        list.innerHTML = "";
+        pdfFiles.forEach(f=>{
+            const li = document.createElement("li");
+            li.textContent = f.name;
+            list.appendChild(li);
+        });
+    }
+
+    mergeBtn.onclick = async function(){
+
+        if(pdfFiles.length < 2){
+            alert("Select at least 2 PDFs");
+            return;
+        }
+
+        const mergedPdf = await PDFLib.PDFDocument.create();
+
+        for(const file of pdfFiles){
+
+            const bytes = await file.arrayBuffer();
+            const pdf = await PDFLib.PDFDocument.load(bytes);
+
+            const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+
+            copiedPages.forEach(page=>{
+                mergedPdf.addPage(page);
+            });
+        }
+
+        const mergedBytes = await mergedPdf.save();
+
+        const blob = new Blob([mergedBytes],{type:"application/pdf"});
 
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = "converted.pdf";
+        link.download = "merged.pdf";
         link.click();
     };
 
 }
-
 </script>
 </script>
 

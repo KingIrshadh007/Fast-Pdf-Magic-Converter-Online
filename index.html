@@ -11,9 +11,7 @@
 
 <style>
 
-/*==================================================
-    RESET
-==================================================*/
+/* RESET */
 *{
     margin:0;
     padding:0;
@@ -21,17 +19,12 @@
     font-family:Arial,sans-serif;
 }
 
-/*==================================================
-    BODY
-==================================================*/
 body{
     background:#f3f4f6;
     transition:0.3s;
 }
 
-/*==================================================
-    HEADER
-==================================================*/
+/* HEADER */
 header{
     position:sticky;
     top:0;
@@ -50,9 +43,7 @@ header{
     color:#2563eb;
 }
 
-/*==================================================
-    BUTTON
-==================================================*/
+/* BUTTON */
 button{
     padding:8px 12px;
     border:none;
@@ -62,26 +53,12 @@ button{
     cursor:pointer;
 }
 
-/*==================================================
-    HERO SECTION
-==================================================*/
+/* HERO */
 .hero{
     text-align:center;
     padding:40px 20px;
 }
 
-.hero h1{
-    font-size:28px;
-    margin-bottom:10px;
-}
-
-.hero p{
-    color:#555;
-}
-
-/*==================================================
-    TOOL GRID
-==================================================*/
 .tools{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
@@ -98,16 +75,9 @@ button{
     text-align:center;
     cursor:pointer;
     box-shadow:0 3px 10px rgba(0,0,0,0.08);
-    transition:0.2s;
 }
 
-.tool-card:hover{
-    transform:translateY(-3px);
-}
-
-/*==================================================
-    FOOTER
-==================================================*/
+/* FOOTER */
 footer{
     text-align:center;
     padding:20px;
@@ -116,9 +86,7 @@ footer{
     color:white;
 }
 
-/*==================================================
-    DARK MODE
-==================================================*/
+/* DARK */
 .dark{
     background:#111827;
     color:white;
@@ -126,7 +94,6 @@ footer{
 
 .dark header{
     background:#1f2937;
-    color:white;
 }
 
 .dark .tool-card{
@@ -140,634 +107,258 @@ footer{
 
 <body>
 
-<!-- HEADER -->
 <header>
     <div class="logo">⚡ Fast Magic PDF</div>
     <button onclick="toggleTheme()">🌙 Dark Mode</button>
 </header>
 
-<!-- HERO -->
 <div class="hero">
     <h1>All-in-One PDF Tools</h1>
     <p>Convert, merge, split and edit PDFs instantly in your browser</p>
 </div>
 
-    <div id="app"></div>
+<!-- REQUIRED APP CONTAINER -->
+<div id="app"></div>
 
-<!-- TOOL GRID -->
 <div class="tools">
 
-    <div class="tool-card" onclick="openTool('imagepdf')">
-        📷 Image → PDF
-    </div>
+    <div class="tool-card" onclick="openTool('imagepdf')">📷 Image → PDF</div>
+    <div class="tool-card" onclick="openTool('mergepdf')">📄 Merge PDF</div>
+    <div class="tool-card" onclick="openTool('splitpdf')">✂ Split PDF</div>
+    <div class="tool-card" onclick="openTool('compresspdf')">🗜 Compress PDF</div>
+    <div class="tool-card" onclick="openTool('rotatepdf')">🔄 Rotate PDF</div>
+    <div class="tool-card" onclick="openTool('deletepdf')">🗑 Delete Pages</div>
+    <div class="tool-card" onclick="openTool('protectpdf')">🔒 Protect PDF</div>
+    <div class="tool-card" onclick="openTool('unlockpdf')">🔓 Unlock PDF</div>
+    <div class="tool-card" onclick="openTool('watermarkpdf')">📝 Watermark PDF</div>
+    <div class="tool-card" onclick="openTool('signpdf')">✍ Sign PDF</div>
+    <div class="tool-card" onclick="openTool('pdftojpg')">📷 PDF → JPG</div>
 
-    <div class="tool-card" onclick="openTool('mergepdf')">
-        📄 Merge PDF
-    </div>
-
-    <div class="tool-card" onclick="openTool('splitpdf')">
-        ✂ Split PDF
-    </div>
-
-    <div class="tool-card" onclick="openTool('compresspdf')">
-        🗜 Compress PDF
-    </div>
-
-    <div class="tool-card" onclick="openTool('rotatepdf')">
-        🔄 Rotate PDF
-    </div>
-
-    <div class="tool-card" onclick="openTool('deletepdf')">
-        🗑 Delete Pages
-    </div>
-
-    <div class="tool-card" onclick="openTool('protectpdf')">
-        🔒 Protect PDF
-    </div>
-
-    <div class="tool-card" onclick="openTool('unlockpdf')">
-        🔓 Unlock PDF
-    </div>
-
-    <div class="tool-card" onclick="openTool('watermarkpdf')">
-        📝 Watermark PDF
-    </div>
-
-    <div class="tool-card" onclick="openTool('signpdf')">
-        ✍ Sign PDF
-    </div>
-
-    <div class="tool-card" onclick="openTool('pdftojpg')">
-        📷 PDF → JPG
-    </div>
 </div>
 
-<!-- FOOTER -->
-<footer>
-    © 2026 Fast Magic PDF Tools
-</footer>
+<footer>© 2026 Fast Magic PDF Tools</footer>
+
 <script>
 
-/*==================================================
-    THEME TOGGLE
-==================================================*/
+/* THEME */
 function toggleTheme(){
     document.body.classList.toggle("dark");
 }
 
-/*==================================================
-    TOOL NAVIGATION
-==================================================*/
+/* NAVIGATION */
 function openTool(tool){
+    const container = document.getElementById("app");
 
-   const container = document.getElementById("app");
-    if(tool === "imagepdf"){
-        loadImageToPDF(container);
-
-    }
-    else if(tool === "mergepdf"){
-        loadMergePDF(container);
-
-    }
-    else if(tool === "splitpdf"){
-        loadSplitPDF(container);
-
-    }
-    else if(tool === "compresspdf"){
-        loadCompressPDF(container);
-
-    }
-    else if(tool === "rotatepdf"){
-        loadRotatePDF(container);
-
-    }
-    else if(tool === "deletepdf"){
-        loadDeletePDF(container);
-
-    }
-        else if(tool === "protectpdf"){
-    loadProtectPDF(container);
-}
-else if(tool === "unlockpdf"){
-    loadUnlockPDF(container);
-}
-else if(tool === "watermarkpdf"){
-    loadWatermarkPDF(container);
-}
-else if(tool === "signpdf"){
-    loadSignPDF(container);
-}
-else if(tool === "pdftojpg"){
-    loadPDFToJPG(container);
-}     
-    else {
-        container.innerHTML = "<h2 style='text-align:center;padding:40px;'>🚧 Coming Soon</h2>";
-    }
+    if(tool === "imagepdf") loadImageToPDF(container);
+    else if(tool === "mergepdf") loadMergePDF(container);
+    else if(tool === "splitpdf") loadSplitPDF(container);
+    else if(tool === "compresspdf") loadCompressPDF(container);
+    else if(tool === "rotatepdf") loadRotatePDF(container);
+    else if(tool === "deletepdf") loadDeletePDF(container);
+    else if(tool === "protectpdf") loadProtectPDF(container);
+    else if(tool === "unlockpdf") loadUnlockPDF(container);
+    else if(tool === "watermarkpdf") loadWatermarkPDF(container);
+    else if(tool === "signpdf") loadSignPDF(container);
+    else if(tool === "pdftojpg") loadPDFToJPG(container);
 }
 
-/*==================================================
-    IMAGE → PDF (UNCHANGED)
-==================================================*/
+/* IMAGE → PDF FIXED */
 function loadImageToPDF(container){
 
-    container.innerHTML = `
-        <div style="max-width:900px;margin:auto;padding:20px;">
-            <h2 style="text-align:center;">📷 Image → PDF</h2>
+container.innerHTML = `
+<div style="max-width:900px;margin:auto;padding:20px;">
+<h2>📷 Image → PDF</h2>
 
-            <div id="dropzone"
-                style="border:2px dashed #2563eb;padding:30px;text-align:center;border-radius:12px;">
-                <input type="file" id="files" multiple accept="image/*" hidden>
-                <p>Click or Drop Images</p>
-            </div>
+<div id="dropzone" style="border:2px dashed #2563eb;padding:30px;text-align:center;border-radius:12px;">
+<input type="file" id="files" multiple accept="image/*" hidden>
+<p>Click or Drop Images</p>
+</div>
 
-            <div id="preview"></div>
+<div id="preview"></div>
 
-            <button id="convertBtn" style="width:100%;margin-top:10px;">
-                Convert
-            </button>
-        </div>
-    `;
+<button id="convertBtn" style="width:100%;margin-top:10px;">Convert</button>
+</div>
+`;
 
-    const dropzone = document.getElementById("dropzone");
-    const input = document.getElementById("files");
-    const preview = document.getElementById("preview");
-    const btn = document.getElementById("convertBtn");
+const dropzone = document.getElementById("dropzone");
+const input = document.getElementById("files");
+const preview = document.getElementById("preview");
+const btn = document.getElementById("convertBtn");
 
-    let files = [];
+let files = [];
 
-    dropzone.onclick = ()=>input.click();
+dropzone.onclick = ()=>input.click();
 
-    input.onchange = (e)=>{
-        files = [...e.target.files];
-        render();
-    };
+input.onchange = (e)=>{
+    files = [...e.target.files];
+    render();
+};
+
+dropzone.ondragover = (e)=>e.preventDefault();
+
 dropzone.ondrop = (e)=>{
-    dropzone.ondragover = (e)=>e.preventDefault();
+    e.preventDefault();
+    files = [...e.dataTransfer.files];
+    render();
+};
 
-    function render(){
-        preview.innerHTML = "";
-        files.forEach(f=>{
-            let img = document.createElement("img");
-            img.src = URL.createObjectURL(f);
-            img.style.width = "80px";
-            img.style.margin = "5px";
-            preview.appendChild(img);
-        });
+function render(){
+    preview.innerHTML = "";
+    files.forEach(f=>{
+        let img = document.createElement("img");
+        img.src = URL.createObjectURL(f);
+        img.style.width = "80px";
+        img.style.margin = "5px";
+        preview.appendChild(img);
+    });
+}
+
+btn.onclick = async ()=>{
+
+    if(files.length === 0){
+        alert("Select images first");
+        return;
     }
 
-   btn.onclick = async ()=>{
-       if(files.length === 0){
-    alert("Please select images first");
-    return;
-}
-        const pdf = await PDFLib.PDFDocument.create();
+    const pdf = await PDFLib.PDFDocument.create();
 
-        for(let f of files){
-            let bytes = await f.arrayBuffer();
+    for(let f of files){
+        let bytes = await f.arrayBuffer();
+        let img = f.type.includes("png")
+            ? await pdf.embedPng(bytes)
+            : await pdf.embedJpg(bytes);
 
-            let img = f.type.includes("png")
-                ? await pdf.embedPng(bytes)
-                : await pdf.embedJpg(bytes);
+        let page = pdf.addPage([600,800]);
+        page.drawImage(img,{x:50,y:200,width:500,height:400});
+    }
 
-            let page = pdf.addPage([600,800]);
-
-            page.drawImage(img,{x:50,y:200,width:500,height:400});
-        }
-
-        download(await pdf.save(),"image.pdf");
-    };
+    download(await pdf.save(),"image.pdf");
+};
 }
 
-/*==================================================
-    📄 MERGE PDF (UNCHANGED)
-==================================================*/
+/* MERGE PDF */
 function loadMergePDF(container){
 
-    container.innerHTML = `
-        <div style="padding:20px;">
-            <h2>📄 Merge PDF</h2>
+container.innerHTML = `
+<div style="padding:20px;">
+<h2>📄 Merge PDF</h2>
+<input type="file" id="pdfFiles" multiple>
+<button id="mergeBtn">Merge</button>
+</div>
+`;
 
-            <input type="file" id="pdfFiles" multiple accept="application/pdf">
+const input = document.getElementById("pdfFiles");
+const btn = document.getElementById("mergeBtn");
 
-            <button id="mergeBtn">Merge</button>
-        </div>
-    `;
+let files = [];
 
-    const input = document.getElementById("pdfFiles");
-    const btn = document.getElementById("mergeBtn");
+input.onchange = e=>{
+    files = [...e.target.files];
+};
 
-    let files = [];
+btn.onclick = async ()=>{
+    const merged = await PDFLib.PDFDocument.create();
 
-    input.onchange = e=>{
-        files = [...e.target.files];
-    };
+    for(let f of files){
+        let bytes = await f.arrayBuffer();
+        let pdf = await PDFLib.PDFDocument.load(bytes);
 
-    btn.onclick = async ()=>{
+        let pages = await merged.copyPages(pdf, pdf.getPageIndices());
+        pages.forEach(p=>merged.addPage(p));
+    }
 
-        if(files.length === 0){
-    alert("Please select images first");
-    return;
-}
-       const merged = await PDFLib.PDFDocument.create();
-
-        for(let f of files){
-            let bytes = await f.arrayBuffer();
-            let pdf = await PDFLib.PDFDocument.load(bytes);
-
-            let pages = await merged.copyPages(pdf, pdf.getPageIndices());
-            pages.forEach(p=>merged.addPage(p));
-        }
-
-        download(await merged.save(),"merged.pdf");
-    };
+    download(await merged.save(),"merged.pdf");
+};
 }
 
-/*==================================================
-    ✂ SPLIT PDF (UNCHANGED)
-==================================================*/
+/* SPLIT PDF */
 function loadSplitPDF(container){
 
-    container.innerHTML = `
-        <div style="padding:20px;">
-            <h2>✂ Split PDF</h2>
+container.innerHTML = `
+<div style="padding:20px;">
+<h2>✂ Split PDF</h2>
+<input type="file" id="splitFile">
+<input id="range" placeholder="1-3">
+<button id="splitBtn">Split</button>
+</div>
+`;
 
-            <input type="file" id="splitFile">
+const fileInput = document.getElementById("splitFile");
+const range = document.getElementById("range");
+const btn = document.getElementById("splitBtn");
 
-            <input id="range" placeholder="1-3">
+let file = null;
 
-            <button id="splitBtn">Split</button>
-        </div>
-    `;
+fileInput.onchange = e=>{
+    file = e.target.files[0];
+};
 
-    const fileInput = document.getElementById("splitFile");
-    const range = document.getElementById("range");
-    const btn = document.getElementById("splitBtn");
+btn.onclick = async ()=>{
 
-    let file = null;
+if(!file) return alert("Select file");
 
-    fileInput.onchange = e=>{
-        file = e.target.files[0];
-    };
-
-    btn.onclick = async ()=>{
-        
-        if(files.length === 0){
-    alert("Please select images first");
-    return;
-}
-
-        const parts = range.value.split("-");
-
-if(parts.length !== 2){
-    alert("Enter range like 1-3");
-    return;
-}
+const parts = range.value.split("-");
+if(parts.length !== 2) return alert("Enter 1-3");
 
 let s = parseInt(parts[0]);
 let e = parseInt(parts[1]);
 
-if(isNaN(s) || isNaN(e) || s > e){
-    alert("Invalid range");
-    return;
+let bytes = await file.arrayBuffer();
+let pdf = await PDFLib.PDFDocument.load(bytes);
+let out = await PDFLib.PDFDocument.create();
+
+let pages = await out.copyPages(
+    pdf,
+    Array.from({length:e-s+1},(_,i)=>s-1+i)
+);
+
+pages.forEach(p=>out.addPage(p));
+
+download(await out.save(),"split.pdf");
+};
 }
 
-        let bytes = await file.arrayBuffer();
-
-        let pdf = await PDFLib.PDFDocument.load(bytes);
-        let out = await PDFLib.PDFDocument.create();
-
-        let pages = await out.copyPages(
-            pdf,
-            Array.from({length:e-s+1},(_,i)=>s-1+i)
-        );
-
-        pages.forEach(p=>out.addPage(p));
-
-        download(await out.save(),"split.pdf");
-    };
-}
-
-/*==================================================
-    🗜 COMPRESS PDF (SIMULATED)
-==================================================*/
-function loadCompressPDF(container){
-
-    container.innerHTML = `
-        <div style="padding:20px;">
-            <h2>🗜 Compress PDF</h2>
-
-            <input type="file" id="compressFile">
-
-            <button id="compressBtn">Compress</button>
-
-            <p style="font-size:12px;color:gray;">
-                Note: Browser compression is limited.
-            </p>
-        </div>
-    `;
-
-    const input = document.getElementById("compressFile");
-    const btn = document.getElementById("compressBtn");
-
-    let file = null;
-
-    input.onchange = e=>{
-        file = e.target.files[0];
-    };
-
-    btn.onclick = async ()=>{
-
-        if(files.length === 0){
-    alert("Please select images first");
-    return;
-}
-
-        let bytes = await file.arrayBuffer();
-        let pdf = await PDFLib.PDFDocument.load(bytes);
-
-        const compressed = await pdf.save({
-            useObjectStreams: true
-        });
-
-        download(compressed,"compressed.pdf");
-    };
-}
-
-/*==================================================
-    🔄 ROTATE PDF
-==================================================*/
+/* ROTATE FIXED */
 function loadRotatePDF(container){
 
-    container.innerHTML = `
-        <div style="padding:20px;">
-            <h2>🔄 Rotate PDF</h2>
+container.innerHTML = `
+<div style="padding:20px;">
+<h2>🔄 Rotate PDF</h2>
+<input type="file" id="rotateFile">
+<button id="rotateBtn">Rotate</button>
+</div>
+`;
 
-            <input type="file" id="rotateFile">
+const input = document.getElementById("rotateFile");
+const btn = document.getElementById("rotateBtn");
 
-            <button id="rotateBtn">Rotate 90°</button>
-        </div>
-    `;
+let file = null;
 
-    const input = document.getElementById("rotateFile");
-    const btn = document.getElementById("rotateBtn");
+input.onchange = e=>file = e.target.files[0];
 
-    let file = null;
+btn.onclick = async ()=>{
 
-    input.onchange = e=>{
-        file = e.target.files[0];
-    };
+let bytes = await file.arrayBuffer();
+let pdf = await PDFLib.PDFDocument.load(bytes);
 
-    btn.onclick = async ()=>{
+pdf.getPages().forEach(p=>{
+    let angle = p.getRotation().angle + 90;
+    p.setRotation(PDFLib.degrees(angle));
+});
 
-        if(files.length === 0){
-    alert("Please select images first");
-    return;
+download(await pdf.save(),"rotated.pdf");
+};
 }
 
-        let bytes = await file.arrayBuffer();
-        let pdf = await PDFLib.PDFDocument.load(bytes);
-
-        let pages = pdf.getPages();
-
-        pages.forEach(p=>{
-            let angle = p.getRotation().angle + 90;
-            p.setRotation(PDFLib.degrees(angle));
-        });
-
-        download(await pdf.save(),"rotated.pdf");
-    };
-}
-
-/*==================================================
-    🗑 DELETE PAGES
-==================================================*/
-function loadDeletePDF(container){
-
-    container.innerHTML = `
-        <div style="padding:20px;">
-            <h2>🗑 Delete Pages</h2>
-
-            <input type="file" id="deleteFile">
-
-            <input id="pages" placeholder="Pages to delete (e.g. 1,3)">
-
-            <button id="deleteBtn">Delete</button>
-        </div>
-    `;
-
-    const input = document.getElementById("deleteFile");
-    const pagesInput = document.getElementById("pages");
-    const btn = document.getElementById("deleteBtn");
-
-    let file = null;
-
-    input.onchange = e=>{
-        file = e.target.files[0];
-    };
-
-    btn.onclick = async ()=>{
-
-        if(files.length === 0){
-    alert("Please select images first");
-    return;
-}
-
-        let bytes = await file.arrayBuffer();
-        let pdf = await PDFLib.PDFDocument.load(bytes);
-
-        let toDelete = pagesInput.value.split(",").map(n=>parseInt(n)-1);
-
-        let newPdf = await PDFLib.PDFDocument.create();
-
-        let keep = pdf.getPageIndices().filter(i=>!toDelete.includes(i));
-
-        let pages = await newPdf.copyPages(pdf, keep);
-
-        pages.forEach(p=>newPdf.addPage(p));
-
-        download(await newPdf.save(),"updated.pdf");
-    };
-}
-
-/*==================================================
-    DOWNLOAD HELPER
-==================================================*/
+/* DOWNLOAD */
 function download(data,name){
-
-    let blob = new Blob([data],{type:"application/pdf"});
-
-    let a = document.createElement("a");
-
-    a.href = URL.createObjectURL(blob);
-    a.download = name;
-    a.click();
+let blob = new Blob([data],{type:"application/pdf"});
+let a = document.createElement("a");
+a.href = URL.createObjectURL(blob);
+a.download = name;
+a.click();
 }
-function loadProtectPDF(container){
 
-container.innerHTML = `
-<div style="padding:20px;">
-<h2>🔒 Protect PDF</h2>
-
-<input type="file" id="protectFile">
-<input type="password" id="pdfPass" placeholder="Enter password" style="width:100%;padding:10px;margin-top:10px;">
-
-<button id="protectBtn" style="margin-top:10px;width:100%;">Protect PDF</button>
-</div>
-`;
-
-const input = document.getElementById("protectFile");
-const pass = document.getElementById("pdfPass");
-const btn = document.getElementById("protectBtn");
-
-let file = null;
-
-input.onchange = e => file = e.target.files[0];
-
-btn.onclick = async () => {
-
-if(!file) return alert("Select PDF");
-
-await file.arrayBuffer(); // placeholder (true encryption needs backend)
-
-alert("PDF protection requires server-side encryption. This is UI-ready.");
-};
-}
-    function loadUnlockPDF(container){
-
-container.innerHTML = `
-<div style="padding:20px;">
-<h2>🔓 Unlock PDF</h2>
-
-<input type="file" id="unlockFile">
-<input type="password" id="unlockPass" placeholder="Enter password" style="width:100%;padding:10px;margin-top:10px;">
-
-<button id="unlockBtn" style="margin-top:10px;width:100%;">Unlock PDF</button>
-</div>
-`;
-
-const input = document.getElementById("unlockFile");
-const btn = document.getElementById("unlockBtn");
-
-let file = null;
-
-input.onchange = e => file = e.target.files[0];
-
-btn.onclick = async () => {
-
-if(!file) return alert("Select PDF");
-
-alert("Browser cannot decrypt PDFs without backend. UI ready only.");
-};
-}
-    function loadWatermarkPDF(container){
-
-container.innerHTML = `
-<div style="padding:20px;">
-<h2>📝 Watermark PDF</h2>
-
-<input type="file" id="wmFile">
-<input type="text" id="wmText" placeholder="Enter watermark text" style="width:100%;padding:10px;margin-top:10px;">
-
-<button id="wmBtn" style="margin-top:10px;width:100%;">Add Watermark</button>
-</div>
-`;
-
-const input = document.getElementById("wmFile");
-const text = document.getElementById("wmText");
-const btn = document.getElementById("wmBtn");
-
-let file = null;
-
-input.onchange = e => file = e.target.files[0];
-
-btn.onclick = async () => {
-
-if(!file) return alert("Select PDF");
-
-const bytes = await file.arrayBuffer();
-const pdf = await PDFLib.PDFDocument.load(bytes);
-
-const pages = pdf.getPages();
-
-pages.forEach(p=>{
-p.drawText(text.value || "WATERMARK", {
-x: 150,
-y: 400,
-size: 50,
-opacity: 0.3
-});
-});
-
-download(await pdf.save(), "watermarked.pdf");
-};
-}
-    function loadSignPDF(container){
-
-container.innerHTML = `
-<div style="padding:20px;">
-<h2>✍ Sign PDF</h2>
-
-<input type="file" id="signFile">
-<input type="text" id="signText" placeholder="Your Name / Signature" style="width:100%;padding:10px;margin-top:10px;">
-
-<button id="signBtn" style="margin-top:10px;width:100%;">Add Signature</button>
-</div>
-`;
-
-const input = document.getElementById("signFile");
-const text = document.getElementById("signText");
-const btn = document.getElementById("signBtn");
-
-let file = null;
-
-input.onchange = e => file = e.target.files[0];
-
-btn.onclick = async () => {
-
-if(!file) return alert("Select PDF");
-
-const bytes = await file.arrayBuffer();
-const pdf = await PDFLib.PDFDocument.load(bytes);
-
-const pages = pdf.getPages();
-
-pages[0].drawText(text.value || "SIGNED", {
-x: 100,
-y: 100,
-size: 30
-});
-
-download(await pdf.save(), "signed.pdf");
-};
-}
-    function loadPDFToJPG(container){
-
-container.innerHTML = `
-<div style="padding:20px;">
-<h2>📷 PDF → JPG</h2>
-
-<input type="file" id="jpgFile">
-
-<button id="jpgBtn" style="margin-top:10px;width:100%;">Convert</button>
-</div>
-`;
-
-const input = document.getElementById("jpgFile");
-const btn = document.getElementById("jpgBtn");
-
-let file = null;
-
-input.onchange = e => file = e.target.files[0];
-
-btn.onclick = async () => {
-
-if(!file) return alert("Select PDF");
-
-alert("True PDF → Image conversion needs backend or pdf.js rendering.
-Frontend-only basic version coming next upgrade.");
-};
-}
-    
 </script>
 
 </body>

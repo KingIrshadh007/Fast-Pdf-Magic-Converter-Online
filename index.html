@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Fast Magic PDF Tools</title>
+<title>Fast-Magic-Pdf-Image-Converter-Online</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
 <style>
 
-/* RESET */
+/* ===== BASE ===== */
 *{
     margin:0;
     padding:0;
@@ -24,339 +22,589 @@ body{
     transition:0.3s;
 }
 
-/* HEADER */
-header{
+/* ===== HEADER ===== */
+.site-header{
     position:sticky;
     top:0;
     z-index:1000;
-    background:#fff;
-    padding:15px 20px;
     display:flex;
     justify-content:space-between;
     align-items:center;
-    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+    padding:15px 30px;
+    background:white;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
 }
 
 .logo{
-    font-size:20px;
+    font-size:22px;
     font-weight:bold;
     color:#2563eb;
 }
 
-/* BUTTON */
-button{
-    padding:8px 12px;
-    border:none;
-    background:#2563eb;
-    color:white;
-    border-radius:6px;
-    cursor:pointer;
+.site-header nav{
+    display:flex;
+    gap:18px;
 }
 
-/* HERO */
-.hero{
-    text-align:center;
+.site-header nav a{
+    text-decoration:none;
+    color:#374151;
+}
+
+/* ===== LAYOUT ===== */
+.page-wrapper{
+    min-height:calc(100vh - 140px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
     padding:40px 20px;
 }
 
-.tools{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:15px;
-    padding:20px;
-    max-width:1000px;
-    margin:auto;
+.container{
+    width:100%;
+    max-width:900px;
+    background:white;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
 
-.tool-card{
-    background:white;
-    padding:20px;
-    border-radius:12px;
+/* TITLE */
+h1{
     text-align:center;
+    margin-bottom:30px;
+}
+
+/* ===== DROPZONE ===== */
+.dropzone{
+    min-height:180px;
+    border:2px dashed #2563eb;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    border-radius:12px;
+    background:#eff6ff;
     cursor:pointer;
-    box-shadow:0 3px 10px rgba(0,0,0,0.08);
+    text-align:center;
+    padding:20px;
+}
+
+.dropzone.dragover{
+    background:#bfdbfe;
+}
+
+.formats{
+    margin-top:10px;
+    font-size:13px;
+    color:#6b7280;
+}
+
+/* OPTIONS */
+.options{
+    margin-top:15px;
+    margin-bottom:10px;
+}
+
+.options label{
+    font-weight:bold;
+    display:block;
+    margin-bottom:6px;
+}
+
+.options select{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+input[type="file"]{
+    display:none;
+}
+
+#fileList{
+    margin-top:15px;
+}
+
+.file-item{
+    display:flex;
+    justify-content:space-between;
+    padding:10px;
+    border:1px solid #ddd;
+    margin-top:10px;
+    border-radius:8px;
+}
+
+/* BUTTON */
+.convert-btn{
+    width:100%;
+    margin-top:20px;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:#2563eb;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
 }
 
 /* FOOTER */
-footer{
-    text-align:center;
-    padding:20px;
-    margin-top:30px;
+.site-footer{
+    margin-top:40px;
+    padding:25px;
+    background:#111827;
+    color:white;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.footer-links{
+    display:flex;
+    gap:25px;
+    flex-wrap:wrap;
+}
+
+.footer-links a{
+    color:#ccc;
+    text-decoration:none;
+    font-size:14px;
+}
+
+.footer-links a:hover{
+    color:white;
+}
+
+/* DARK MODE */
+.dark-mode{
     background:#111827;
     color:white;
 }
 
-/* DARK */
-.dark{
-    background:#111827;
-    color:white;
-}
-
-.dark header{
+.dark-mode .container{
     background:#1f2937;
 }
 
-.dark .tool-card{
+.dark-mode .site-header{
     background:#1f2937;
+}
+
+.dark-mode .site-header a{
     color:white;
 }
 
+.dark-mode .file-item{
+    background:#374151;
+    border-color:#4b5563;
+}
+
+.dark-mode .dropzone{
+    background:#1e3a8a;
+}
+
+.dark-mode .formats{
+    color:#cbd5e1;
+}
+/* =========================
+   MOBILE RESPONSIVE FIX ONLY
+========================= */
+
+@media (max-width: 768px) {
+
+    .site-header{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 15px;
+    }
+
+    .site-header nav{
+        flex-wrap: wrap;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .site-header nav a{
+        font-size: 14px;
+    }
+
+    .logo{
+        font-size: 18px;
+    }
+
+    .container{
+        padding: 20px;
+        border-radius: 12px;
+    }
+
+    h1{
+        font-size: 20px;
+    }
+
+    .dropzone{
+        min-height: 140px;
+        padding: 15px;
+    }
+
+    .file-item{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .convert-btn{
+        font-size: 16px;
+        padding: 12px;
+    }
+
+    .site-footer{
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .footer-links{
+        justify-content: center;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 420px) {
+
+    .container{
+        padding: 15px;
+    }
+
+    .site-header nav{
+        justify-content: center;
+    }
+}
 </style>
-
 </head>
 
 <body>
 
-<header>
+<header class="site-header">
     <div class="logo">⚡ Fast Magic PDF</div>
-    <button onclick="toggleTheme()">🌙 Dark Mode</button>
+
+    <nav>
+        <a href="#" onclick="showSection('home')">Home</a>
+        <a href="#" onclick="showSection('tools')">Tools</a>
+        <a href="#" onclick="showSection('features')">Features</a>
+        <a href="#" onclick="showSection('contact')">Contact</a>
+    </nav>
+
+    <button id="themeToggle">🌙 Dark Mode</button>
 </header>
 
-<div class="hero">
-    <h1>All-in-One PDF Tools</h1>
-    <p>Convert, merge, split and edit PDFs instantly in your browser</p>
+<div class="page-wrapper">
+
+<div class="container">
+
+<!-- DYNAMIC CONTENT AREA -->
+<div id="dynamicContent">
+
+<h1>Image → PDF Converter</h1>
+
+<div class="dropzone" id="dropzone">
+    <h3>Upload Images</h3>
+    <p>Click or drag & drop images here</p>
+
+    <div class="formats">
+        Supported: JPG, JPEG, PNG, WEBP, GIF, BMP, AVIF
+    </div>
 </div>
 
-<!-- REQUIRED APP CONTAINER -->
-<div id="app"></div>
+<input type="file" id="images" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.avif">
 
-<div class="tools">
+<div class="options">
+    <label>PDF Page Size</label>
+    <select id="pageSize">
+        <option value="A4">A4 (Standard)</option>
+        <option value="LETTER">Letter (US)</option>
+        <option value="A3">A3 (Large)</option>
+    </select>
+</div>
 
-    <div class="tool-card" onclick="openTool('imagepdf')">📷 Image → PDF</div>
-    <div class="tool-card" onclick="openTool('mergepdf')">📄 Merge PDF</div>
-    <div class="tool-card" onclick="openTool('splitpdf')">✂ Split PDF</div>
-    <div class="tool-card" onclick="openTool('compresspdf')">🗜 Compress PDF</div>
-    <div class="tool-card" onclick="openTool('rotatepdf')">🔄 Rotate PDF</div>
-    <div class="tool-card" onclick="openTool('deletepdf')">🗑 Delete Pages</div>
-    <div class="tool-card" onclick="openTool('protectpdf')">🔒 Protect PDF</div>
-    <div class="tool-card" onclick="openTool('unlockpdf')">🔓 Unlock PDF</div>
-    <div class="tool-card" onclick="openTool('watermarkpdf')">📝 Watermark PDF</div>
-    <div class="tool-card" onclick="openTool('signpdf')">✍ Sign PDF</div>
-    <div class="tool-card" onclick="openTool('pdftojpg')">📷 PDF → JPG</div>
+<div id="fileList"></div>
+
+<button class="convert-btn" id="convertBtn">
+Convert & Download PDF
+</button>
+
+<div id="status"></div>
 
 </div>
 
-<footer>© 2026 Fast Magic PDF Tools</footer>
+</div>
+
+</div>
+
+<footer class="site-footer">
+    <div class="footer-links">
+        <a href="#" onclick="showSection('privacy')">Privacy Policy</a>
+        <a href="#" onclick="showSection('terms')">Terms</a>
+        <a href="#" onclick="showSection('cookies')">Cookies</a>
+        <a href="#" onclick="showSection('contact')">Contact</a>
+    </div>
+
+    <p>© 2026 Fast Magic PDF</p>
+</footer>
 
 <script>
 
-/* THEME */
-function toggleTheme(){
-    document.body.classList.toggle("dark");
+const input=document.getElementById("images");
+const dropzone=document.getElementById("dropzone");
+const fileList=document.getElementById("fileList");
+const pageSize=document.getElementById("pageSize");
+
+let selectedFiles=[];
+
+/* DARK MODE */
+const themeToggle=document.getElementById("themeToggle");
+
+if(localStorage.getItem("theme")==="dark"){
+    document.body.classList.add("dark-mode");
+    themeToggle.innerHTML="☀️ Light Mode";
 }
 
-/* NAVIGATION */
-function openTool(tool){
-    const container = document.getElementById("app");
+themeToggle.addEventListener("click",()=>{
 
-    if(tool === "imagepdf") loadImageToPDF(container);
-    else if(tool === "mergepdf") loadMergePDF(container);
-    else if(tool === "splitpdf") loadSplitPDF(container);
-    else if(tool === "compresspdf") loadCompressPDF(container);
-    else if(tool === "rotatepdf") loadRotatePDF(container);
-    else if(tool === "deletepdf") loadDeletePDF(container);
-    else if(tool === "protectpdf") loadProtectPDF(container);
-    else if(tool === "unlockpdf") loadUnlockPDF(container);
-    else if(tool === "watermarkpdf") loadWatermarkPDF(container);
-    else if(tool === "signpdf") loadSignPDF(container);
-    else if(tool === "pdftojpg") loadPDFToJPG(container);
+    document.body.classList.toggle("dark-mode");
+
+    if(document.body.classList.contains("dark-mode")){
+        localStorage.setItem("theme","dark");
+        themeToggle.innerHTML="☀️ Light Mode";
+    }else{
+        localStorage.setItem("theme","light");
+        themeToggle.innerHTML="🌙 Dark Mode";
+    }
+});
+
+/* HEADER + FOOTER PAGE SWITCH */
+function showSection(section){
+
+    const content=document.getElementById("dynamicContent");
+
+    let html="";
+
+    switch(section){
+
+        case "home":
+            location.reload();
+            return;
+
+        case "tools":
+            html=`
+                <h2>🧰 Tools</h2>
+                <p>Image to PDF Converter (current)</p>
+                <p>More tools coming soon like PDF merge and compression.</p>
+            `;
+            break;
+
+        case "features":
+            html=`
+                <h2>⚡ Features</h2>
+                <ul>
+                    <li>Fast browser-based conversion</li>
+                    <li>No file upload (fully secure)</li>
+                    <li>High-quality PDF output</li>
+                    <li>Mobile friendly design</li>
+                </ul>
+            `;
+            break;
+
+        case "contact":
+            html=`
+                <h2>📩 Contact</h2>
+                <p>Email: support@fastmagicpdf.com</p>
+            `;
+            break;
+
+        case "privacy":
+            html=`
+                <h2>🔒 Privacy Policy</h2>
+                <p>Your files are processed locally and never uploaded.</p>
+            `;
+            break;
+
+        case "terms":
+            html=`
+                <h2>📜 Terms</h2>
+                <p>Use this tool responsibly. No misuse allowed.</p>
+            `;
+            break;
+
+        case "cookies":
+            html=`
+                <h2>🍪 Cookies</h2>
+                <p>We only use localStorage for theme settings.</p>
+            `;
+            break;
+    }
+
+    content.innerHTML=html;
 }
 
-/* IMAGE → PDF FIXED */
-function loadImageToPDF(container){
+/* CLICK UPLOAD */
+dropzone.onclick=()=>input.click();
 
-container.innerHTML = `
-<div style="max-width:900px;margin:auto;padding:20px;">
-<h2>📷 Image → PDF</h2>
+input.addEventListener("change",()=>{
+    selectedFiles=[...selectedFiles,...input.files];
+    renderFiles();
+});
 
-<div id="dropzone" style="border:2px dashed #2563eb;padding:30px;text-align:center;border-radius:12px;">
-<input type="file" id="files" multiple accept="image/*" hidden>
-<p>Click or Drop Images</p>
-</div>
-
-<div id="preview"></div>
-
-<button id="convertBtn" style="width:100%;margin-top:10px;">Convert</button>
-</div>
-`;
-
-const dropzone = document.getElementById("dropzone");
-const input = document.getElementById("files");
-const preview = document.getElementById("preview");
-const btn = document.getElementById("convertBtn");
-
-let files = [];
-
-dropzone.onclick = ()=>input.click();
-
-input.onchange = (e)=>{
-    files = [...e.target.files];
-    render();
-};
-
-dropzone.ondragover = (e)=>e.preventDefault();
-
-dropzone.ondrop = (e)=>{
+dropzone.addEventListener("dragover",(e)=>{
     e.preventDefault();
-    files = [...e.dataTransfer.files];
-    render();
-};
+    dropzone.classList.add("dragover");
+});
 
-function render(){
-    preview.innerHTML = "";
-    files.forEach(f=>{
-        let img = document.createElement("img");
-        img.src = URL.createObjectURL(f);
-        img.style.width = "80px";
-        img.style.margin = "5px";
-        preview.appendChild(img);
+dropzone.addEventListener("dragleave",()=>{
+    dropzone.classList.remove("dragover");
+});
+
+dropzone.addEventListener("drop",(e)=>{
+    e.preventDefault();
+    dropzone.classList.remove("dragover");
+
+    const files=[...e.dataTransfer.files];
+    const images=files.filter(f=>f.type.startsWith("image/"));
+
+    selectedFiles=[...selectedFiles,...images];
+    renderFiles();
+});
+
+function renderFiles(){
+
+    fileList.innerHTML="";
+
+    selectedFiles.forEach((file,i)=>{
+
+        const div=document.createElement("div");
+        div.className="file-item";
+
+        div.innerHTML=`
+        <span>${file.name}</span>
+        <button onclick="removeFile(${i})">X</button>
+        `;
+
+        fileList.appendChild(div);
     });
 }
 
-btn.onclick = async ()=>{
+function removeFile(i){
+    selectedFiles.splice(i,1);
+    renderFiles();
+}
 
-    if(files.length === 0){
+/* PDF CREATE (UNCHANGED LOGIC) */
+document.getElementById("convertBtn")
+.addEventListener("click",createPDF);
+
+async function createPDF(){
+
+    if(selectedFiles.length===0){
         alert("Select images first");
         return;
     }
 
-    const pdf = await PDFLib.PDFDocument.create();
+    const pdfDoc=await PDFLib.PDFDocument.create();
 
-    for(let f of files){
-        let bytes = await f.arrayBuffer();
-        let img = f.type.includes("png")
-            ? await pdf.embedPng(bytes)
-            : await pdf.embedJpg(bytes);
+    let pageWidth=595;
+    let pageHeight=842;
 
-        let page = pdf.addPage([600,800]);
-        page.drawImage(img,{x:50,y:200,width:500,height:400});
+    const size=pageSize.value;
+
+    if(size==="LETTER"){
+        pageWidth=612;
+        pageHeight=792;
     }
 
-    download(await pdf.save(),"image.pdf");
-};
-}
-
-/* MERGE PDF */
-function loadMergePDF(container){
-
-container.innerHTML = `
-<div style="padding:20px;">
-<h2>📄 Merge PDF</h2>
-<input type="file" id="pdfFiles" multiple>
-<button id="mergeBtn">Merge</button>
-</div>
-`;
-
-const input = document.getElementById("pdfFiles");
-const btn = document.getElementById("mergeBtn");
-
-let files = [];
-
-input.onchange = e=>{
-    files = [...e.target.files];
-};
-
-btn.onclick = async ()=>{
-    const merged = await PDFLib.PDFDocument.create();
-
-    for(let f of files){
-        let bytes = await f.arrayBuffer();
-        let pdf = await PDFLib.PDFDocument.load(bytes);
-
-        let pages = await merged.copyPages(pdf, pdf.getPageIndices());
-        pages.forEach(p=>merged.addPage(p));
+    if(size==="A3"){
+        pageWidth=842;
+        pageHeight=1191;
     }
 
-    download(await merged.save(),"merged.pdf");
-};
+    for(const file of selectedFiles){
+
+        const blob=await resizeImage(file);
+        const bytes=await blob.arrayBuffer();
+
+        const image=await pdfDoc.embedJpg(bytes);
+
+        const page=pdfDoc.addPage([pageWidth,pageHeight]);
+
+        const scale=Math.min(
+            pageWidth/image.width,
+            pageHeight/image.height
+        );
+
+        page.drawImage(image,{
+            x:(pageWidth-image.width*scale)/2,
+            y:(pageHeight-image.height*scale)/2,
+            width:image.width*scale,
+            height:image.height*scale
+        });
+    }
+
+    const pages=pdfDoc.getPages();
+
+    pages.forEach((p,i)=>{
+        p.drawText(`Page ${i+1} of ${pages.length}`,{
+            x:p.getWidth()/2-40,
+            y:20,
+            size:10
+        });
+    });
+
+    const pdfBytes=await pdfDoc.save();
+
+    const blob=new Blob([pdfBytes],{type:"application/pdf"});
+
+    const url=URL.createObjectURL(blob);
+
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="images.pdf";
+    a.click();
+
+    URL.revokeObjectURL(url);
 }
 
-/* SPLIT PDF */
-function loadSplitPDF(container){
+/* RESIZE */
+async function resizeImage(file){
 
-container.innerHTML = `
-<div style="padding:20px;">
-<h2>✂ Split PDF</h2>
-<input type="file" id="splitFile">
-<input id="range" placeholder="1-3">
-<button id="splitBtn">Split</button>
-</div>
-`;
+    return new Promise(resolve=>{
 
-const fileInput = document.getElementById("splitFile");
-const range = document.getElementById("range");
-const btn = document.getElementById("splitBtn");
+        const img=new Image();
 
-let file = null;
+        img.onload=()=>{
 
-fileInput.onchange = e=>{
-    file = e.target.files[0];
-};
+            const canvas=document.createElement("canvas");
 
-btn.onclick = async ()=>{
+            let w=img.width;
+            let h=img.height;
 
-if(!file) return alert("Select file");
+            if(w>1800){
+                h*=1800/w;
+                w=1800;
+            }
 
-const parts = range.value.split("-");
-if(parts.length !== 2) return alert("Enter 1-3");
+            canvas.width=w;
+            canvas.height=h;
 
-let s = parseInt(parts[0]);
-let e = parseInt(parts[1]);
+            const ctx=canvas.getContext("2d");
+            ctx.drawImage(img,0,0,w,h);
 
-let bytes = await file.arrayBuffer();
-let pdf = await PDFLib.PDFDocument.load(bytes);
-let out = await PDFLib.PDFDocument.create();
+            canvas.toBlob(blob=>resolve(blob),"image/jpeg",0.9);
+        };
 
-let pages = await out.copyPages(
-    pdf,
-    Array.from({length:e-s+1},(_,i)=>s-1+i)
-);
-
-pages.forEach(p=>out.addPage(p));
-
-download(await out.save(),"split.pdf");
-};
-}
-
-/* ROTATE FIXED */
-function loadRotatePDF(container){
-
-container.innerHTML = `
-<div style="padding:20px;">
-<h2>🔄 Rotate PDF</h2>
-<input type="file" id="rotateFile">
-<button id="rotateBtn">Rotate</button>
-</div>
-`;
-
-const input = document.getElementById("rotateFile");
-const btn = document.getElementById("rotateBtn");
-
-let file = null;
-
-input.onchange = e=>file = e.target.files[0];
-
-btn.onclick = async ()=>{
-
-let bytes = await file.arrayBuffer();
-let pdf = await PDFLib.PDFDocument.load(bytes);
-
-pdf.getPages().forEach(p=>{
-    let angle = p.getRotation().angle + 90;
-    p.setRotation(PDFLib.degrees(angle));
-});
-
-download(await pdf.save(),"rotated.pdf");
-};
-}
-
-/* DOWNLOAD */
-function download(data,name){
-let blob = new Blob([data],{type:"application/pdf"});
-let a = document.createElement("a");
-a.href = URL.createObjectURL(blob);
-a.download = name;
-a.click();
+        img.src=URL.createObjectURL(file);
+    });
 }
 
 </script>

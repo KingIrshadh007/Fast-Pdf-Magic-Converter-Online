@@ -205,7 +205,6 @@ footer{
 <footer>
     © 2026 Fast Magic PDF Tools
 </footer>
-
 <script>
 
 /*==================================================
@@ -229,16 +228,18 @@ function openTool(tool){
     else if(tool === "mergepdf"){
         loadMergePDF(container);
 
-    } 
+    }
+    else if(tool === "splitpdf"){
+        loadSplitPDF(container);
+
+    }
     else {
         container.innerHTML = "<h2 style='text-align:center;padding:40px;'>🚧 Coming Soon</h2>";
     }
 }
 
-let activeFiles = [];
-
 /*==================================================
-    IMAGE → PDF (KEEP FROM PHASE 2)
+    IMAGE → PDF (UNCHANGED)
 ==================================================*/
 function loadImageToPDF(container){
 
@@ -332,37 +333,23 @@ function loadImageToPDF(container){
 }
 
 /*==================================================
-    📄 MERGE PDF TOOL (NEW)
+    📄 MERGE PDF (UNCHANGED)
 ==================================================*/
 function loadMergePDF(container){
 
     container.innerHTML = `
         <div style="max-width:900px;margin:auto;padding:20px;">
-
-            <h2 style="text-align:center;margin-bottom:20px;">
-                📄 Merge PDF Tool
-            </h2>
+            <h2 style="text-align:center;">📄 Merge PDF Tool</h2>
 
             <div id="pdfDropzone"
-                style="
-                    border:2px dashed #2563eb;
-                    padding:30px;
-                    text-align:center;
-                    border-radius:12px;
-                    background:#eef6ff;
-                    cursor:pointer;
-                ">
-
-                <p>Click or Drag & Drop PDF Files</p>
+                style="border:2px dashed #2563eb;padding:30px;text-align:center;border-radius:12px;background:#eef6ff;cursor:pointer;">
+                <p>Click or Drop PDF Files</p>
                 <input type="file" id="pdfFiles" multiple accept="application/pdf" hidden>
             </div>
 
             <ul id="pdfList" style="margin-top:15px;"></ul>
 
-            <button id="mergeBtn" style="margin-top:15px;width:100%;">
-                Merge PDFs
-            </button>
-
+            <button id="mergeBtn" style="margin-top:15px;width:100%;">Merge PDFs</button>
         </div>
     `;
 
@@ -413,10 +400,10 @@ function loadMergePDF(container){
             const bytes = await file.arrayBuffer();
             const pdf = await PDFLib.PDFDocument.load(bytes);
 
-            const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+            const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
 
-            copiedPages.forEach(page=>{
-                mergedPdf.addPage(page);
+            pages.forEach(p=>{
+                mergedPdf.addPage(p);
             });
         }
 
@@ -429,9 +416,91 @@ function loadMergePDF(container){
         link.download = "merged.pdf";
         link.click();
     };
-
 }
-</script>
+
+/*==================================================
+    ✂️ SPLIT PDF TOOL (NEW)
+==================================================*/
+function loadSplitPDF(container){
+
+    container.innerHTML = `
+        <div style="max-width:900px;margin:auto;padding:20px;">
+
+            <h2 style="text-align:center;margin-bottom:20px;">
+                ✂ Split PDF Tool
+            </h2>
+
+            <div id="splitDropzone"
+                style="border:2px dashed #2563eb;padding:30px;text-align:center;border-radius:12px;background:#f0f7ff;cursor:pointer;">
+                <p>Upload PDF to Split</p>
+                <input type="file" id="splitFile" accept="application/pdf" hidden>
+            </div>
+
+            <input id="pageRange"
+                placeholder="Enter page range (example: 1-3)"
+                style="width:100%;padding:10px;margin-top:15px;border:1px solid #ccc;border-radius:6px;">
+
+            <button id="splitBtn" style="margin-top:15px;width:100%;">
+                Split PDF
+            </button>
+
+        </div>
+    `;
+
+    const dropzone = document.getElementById("splitDropzone");
+    const input = document.getElementById("splitFile");
+    const rangeInput = document.getElementById("pageRange");
+    const splitBtn = document.getElementById("splitBtn");
+
+    let pdfFile = null;
+
+    dropzone.onclick = () => input.click();
+
+    input.addEventListener("change",(e)=>{
+        pdfFile = e.target.files[0];
+    });
+
+    splitBtn.onclick = async function(){
+
+        if(!pdfFile){
+            alert("Select PDF file");
+            return;
+        }
+
+        const range = rangeInput.value.trim();
+
+        if(!range.includes("-")){
+            alert("Enter valid range like 1-3");
+            return;
+        }
+
+        const [start, end] = range.split("-").map(n => parseInt(n));
+
+        const bytes = await pdfFile.arrayBuffer();
+
+        const pdfDoc = await PDFLib.PDFDocument.load(bytes);
+        const newPdf = await PDFLib.PDFDocument.create();
+
+        const pages = await newPdf.copyPages(
+            pdfDoc,
+            Array.from({length: end - start + 1}, (_, i) => start - 1 + i)
+        );
+
+        pages.forEach(p=>{
+            newPdf.addPage(p);
+        });
+
+        const newBytes = await newPdf.save();
+
+        const blob = new Blob([newBytes],{type:"application/pdf"});
+
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "split.pdf";
+        link.click();
+    };
+}
+
 </script>
 
 </body>

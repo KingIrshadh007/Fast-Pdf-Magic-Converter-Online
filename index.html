@@ -682,8 +682,12 @@ function loadTool(tool) {
             return;
 
         case "mergePdf":
-            content.innerHTML = mergePDFUI();
-            break;
+
+    content.innerHTML = mergePDFUI();
+
+    initMergePDF();
+
+    break;
 
         case "splitPdf":
             content.innerHTML = splitPDFUI();
@@ -711,12 +715,376 @@ function loadTool(tool) {
     }
 }
 
+/* ============================
+      MERGE PDF TOOL
+============================ */
+
+
 function mergePDFUI(){
+
 return `
-<h1>Merge PDF</h1>
-<input type="file" id="mergeFiles" multiple />
-<button onclick="mergePDF()">Merge</button>
+
+<h1>📄 Merge PDF</h1>
+
+
+<div class="dropzone" id="mergeDropzone">
+
+<h3>Upload PDF Files</h3>
+
+<p>Click or Drag & Drop PDFs Here</p>
+
+<div class="formats">
+Supported: PDF files only
+</div>
+
+</div>
+
+
+<input 
+type="file"
+id="mergeFiles"
+multiple
+accept=".pdf">
+
+
+<div id="mergeFileList"></div>
+
+
+<button 
+class="convert-btn"
+id="mergeBtn">
+
+Merge PDF
+
+</button>
+
+
+<div id="mergeStatus"></div>
+
 `;
+
+}
+
+
+
+/* INITIALIZE MERGE TOOL */
+
+function initMergePDF(){
+
+
+const input=document.getElementById("mergeFiles");
+
+const dropzone=document.getElementById("mergeDropzone");
+
+const button=document.getElementById("mergeBtn");
+
+
+window.mergeSelectedFiles=[];
+
+
+
+// Click upload
+
+dropzone.onclick=()=>{
+
+input.click();
+
+};
+
+
+
+// Select files
+
+input.addEventListener("change",()=>{
+
+
+const files=[...input.files];
+
+
+const pdfFiles=files.filter(file=>
+
+file.type==="application/pdf"
+
+);
+
+
+mergeSelectedFiles.push(...pdfFiles);
+
+
+renderMergeFiles();
+
+
+});
+
+
+
+
+// Drag Over
+
+dropzone.addEventListener("dragover",(e)=>{
+
+e.preventDefault();
+
+dropzone.classList.add("dragover");
+
+});
+
+
+
+
+// Drag Leave
+
+dropzone.addEventListener("dragleave",()=>{
+
+dropzone.classList.remove("dragover");
+
+});
+
+
+
+
+// Drop Files
+
+dropzone.addEventListener("drop",(e)=>{
+
+
+e.preventDefault();
+
+
+dropzone.classList.remove("dragover");
+
+
+
+const files=[...e.dataTransfer.files];
+
+
+
+const pdfFiles=files.filter(file=>
+
+file.type==="application/pdf"
+
+);
+
+
+
+mergeSelectedFiles.push(...pdfFiles);
+
+
+
+renderMergeFiles();
+
+
+
+});
+
+
+
+
+// Merge button
+
+button.onclick=mergePDF;
+
+
+}
+
+
+
+/* SHOW SELECTED FILES */
+
+
+function renderMergeFiles(){
+
+
+const list=document.getElementById("mergeFileList");
+
+
+if(!list) return;
+
+
+list.innerHTML="";
+
+
+
+mergeSelectedFiles.forEach((file,index)=>{
+
+
+const div=document.createElement("div");
+
+
+div.className="file-item";
+
+
+
+div.innerHTML=`
+
+<span>
+
+${index+1}. ${file.name}
+
+</span>
+
+
+<button onclick="removeMergeFile(${index})">
+
+❌ Remove
+
+</button>
+
+`;
+
+
+
+list.appendChild(div);
+
+
+
+});
+
+
+}
+
+
+
+
+/* REMOVE FILE */
+
+
+function removeMergeFile(index){
+
+
+mergeSelectedFiles.splice(index,1);
+
+
+renderMergeFiles();
+
+
+}
+
+
+
+
+
+/* MERGE FUNCTION */
+
+
+async function mergePDF(){
+
+
+try{
+
+
+if(mergeSelectedFiles.length < 2){
+
+
+alert("Please select minimum 2 PDF files");
+
+
+return;
+
+
+}
+
+
+
+const mergedPdf = 
+await PDFLib.PDFDocument.create();
+
+
+
+
+for(const file of mergeSelectedFiles){
+
+
+
+const bytes = await file.arrayBuffer();
+
+
+
+const pdf = 
+await PDFLib.PDFDocument.load(bytes);
+
+
+
+
+const copiedPages = 
+await mergedPdf.copyPages(
+
+pdf,
+
+pdf.getPageIndices()
+
+);
+
+
+
+
+copiedPages.forEach(page=>{
+
+
+mergedPdf.addPage(page);
+
+
+});
+
+
+
+}
+
+
+
+
+const pdfBytes = 
+await mergedPdf.save();
+
+
+
+downloadPDF(
+
+pdfBytes,
+
+"merged.pdf"
+
+);
+
+
+
+
+document.getElementById("mergeStatus").innerHTML=
+
+`
+
+<p style="color:green">
+
+✅ PDF merged successfully!
+
+</p>
+
+`;
+
+
+
+}
+
+catch(error){
+
+
+
+console.error(error);
+
+
+
+alert(
+
+"Merge failed. Please check your PDF files."
+
+);
+
+
+
+}
+
+
+
 }
 
 function splitPDFUI(){
@@ -779,22 +1147,7 @@ return `
     URL.revokeObjectURL(url);
 }
 
-    async function mergePDF(){
-    const files = document.getElementById("mergeFiles").files;
-
-    const mergedPdf = await PDFLib.PDFDocument.create();
-
-    for(const file of files){
-        const bytes = await file.arrayBuffer();
-        const pdf = await PDFLib.PDFDocument.load(bytes);
-
-        const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-        pages.forEach(page => mergedPdf.addPage(page));
-    }
-
-    const pdfBytes = await mergedPdf.save();
-    downloadPDF(pdfBytes, "merged.pdf");
-}
+  
 
     async function splitPDF(){
     const file = document.getElementById("splitFile").files[0];

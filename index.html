@@ -6,6 +6,7 @@
 <title>Fast Magic PDF Tools</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style>
 
@@ -1100,30 +1101,16 @@ function splitPDFUI(){
 
 return `
 
-
 <h1>✂️ Split PDF</h1>
 
 
 <div class="dropzone" id="splitDropzone">
 
-
 <h3>Upload PDF</h3>
 
-
-<p>
-Click or Drag & Drop PDF Here
-</p>
-
-
-<div class="formats">
-
-Only PDF files supported
+<p>Click or Drag PDF here</p>
 
 </div>
-
-
-</div>
-
 
 
 <input 
@@ -1132,9 +1119,61 @@ id="splitFile"
 accept=".pdf">
 
 
+<div id="pdfInfo"></div>
 
-<div id="splitInfo"></div>
 
+<div id="splitOptions" style="display:none">
+
+
+<label>
+Select Pages
+</label>
+
+
+<select id="splitType">
+
+
+<option value="range">
+Page Range
+</option>
+
+
+<option value="custom">
+Custom Pages
+</option>
+
+
+</select>
+
+
+
+<div id="rangeBox">
+
+<input 
+id="startPage"
+type="number"
+placeholder="Start Page">
+
+
+<input 
+id="endPage"
+type="number"
+placeholder="End Page">
+
+</div>
+
+
+
+<div id="customBox"
+style="display:none">
+
+
+<input 
+id="customPages"
+placeholder="Example: 1,100">
+
+
+</div>
 
 
 <button 
@@ -1146,6 +1185,8 @@ Split PDF
 </button>
 
 
+</div>
+
 
 <div id="splitStatus"></div>
 
@@ -1153,6 +1194,11 @@ Split PDF
 `;
 
 }
+
+let uploadedPDF=null;
+let totalPDFPages=0;
+
+
 
 function initSplitPDF(){
 
@@ -1164,214 +1210,159 @@ const dropzone=document.getElementById("splitDropzone");
 const button=document.getElementById("splitBtn");
 
 
-let selectedPDF=null;
 
+dropzone.onclick=()=>input.click();
 
 
-// Open file picker
 
-dropzone.onclick=()=>{
+input.onchange=async()=>{
 
-input.click();
 
-};
+uploadedPDF=input.files[0];
 
 
+const bytes=
+await uploadedPDF.arrayBuffer();
 
 
-// File select
 
-input.onchange=()=>{
+const pdf=
+await PDFLib.PDFDocument.load(bytes);
 
 
-selectedPDF=input.files[0];
 
+totalPDFPages=
+pdf.getPageCount();
 
-showSplitInfo();
 
 
-};
-
-
-
-
-// Drag over
-
-dropzone.ondragover=(e)=>{
-
-e.preventDefault();
-
-dropzone.classList.add("dragover");
-
-};
-
-
-
-// Drag leave
-
-dropzone.ondragleave=()=>{
-
-dropzone.classList.remove("dragover");
-
-};
-
-
-
-
-// Drop PDF
-
-dropzone.ondrop=(e)=>{
-
-
-e.preventDefault();
-
-
-dropzone.classList.remove("dragover");
-
-
-
-const file=e.dataTransfer.files[0];
-
-
-if(file.type==="application/pdf"){
-
-
-selectedPDF=file;
-
-
-showSplitInfo();
-
-
-}
-
-
-
-};
-
-
-
-
-
-button.onclick=()=>{
-
-
-if(!selectedPDF){
-
-
-alert("Please select a PDF file");
-
-
-return;
-
-
-}
-
-
-splitPDF(selectedPDF);
-
-
-};
-
-
-
-function showSplitInfo(){
-
-
-document.getElementById("splitInfo").innerHTML=
-
+document.getElementById("pdfInfo").innerHTML=
 
 `
 
-<p>
+<div class="file-item">
 
-Selected:
+PDF:
 
-<b>${selectedPDF.name}</b>
+${uploadedPDF.name}
 
-</p>
+<br>
+
+Total Pages:
+
+<b>${totalPDFPages}</b>
+
+</div>
 
 `;
 
+
+
+document.getElementById("splitOptions").style.display="block";
+
+
+};
+
+
+
+
+
+document.getElementById("splitType")
+.onchange=function(){
+
+
+if(this.value==="custom"){
+
+
+document.getElementById("rangeBox").style.display="none";
+
+
+document.getElementById("customBox").style.display="block";
+
+
+}
+
+else{
+
+
+document.getElementById("rangeBox").style.display="block";
+
+
+document.getElementById("customBox").style.display="none";
+
+
+}
+
+
+};
+
+
+
+
+
+button.onclick=splitPDF;
+
+
 }
 
 
 
-}
-
-/* SPLIT PDF FUNCTION */
 
 
-async function splitPDF(file){
+
+async function splitPDF(){
 
 
 try{
 
 
-document.getElementById("splitStatus").innerHTML=
-
-"⏳ Splitting PDF...";
-
+const zip=new JSZip();
 
 
 const bytes=
-
-await file.arrayBuffer();
-
+await uploadedPDF.arrayBuffer();
 
 
 const pdf=
-
 await PDFLib.PDFDocument.load(bytes);
 
 
 
-const totalPages=
-
-pdf.getPageCount();
+let pages=[];
 
 
-
-
-for(let i=0;i<totalPages;i++){
-
-
-
-const newPDF=
-
-await PDFLib.PDFDocument.create();
+const type=
+document.getElementById("splitType").value;
 
 
 
 
-const [page]=
-
-await newPDF.copyPages(
-
-pdf,
-
-[i]
-
-);
+if(type==="range"){
 
 
+let start=
+Number(document.getElementById("startPage").value);
 
-newPDF.addPage(page);
+
+let end=
+Number(document.getElementById("endPage").value);
 
 
 
-const pdfBytes=
+if(start<1 || end>totalPDFPages){
 
-await newPDF.save();
+alert("Invalid page range");
+
+return;
+
+}
 
 
+for(let i=start-1;i<end;i++){
 
-downloadPDF(
+pages.push(i);
 
-pdfBytes,
-
-`page_${i+1}.pdf`
-
-);
+}
 
 
 
@@ -1379,17 +1370,94 @@ pdfBytes,
 
 
 
+if(type==="custom"){
+
+
+pages=
+document.getElementById("customPages")
+.value
+.split(",")
+.map(x=>Number(x.trim())-1);
+
+
+}
+
+
+
+
+const newPDF=
+await PDFLib.PDFDocument.create();
+
+
+
+const copied=
+await newPDF.copyPages(
+pdf,
+pages
+);
+
+
+
+copied.forEach(page=>
+
+newPDF.addPage(page)
+
+);
+
+
+
+const result=
+await newPDF.save();
+
+
+
+zip.file(
+"selected_pages.pdf",
+result
+);
+
+
+
+const zipBlob=
+await zip.generateAsync(
+{
+type:"blob"
+}
+);
+
+
+
+const url=
+URL.createObjectURL(zipBlob);
+
+
+
+const a=document.createElement("a");
+
+a.href=url;
+
+a.download="split_pdf.zip";
+
+a.click();
+
+
+
+URL.revokeObjectURL(url);
+
+
 
 document.getElementById("splitStatus").innerHTML=
-
 
 `
 
 <p style="color:green">
 
-✅ Split completed!
+✅ Split Completed
 
-Total Pages: ${totalPages}
+<br>
+
+Pages created:
+${pages.length}
 
 </p>
 
@@ -1399,22 +1467,13 @@ Total Pages: ${totalPages}
 
 }
 
-catch(error){
+catch(e){
 
+console.error(e);
 
-console.error(error);
-
-
-
-alert(
-
-"Unable to split PDF"
-
-);
-
+alert("Split failed");
 
 }
-
 
 
 }

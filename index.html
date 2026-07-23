@@ -711,11 +711,29 @@ function loadTool(tool) {
     }
 }
 
-function mergePDFUI(){
+function mergePDFUI() {
 return `
-<h1>Merge PDF</h1>
-<input type="file" id="mergeFiles" multiple />
-<button onclick="mergePDF()">Merge</button>
+<h1>📄 Merge PDF</h1>
+
+<div class="dropzone" id="mergeDropzone">
+    <h3>Upload PDF Files</h3>
+    <p>Click or Drag & Drop PDFs Here</p>
+</div>
+
+<input
+type="file"
+id="mergeFiles"
+multiple
+accept=".pdf"
+style="display:none;">
+
+<div id="mergeFileList"></div>
+
+<button class="convert-btn" id="mergeBtn">
+Merge PDF
+</button>
+
+<div id="mergeStatus"></div>
 `;
 }
 

@@ -689,12 +689,13 @@ function loadTool(tool) {
 
     break;
 
-        case "splitPdf":
+       case "splitPdf":
 
     content.innerHTML = splitPDFUI();
 
-   function initSplitPDF(){
+    initSplitPDF();
 
+    break;
 
 const input=document.getElementById("splitFile");
 
@@ -989,38 +990,27 @@ Merge PDF
 }
 
 /* ============================
-        SPLIT PDF TOOL
+        SPLIT PDF TOOL UI
 ============================ */
-
 
 function splitPDFUI(){
 
 return `
-
 
 <h1>✂️ Split PDF</h1>
 
 
 <div class="dropzone" id="splitDropzone">
 
+<h3>Upload PDF File</h3>
 
-<h3>Upload PDF</h3>
-
-
-<p>
-Click or Drag & Drop PDF Here
-</p>
-
+<p>Click or Drag & Drop PDF Here</p>
 
 <div class="formats">
-
-Only PDF files supported
-
+Supported: PDF only
 </div>
 
-
 </div>
-
 
 
 <input 
@@ -1029,9 +1019,7 @@ id="splitFile"
 accept=".pdf">
 
 
-
 <div id="splitInfo"></div>
-
 
 
 <button 
@@ -1043,7 +1031,6 @@ Split PDF
 </button>
 
 
-
 <div id="splitStatus"></div>
 
 
@@ -1051,6 +1038,287 @@ Split PDF
 
 }
 
+ /* ============================
+        SPLIT PDF LOGIC
+============================ */
+
+
+function initSplitPDF(){
+
+
+const input =
+document.getElementById("splitFile");
+
+
+const dropzone =
+document.getElementById("splitDropzone");
+
+
+const button =
+document.getElementById("splitBtn");
+
+
+
+let selectedPDF = null;
+
+
+
+// Click upload
+
+dropzone.onclick=()=>{
+
+input.click();
+
+};
+
+
+
+
+// Select PDF
+
+input.onchange=()=>{
+
+
+selectedPDF=input.files[0];
+
+
+displaySplitFile();
+
+
+};
+
+
+
+
+// Drag over
+
+dropzone.addEventListener(
+"dragover",
+(e)=>{
+
+e.preventDefault();
+
+dropzone.classList.add("dragover");
+
+});
+
+
+
+
+// Drag leave
+
+dropzone.addEventListener(
+"dragleave",
+()=>{
+
+dropzone.classList.remove("dragover");
+
+});
+
+
+
+
+// Drop PDF
+
+dropzone.addEventListener(
+"drop",
+(e)=>{
+
+
+e.preventDefault();
+
+
+dropzone.classList.remove("dragover");
+
+
+
+const file=e.dataTransfer.files[0];
+
+
+
+if(file && file.type==="application/pdf"){
+
+
+selectedPDF=file;
+
+
+displaySplitFile();
+
+
+}
+
+
+});
+
+
+
+
+// Split button
+
+button.onclick=()=>{
+
+
+if(!selectedPDF){
+
+
+alert("Please select a PDF file");
+
+
+return;
+
+
+}
+
+
+splitPDF(selectedPDF);
+
+
+};
+
+
+
+function displaySplitFile(){
+
+
+document.getElementById("splitInfo").innerHTML=
+
+`
+
+<div class="file-item">
+
+<span>
+
+${selectedPDF.name}
+
+</span>
+
+</div>
+
+`;
+
+}
+
+
+
+}
+
+
+
+
+/* ============================
+        SPLIT PDF FUNCTION
+============================ */
+
+
+async function splitPDF(file){
+
+
+try{
+
+
+document.getElementById("splitStatus").innerHTML=
+
+"⏳ Processing PDF...";
+
+
+
+const bytes =
+await file.arrayBuffer();
+
+
+
+const pdf =
+await PDFLib.PDFDocument.load(bytes);
+
+
+
+const totalPages =
+pdf.getPageCount();
+
+
+
+
+
+for(let i=0;i<totalPages;i++){
+
+
+
+const newPDF =
+await PDFLib.PDFDocument.create();
+
+
+
+const [page] =
+await newPDF.copyPages(
+
+pdf,
+
+[i]
+
+);
+
+
+
+newPDF.addPage(page);
+
+
+
+const pdfBytes =
+await newPDF.save();
+
+
+
+downloadPDF(
+
+pdfBytes,
+
+`split_page_${i+1}.pdf`
+
+);
+
+
+
+}
+
+
+
+
+document.getElementById("splitStatus").innerHTML=
+
+`
+
+<p style="color:green">
+
+✅ Split Completed Successfully
+
+<br>
+
+Total Pages: ${totalPages}
+
+</p>
+
+`;
+
+
+
+}
+
+catch(error){
+
+
+console.error(error);
+
+
+
+alert(
+"Unable to split PDF. File may be corrupted."
+);
+
+
+}
+
+
+}           
 
 function rotatePDFUI(){
 return `

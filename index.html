@@ -1306,74 +1306,78 @@ button.onclick=splitPDF;
 }
 
 
-
-
-
-
 async function splitPDF(){
-
 
 try{
 
+if(!uploadedPDF){
 
-const zip=new JSZip();
-
-
-const bytes=
-await uploadedPDF.arrayBuffer();
-
-
-const pdf=
-await PDFLib.PDFDocument.load(bytes);
-
-
-
-let pages=[];
-
-
-const type=
-document.getElementById("splitType").value;
-
-
-
-
-if(type==="range"){
-
-
-let start=
-Number(document.getElementById("startPage").value);
-
-
-let end=
-Number(document.getElementById("endPage").value);
-
-
-
-if(start<1 || end>totalPDFPages){
-
-alert("Invalid page range");
+alert("Upload PDF first");
 
 return;
 
 }
 
 
+const bytes =
+await uploadedPDF.arrayBuffer();
+
+
+const pdf =
+await PDFLib.PDFDocument.load(bytes);
+
+
+
+let selectedPages=[];
+
+
+const type =
+document.getElementById("splitType").value;
+
+
+
+// RANGE
+
+if(type==="range"){
+
+
+let start =
+Number(document.getElementById("startPage").value);
+
+
+let end =
+Number(document.getElementById("endPage").value);
+
+
+
+if(!start || !end){
+
+alert("Enter page range");
+
+return;
+
+}
+
+
+
 for(let i=start-1;i<end;i++){
 
-pages.push(i);
+selectedPages.push(i);
+
+}
+
 
 }
 
 
 
-}
-
-
+// CUSTOM
 
 if(type==="custom"){
 
 
-pages=
+selectedPages =
+
 document.getElementById("customPages")
 .value
 .split(",")
@@ -1385,64 +1389,47 @@ document.getElementById("customPages")
 
 
 
-const newPDF=
+// Create ONE PDF
+
+const newPDF =
 await PDFLib.PDFDocument.create();
 
 
 
-const copied=
+const copiedPages =
 await newPDF.copyPages(
+
 pdf,
-pages
-);
 
-
-
-copied.forEach(page=>
-
-newPDF.addPage(page)
+selectedPages
 
 );
 
 
 
-const result=
+copiedPages.forEach(page=>{
+
+newPDF.addPage(page);
+
+});
+
+
+
+const finalPDF =
 await newPDF.save();
 
 
 
-zip.file(
-"selected_pages.pdf",
-result
+
+// ONE DOWNLOAD ONLY
+
+downloadPDF(
+
+finalPDF,
+
+"split_pages.pdf"
+
 );
-
-
-
-const zipBlob=
-await zip.generateAsync(
-{
-type:"blob"
-}
-);
-
-
-
-const url=
-URL.createObjectURL(zipBlob);
-
-
-
-const a=document.createElement("a");
-
-a.href=url;
-
-a.download="split_pdf.zip";
-
-a.click();
-
-
-
-URL.revokeObjectURL(url);
 
 
 
@@ -1452,12 +1439,12 @@ document.getElementById("splitStatus").innerHTML=
 
 <p style="color:green">
 
-✅ Split Completed
+✅ Completed
 
 <br>
 
-Pages created:
-${pages.length}
+Created Pages:
+${selectedPages.length}
 
 </p>
 
@@ -1467,16 +1454,19 @@ ${pages.length}
 
 }
 
-catch(e){
+catch(error){
 
-console.error(e);
+console.error(error);
 
-alert("Split failed");
+alert(
+"Unable to split PDF"
+);
 
 }
 
 
 }
+
 
 function rotatePDFUI(){
 return `

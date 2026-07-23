@@ -1737,24 +1737,6 @@ alert(
 
 
 }
-    async function splitPDF(){
-    const file = document.getElementById("splitFile").files[0];
-    const bytes = await file.arrayBuffer();
-
-    const pdf = await PDFLib.PDFDocument.load(bytes);
-
-    const total = pdf.getPageCount();
-
-    for(let i=0;i<total;i++){
-        const newPdf = await PDFLib.PDFDocument.create();
-        const [page] = await newPdf.copyPages(pdf, [i]);
-        newPdf.addPage(page);
-
-        const pdfBytes = await newPdf.save();
-        downloadPDF(pdfBytes, `page_${i+1}.pdf`);
-    }
-}
-
     async function rotatePDF(){
     const file = document.getElementById("rotateFile").files[0];
     const bytes = await file.arrayBuffer();

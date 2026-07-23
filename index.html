@@ -690,8 +690,12 @@ function loadTool(tool) {
     break;
 
         case "splitPdf":
-            content.innerHTML = splitPDFUI();
-            break;
+
+    content.innerHTML = splitPDFUI();
+
+    initSplitPDF();
+
+    break;
 
         case "rotatePdf":
             content.innerHTML = rotatePDFUI();
@@ -1087,12 +1091,332 @@ alert(
 
 }
 
+/* ============================
+        SPLIT PDF TOOL
+============================ */
+
+
 function splitPDFUI(){
+
 return `
-<h1>Split PDF</h1>
-<input type="file" id="splitFile" />
-<button onclick="splitPDF()">Split</button>
+
+
+<h1>✂️ Split PDF</h1>
+
+
+<div class="dropzone" id="splitDropzone">
+
+
+<h3>Upload PDF</h3>
+
+
+<p>
+Click or Drag & Drop PDF Here
+</p>
+
+
+<div class="formats">
+
+Only PDF files supported
+
+</div>
+
+
+</div>
+
+
+
+<input 
+type="file"
+id="splitFile"
+accept=".pdf">
+
+
+
+<div id="splitInfo"></div>
+
+
+
+<button 
+class="convert-btn"
+id="splitBtn">
+
+Split PDF
+
+</button>
+
+
+
+<div id="splitStatus"></div>
+
+
 `;
+
+}
+
+function initSplitPDF(){
+
+
+const input=document.getElementById("splitFile");
+
+const dropzone=document.getElementById("splitDropzone");
+
+const button=document.getElementById("splitBtn");
+
+
+let selectedPDF=null;
+
+
+
+// Open file picker
+
+dropzone.onclick=()=>{
+
+input.click();
+
+};
+
+
+
+
+// File select
+
+input.onchange=()=>{
+
+
+selectedPDF=input.files[0];
+
+
+showSplitInfo();
+
+
+};
+
+
+
+
+// Drag over
+
+dropzone.ondragover=(e)=>{
+
+e.preventDefault();
+
+dropzone.classList.add("dragover");
+
+};
+
+
+
+// Drag leave
+
+dropzone.ondragleave=()=>{
+
+dropzone.classList.remove("dragover");
+
+};
+
+
+
+
+// Drop PDF
+
+dropzone.ondrop=(e)=>{
+
+
+e.preventDefault();
+
+
+dropzone.classList.remove("dragover");
+
+
+
+const file=e.dataTransfer.files[0];
+
+
+if(file.type==="application/pdf"){
+
+
+selectedPDF=file;
+
+
+showSplitInfo();
+
+
+}
+
+
+
+};
+
+
+
+
+
+button.onclick=()=>{
+
+
+if(!selectedPDF){
+
+
+alert("Please select a PDF file");
+
+
+return;
+
+
+}
+
+
+splitPDF(selectedPDF);
+
+
+};
+
+
+
+function showSplitInfo(){
+
+
+document.getElementById("splitInfo").innerHTML=
+
+
+`
+
+<p>
+
+Selected:
+
+<b>${selectedPDF.name}</b>
+
+</p>
+
+`;
+
+}
+
+
+
+}
+
+/* SPLIT PDF FUNCTION */
+
+
+async function splitPDF(file){
+
+
+try{
+
+
+document.getElementById("splitStatus").innerHTML=
+
+"⏳ Splitting PDF...";
+
+
+
+const bytes=
+
+await file.arrayBuffer();
+
+
+
+const pdf=
+
+await PDFLib.PDFDocument.load(bytes);
+
+
+
+const totalPages=
+
+pdf.getPageCount();
+
+
+
+
+for(let i=0;i<totalPages;i++){
+
+
+
+const newPDF=
+
+await PDFLib.PDFDocument.create();
+
+
+
+
+const [page]=
+
+await newPDF.copyPages(
+
+pdf,
+
+[i]
+
+);
+
+
+
+newPDF.addPage(page);
+
+
+
+const pdfBytes=
+
+await newPDF.save();
+
+
+
+downloadPDF(
+
+pdfBytes,
+
+`page_${i+1}.pdf`
+
+);
+
+
+
+}
+
+
+
+
+document.getElementById("splitStatus").innerHTML=
+
+
+`
+
+<p style="color:green">
+
+✅ Split completed!
+
+Total Pages: ${totalPages}
+
+</p>
+
+`;
+
+
+
+}
+
+catch(error){
+
+
+console.error(error);
+
+
+
+alert(
+
+"Unable to split PDF"
+
+);
+
+
+}
+
+
+
 }
 
 function rotatePDFUI(){

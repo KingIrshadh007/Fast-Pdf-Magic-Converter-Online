@@ -673,38 +673,84 @@ async function resizeImage(file){
 }
 
 function loadTool(tool) {
-    const content = document.getElementById("dynamicContent");
 
-    switch(tool) {
-
-        case "imgToPdf":
-            location.reload();
-            return;
-
-      case "mergePdf":
-
-    content.innerHTML = mergePDFUI();
-
-    initMergePDF();
-
-    break;
-
-       case "splitPdf":
-
-    content.innerHTML = splitPDFUI();
-
-    initSplitPDF();
-
-    break;
-
-const input=document.getElementById("splitFile");
-
-const dropzone=document.getElementById("splitDropzone");
-
-const button=document.getElementById("splitBtn");
+const content = document.getElementById("dynamicContent");
 
 
-let selectedPDF=null;
+switch(tool) {
+
+
+case "imgToPdf":
+
+location.reload();
+
+return;
+
+
+
+case "mergePdf":
+
+content.innerHTML = mergePDFUI();
+
+initMergePDF();
+
+break;
+
+
+
+case "splitPdf":
+
+content.innerHTML = splitPDFUI();
+
+initSplitPDF();
+
+break;
+
+
+
+case "compressPdf":
+
+content.innerHTML = compressPDFUI();
+
+break;
+
+
+
+case "rotatePdf":
+
+content.innerHTML = rotatePDFUI();
+
+break;
+
+
+
+case "pdfToImg":
+
+content.innerHTML = pdfToImageUI();
+
+break;
+
+
+
+case "unlockPdf":
+
+content.innerHTML = unlockPDFUI();
+
+break;
+
+
+
+case "protectPdf":
+
+content.innerHTML = protectPDFUI();
+
+break;
+
+
+}
+
+
+}
 
 
 
@@ -1371,58 +1417,6 @@ return `
 
     URL.revokeObjectURL(url);
 }
-
-    /* ============================
-      MERGE PDF TOOL
-============================ */
-
-
-function mergePDFUI(){
-
-return `
-
-<h1>📄 Merge PDF</h1>
-
-
-<div class="dropzone" id="mergeDropzone">
-
-<h3>Upload PDF Files</h3>
-
-<p>Click or Drag & Drop PDFs Here</p>
-
-<div class="formats">
-Supported: PDF files only
-</div>
-
-</div>
-
-
-<input 
-type="file"
-id="mergeFiles"
-multiple
-accept=".pdf">
-
-
-<div id="mergeFileList"></div>
-
-
-<button 
-class="convert-btn"
-id="mergeBtn">
-
-Merge PDF
-
-</button>
-
-
-<div id="mergeStatus"></div>
-
-`;
-
-}
-
-
 
 /* INITIALIZE MERGE TOOL */
 

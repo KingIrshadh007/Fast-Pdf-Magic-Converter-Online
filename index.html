@@ -113,6 +113,485 @@ Convert & Download PDF
 
 <script src="js/unlockPdf.js"></script>
 
-<script src="js/protectPdf.js"></script>
+<script src="js/protectPdf.js">
+
+function loadTool(tool){
+
+const content=document.getElementById("dynamicContent");
+
+
+switch(tool){
+
+
+case "imgToPdf":
+
+location.reload();
+
+break;
+
+
+
+case "mergePdf":
+
+content.innerHTML=mergePDFUI();
+
+initMergePDF();
+
+break;
+
+
+
+case "splitPdf":
+
+content.innerHTML=splitPDFUI();
+
+initSplitPDF();
+
+break;
+
+
+
+case "compressPdf":
+
+content.innerHTML=compressPDFUI();
+
+initCompressPDF();
+
+break;
+
+
+}
+
+}
+/* ==========================
+      COMPRESS PDF TOOL
+========================== */
+
+
+let compressSelectedFile = null;
+
+
+
+function compressPDFUI(){
+
+return `
+
+
+<h1>📦 Compress PDF</h1>
+
+
+<div class="dropzone" id="compressDropzone">
+
+<h3>Upload PDF File</h3>
+
+<p>
+Click or Drag & Drop PDF Here
+</p>
+
+<div class="formats">
+Supported: PDF only
+</div>
+
+</div>
+
+
+
+<input 
+type="file"
+id="compressInput"
+accept=".pdf"
+style="display:none">
+
+
+
+<div id="compressInfo"></div>
+
+
+<br>
+
+
+<h3>Select Compression Quality</h3>
+
+
+<label>
+
+<input 
+type="radio"
+name="compressQuality"
+value="high"
+checked>
+
+High Quality
+
+</label>
+
+
+<br>
+
+
+<label>
+
+<input 
+type="radio"
+name="compressQuality"
+value="medium">
+
+Medium Quality
+
+</label>
+
+
+<br>
+
+
+<label>
+
+<input 
+type="radio"
+name="compressQuality"
+value="low">
+
+Low Quality
+
+</label>
+
+
+
+<br><br>
+
+
+
+<button 
+class="convert-btn"
+id="compressButton">
+
+Compress PDF
+
+</button>
+
+
+
+<div id="compressStatus"></div>
+
+
+`;
+
+}
+
+
+
+
+
+function initCompressPDF(){
+
+
+const dropzone =
+document.getElementById("compressDropzone");
+
+
+const input =
+document.getElementById("compressInput");
+
+
+const button =
+document.getElementById("compressButton");
+
+
+
+dropzone.onclick = ()=>{
+
+input.click();
+
+};
+
+
+
+
+input.onchange = ()=>{
+
+
+compressSelectedFile =
+input.files[0];
+
+
+showCompressFile();
+
+
+};
+
+
+
+
+dropzone.ondragover=(e)=>{
+
+e.preventDefault();
+
+dropzone.classList.add("dragover");
+
+};
+
+
+
+
+dropzone.ondragleave=()=>{
+
+dropzone.classList.remove("dragover");
+
+};
+
+
+
+
+
+dropzone.ondrop=(e)=>{
+
+
+e.preventDefault();
+
+
+dropzone.classList.remove("dragover");
+
+
+
+const file =
+e.dataTransfer.files[0];
+
+
+
+if(file.type==="application/pdf"){
+
+
+compressSelectedFile=file;
+
+
+showCompressFile();
+
+
+}
+
+
+};
+
+
+
+
+
+button.onclick=()=>{
+
+
+if(!compressSelectedFile){
+
+
+alert("Please select PDF file");
+
+return;
+
+}
+
+
+
+compressPDF(compressSelectedFile);
+
+
+};
+
+
+}
+
+
+
+
+
+function showCompressFile(){
+
+
+document.getElementById("compressInfo").innerHTML=
+
+
+`
+
+<div class="file-item">
+
+<span>
+${compressSelectedFile.name}
+</span>
+
+
+<span>
+${(
+compressSelectedFile.size/1024/1024
+).toFixed(2)} MB
+</span>
+
+
+</div>
+
+
+`;
+
+
+
+}
+
+
+
+
+
+async function compressPDF(file){
+
+
+try{
+
+
+document.getElementById("compressStatus").innerHTML=
+"⏳ Compressing PDF...";
+
+
+
+const bytes =
+await file.arrayBuffer();
+
+
+
+const pdf =
+await PDFLib.PDFDocument.load(bytes);
+
+
+
+// compression level
+
+const quality =
+document.querySelector(
+'input[name="compressQuality"]:checked'
+).value;
+
+
+
+let objectStream=true;
+
+
+
+if(quality==="high"){
+
+objectStream=false;
+
+}
+
+
+
+if(quality==="medium"){
+
+objectStream=true;
+
+}
+
+
+
+if(quality==="low"){
+
+objectStream=true;
+
+}
+
+
+
+
+const pdfBytes =
+await pdf.save({
+
+useObjectStreams:objectStream
+
+});
+
+
+
+
+downloadPDF(
+pdfBytes,
+"compressed.pdf"
+);
+
+
+
+
+
+let oldSize =
+file.size;
+
+
+
+let newSize =
+pdfBytes.length;
+
+
+
+let saved =
+(
+(oldSize-newSize)
+/oldSize
+*100
+).toFixed(2);
+
+
+
+
+
+document.getElementById("compressStatus").innerHTML=
+
+
+`
+
+<p style="color:green">
+
+✅ Compression Completed
+
+<br><br>
+
+Before:
+${(
+oldSize/1024/1024
+).toFixed(2)} MB
+
+
+<br>
+
+After:
+${(
+newSize/1024/1024
+).toFixed(2)} MB
+
+
+<br>
+
+Saved:
+${saved}%
+
+</p>
+
+
+`;
+
+
+
+}
+
+
+catch(error){
+
+
+console.error(error);
+
+
+alert(
+"Compression failed"
+);
+
+
+}
+
+
+}
+    
+</script>
 </body>
 </html>

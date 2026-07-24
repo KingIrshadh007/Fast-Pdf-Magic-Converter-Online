@@ -1582,14 +1582,101 @@ return `
     downloadPDF(pdfBytes, "rotated.pdf");
 }
     async function compressPDF(){
-    const file = document.getElementById("compressFile").files[0];
-    const bytes = await file.arrayBuffer();
 
-    const pdf = await PDFLib.PDFDocument.load(bytes);
+try{
 
-    const pdfBytes = await pdf.save({ useObjectStreams: true });
+if(!compressFile){
 
-    downloadPDF(pdfBytes, "compressed.pdf");
+alert("Please upload a PDF.");
+
+return;
+
+}
+
+document.getElementById("compressStatus").innerHTML="⏳ Compressing...";
+
+const bytes=await compressFile.arrayBuffer();
+
+const pdf=await PDFLib.PDFDocument.load(bytes);
+
+const level=document.getElementById("compressionLevel").value;
+
+let saveOptions={
+
+useObjectStreams:true,
+
+addDefaultPage:false,
+
+updateFieldAppearances:false
+
+};
+
+if(level==="low"){
+
+saveOptions.objectsPerTick=50;
+
+}
+
+if(level==="medium"){
+
+saveOptions.objectsPerTick=20;
+
+}
+
+if(level==="high"){
+
+saveOptions.objectsPerTick=5;
+
+}
+
+const compressedBytes=await pdf.save(saveOptions);
+
+const originalSize=compressFile.size;
+const compressedSize=compressedBytes.length;
+
+downloadPDF(
+compressedBytes,
+"compressed.pdf"
+);
+
+const reduction=((originalSize-compressedSize)/originalSize*100).toFixed(1);
+
+document.getElementById("compressStatus").innerHTML=`
+
+<p style="color:green">
+
+✅ Compression Complete
+
+<br><br>
+
+Original:
+${(originalSize/1024/1024).toFixed(2)} MB
+
+<br>
+
+Compressed:
+${(compressedSize/1024/1024).toFixed(2)} MB
+
+<br>
+
+Reduction:
+${reduction}%
+
+
+</p>
+
+`;
+
+}
+
+catch(error){
+
+console.error(error);
+
+alert("Unable to compress PDF.");
+
+}
+
 }
 
     async function pdfToImages(){

@@ -119,7 +119,6 @@ async function createImagePDF(){
 
 if(selectedImages.length===0){
 
-
 alert("Select images first");
 
 return;
@@ -128,7 +127,7 @@ return;
 
 
 
-const pdfDoc=
+const pdfDoc =
 await PDFLib.PDFDocument.create();
 
 
@@ -136,28 +135,54 @@ await PDFLib.PDFDocument.create();
 for(const file of selectedImages){
 
 
-const bytes=
-await file.arrayBuffer();
-
-
-const image=
-await pdfDoc.embedJpg(bytes);
+const jpegBlob =
+await convertToJPEG(file);
 
 
 
-const page=
-pdfDoc.addPage();
+const bytes =
+await jpegBlob.arrayBuffer();
+
+
+
+let image;
+
+
+if(file.type === "image/jpeg" || file.type === "image/jpg"){
+
+    image = await pdfDoc.embedJpg(bytes);
+
+}
+else{
+
+    image = await pdfDoc.embedPng(bytes);
+
+}
+
+
+
+const page =
+pdfDoc.addPage([595,842]);
+
+
+
+const scale =
+Math.min(
+595/image.width,
+842/image.height
+);
+
 
 
 page.drawImage(image,{
 
-x:50,
+x:(595-image.width*scale)/2,
 
-y:50,
+y:(842-image.height*scale)/2,
 
-width:400,
+width:image.width*scale,
 
-height:500
+height:image.height*scale
 
 });
 
@@ -166,7 +191,7 @@ height:500
 
 
 
-const pdfBytes=
+const pdfBytes =
 await pdfDoc.save();
 
 
@@ -177,10 +202,63 @@ pdfBytes,
 );
 
 
-
 }
 
+async function convertToJPEG(file){
 
+
+return new Promise((resolve)=>{
+
+
+const img=new Image();
+
+
+img.onload=()=>{
+
+
+const canvas=document.createElement("canvas");
+
+
+canvas.width=img.width;
+
+canvas.height=img.height;
+
+
+const ctx=
+canvas.getContext("2d");
+
+
+ctx.drawImage(
+img,
+0,
+0
+);
+
+
+
+canvas.toBlob(
+
+(blob)=>resolve(blob),
+
+"image/jpeg",
+
+0.9
+
+);
+
+
+};
+
+
+
+img.src=
+URL.createObjectURL(file);
+
+
+});
+
+
+}
 
 
 function downloadPDF(bytes,name){

@@ -111,121 +111,109 @@ convertBtn.onclick=createImagePDF;
 
 }
 
-
-
-
 async function createImagePDF(){
 
+    if(selectedImages.length === 0){
 
-if(selectedImages.length===0){
+        alert("Select images first");
+        return;
 
-alert("Select images first");
-
-return;
-
-}
+    }
 
 
-
-const pdfDoc =
-await PDFLib.PDFDocument.create();
+    const pdfDoc =
+    await PDFLib.PDFDocument.create();
 
 
 
-for(const file of selectedImages){
+    for(const file of selectedImages){
 
 
-const jpegBlob =
-await convertToJPEG(file);
-
-
-
-const bytes =
-await jpegBlob.arrayBuffer();
+        const jpegBlob =
+        await convertToJPEG(file);
 
 
 
-let image;
-
-
-if(file.type === "image/jpeg" || file.type === "image/jpg"){
-
-    image = await pdfDoc.embedJpg(bytes);
-
-}
-else{
-
-    image = await pdfDoc.embedPng(bytes);
-
-}
+        const bytes =
+        await jpegBlob.arrayBuffer();
 
 
 
-const page =
-pdfDoc.addPage([595,842]);
+        const image =
+        await pdfDoc.embedJpg(bytes);
 
 
 
-const scale =
-Math.min(
-595/image.width,
-842/image.height
-);
+        const page =
+        pdfDoc.addPage([595,842]);
 
 
 
-page.drawImage(image,{
-
-x:(595-image.width*scale)/2,
-
-y:(842-image.height*scale)/2,
-
-width:image.width*scale,
-
-height:image.height*scale
-
-});
-
-
-}
+        const scale =
+        Math.min(
+            595 / image.width,
+            842 / image.height
+        );
 
 
 
-const pdfBytes =
-await pdfDoc.save();
+        page.drawImage({
+
+            image:image,
+
+            x:(595 - image.width * scale)/2,
+
+            y:(842 - image.height * scale)/2,
+
+            width:image.width * scale,
+
+            height:image.height * scale
+
+        });
+
+
+    }
 
 
 
-downloadPDF(
-pdfBytes,
-"images.pdf"
-);
+    const pdfBytes =
+    await pdfDoc.save();
 
+
+
+    downloadPDF(
+        pdfBytes,
+        "images.pdf"
+    );
 
 }
 
-async function convertToJPEG(file){
+function convertToJPEG(file){
 
 
 return new Promise((resolve)=>{
 
 
-const img=new Image();
+const img = new Image();
 
 
-img.onload=()=>{
+
+img.onload = ()=>{
 
 
-const canvas=document.createElement("canvas");
+const canvas =
+document.createElement("canvas");
 
 
-canvas.width=img.width;
+canvas.width = img.width;
 
-canvas.height=img.height;
+canvas.height = img.height;
 
 
-const ctx=
+
+const ctx =
 canvas.getContext("2d");
+
 
 
 ctx.drawImage(
@@ -238,11 +226,15 @@ img,
 
 canvas.toBlob(
 
-(blob)=>resolve(blob),
+(blob)=>{
+
+resolve(blob);
+
+},
 
 "image/jpeg",
 
-0.9
+0.90
 
 );
 
@@ -251,14 +243,18 @@ canvas.toBlob(
 
 
 
-img.src=
+img.src =
 URL.createObjectURL(file);
+
 
 
 });
 
 
 }
+
+
+
 
 
 function downloadPDF(bytes,name){

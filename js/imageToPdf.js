@@ -136,7 +136,45 @@ async function createImagePDF(){
         const image = await pdfDoc.embedJpg(bytes);
 
 
-        const page = pdfDoc.addPage([595,842]);
+        const size = document.getElementById("pageSize").value;
+
+
+let pageWidth = 595;
+let pageHeight = 842;
+
+
+// A4
+if(size === "A4"){
+
+    pageWidth = 595;
+    pageHeight = 842;
+
+}
+
+
+// Letter
+else if(size === "LETTER"){
+
+    pageWidth = 612;
+    pageHeight = 792;
+
+}
+
+
+// A3
+else if(size === "A3"){
+
+    pageWidth = 842;
+    pageHeight = 1191;
+
+}
+
+
+
+const page = pdfDoc.addPage([
+    pageWidth,
+    pageHeight
+]);
 
 
         const imgWidth = image.width;
@@ -144,9 +182,9 @@ async function createImagePDF(){
 
 
         const scale = Math.min(
-            500 / imgWidth,
-            750 / imgHeight
-        );
+    (pageWidth - 80) / imgWidth,
+    (pageHeight - 80) / imgHeight
+);
 
 
         const width = imgWidth * scale;
@@ -156,8 +194,8 @@ async function createImagePDF(){
         page.drawImage(
             image,
             {
-                x:(595 - width) / 2,
-                y:(842 - height) / 2,
+               x:(pageWidth - width) / 2,
+               y:(pageHeight - height) / 2,
                 width:width,
                 height:height
             }

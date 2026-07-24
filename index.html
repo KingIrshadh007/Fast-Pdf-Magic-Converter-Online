@@ -705,65 +705,6 @@ function loadTool(tool) {
         case "compressPdf":
 
 content.innerHTML=compressPDFUI();
-
-let compressFile = null;
-
-function initCompressPDF(){
-
-const input=document.getElementById("compressFile");
-const dropzone=document.getElementById("compressDropzone");
-const button=document.getElementById("compressBtn");
-
-dropzone.onclick=()=>input.click();
-
-input.onchange=()=>{
-
-compressFile=input.files[0];
-
-showCompressInfo();
-
-};
-
-dropzone.ondragover=(e)=>{
-e.preventDefault();
-dropzone.classList.add("dragover");
-};
-
-dropzone.ondragleave=()=>{
-dropzone.classList.remove("dragover");
-};
-
-dropzone.ondrop=(e)=>{
-
-e.preventDefault();
-
-dropzone.classList.remove("dragover");
-
-compressFile=e.dataTransfer.files[0];
-
-showCompressInfo();
-
-};
-
-button.onclick=compressPDF;
-
-}
-
-function showCompressInfo(){
-
-document.getElementById("compressInfo").innerHTML=`
-
-<div class="file-item">
-
-<span>${compressFile.name}</span>
-
-<span>${(compressFile.size/1024/1024).toFixed(2)} MB</span>
-
-</div>
-
-`;
-
-}
             
 
 initCompressPDF();
@@ -1594,6 +1535,65 @@ Compress PDF
 `;
 
 }
+
+let compressFile = null;
+
+function initCompressPDF(){
+
+const input=document.getElementById("compressFile");
+const dropzone=document.getElementById("compressDropzone");
+const button=document.getElementById("compressBtn");
+
+dropzone.onclick=()=>input.click();
+
+input.onchange=()=>{
+
+compressFile=input.files[0];
+
+showCompressInfo();
+
+};
+
+dropzone.ondragover=(e)=>{
+e.preventDefault();
+dropzone.classList.add("dragover");
+};
+
+dropzone.ondragleave=()=>{
+dropzone.classList.remove("dragover");
+};
+
+dropzone.ondrop=(e)=>{
+
+e.preventDefault();
+
+dropzone.classList.remove("dragover");
+
+compressFile=e.dataTransfer.files[0];
+
+showCompressInfo();
+
+};
+
+button.onclick=compressPDF;
+
+}
+
+function showCompressInfo(){
+
+document.getElementById("compressInfo").innerHTML=`
+
+<div class="file-item">
+
+<span>${compressFile.name}</span>
+
+<span>${(compressFile.size/1024/1024).toFixed(2)} MB</span>
+
+</div>
+
+`;
+
+}    
 
 function pdfToImageUI(){
 return `

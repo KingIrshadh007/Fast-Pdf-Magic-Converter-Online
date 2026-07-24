@@ -703,8 +703,12 @@ function loadTool(tool) {
             break;
 
         case "compressPdf":
-            content.innerHTML = compressPDFUI();
-            break;
+
+content.innerHTML=compressPDFUI();
+
+initCompressPDF();
+
+break;
 
         case "pdfToImg":
             content.innerHTML = pdfToImageUI();

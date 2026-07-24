@@ -1477,11 +1477,58 @@ return `
 }
 
 function compressPDFUI(){
+
 return `
-<h1>Compress PDF</h1>
-<input type="file" id="compressFile" />
-<button onclick="compressPDF()">Compress</button>
+
+<h1>📦 Compress PDF</h1>
+
+<div class="dropzone" id="compressDropzone">
+
+<h3>Upload PDF</h3>
+
+<p>Click or Drag & Drop PDF Here</p>
+
+<div class="formats">
+Supported: PDF only
+</div>
+
+</div>
+
+<input
+type="file"
+id="compressFile"
+accept=".pdf">
+
+<div id="compressInfo"></div>
+
+<div class="options">
+
+<label>Compression Level</label>
+
+<select id="compressionLevel">
+
+<option value="low">Low (Best Quality)</option>
+
+<option value="medium" selected>Medium</option>
+
+<option value="high">High (Smallest File)</option>
+
+</select>
+
+</div>
+
+<button
+class="convert-btn"
+id="compressBtn">
+
+Compress PDF
+
+</button>
+
+<div id="compressStatus"></div>
+
 `;
+
 }
 
 function pdfToImageUI(){

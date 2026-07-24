@@ -121,64 +121,53 @@ async function createImagePDF(){
     }
 
 
-    const pdfDoc =
-    await PDFLib.PDFDocument.create();
-
+    const pdfDoc = await PDFLib.PDFDocument.create();
 
 
     for(const file of selectedImages){
 
 
-        const jpegBlob =
-        await convertToJPEG(file);
+        const jpegBlob = await convertToJPEG(file);
 
 
-
-        const bytes =
-        await jpegBlob.arrayBuffer();
+        const bytes = await jpegBlob.arrayBuffer();
 
 
-
-        const image =
-        await pdfDoc.embedJpg(bytes);
+        const image = await pdfDoc.embedJpg(bytes);
 
 
-
-        const page =
-        pdfDoc.addPage([595,842]);
+        const page = pdfDoc.addPage([595,842]);
 
 
+        const imgWidth = image.width;
+        const imgHeight = image.height;
 
-        const scale =
-        Math.min(
-            595 / image.width,
-            842 / image.height
+
+        const scale = Math.min(
+            500 / imgWidth,
+            750 / imgHeight
         );
 
 
+        const width = imgWidth * scale;
+        const height = imgHeight * scale;
 
-        page.drawImage({
 
-            image:image,
-
-            x:(595 - image.width * scale)/2,
-
-            y:(842 - image.height * scale)/2,
-
-            width:image.width * scale,
-
-            height:image.height * scale
-
-        });
+        page.drawImage(
+            image,
+            {
+                x:(595 - width) / 2,
+                y:(842 - height) / 2,
+                width:width,
+                height:height
+            }
+        );
 
 
     }
 
 
-
-    const pdfBytes =
-    await pdfDoc.save();
-
+    const pdfBytes = await pdfDoc.save();
 
 
     downloadPDF(
@@ -190,34 +179,28 @@ async function createImagePDF(){
 
 function convertToJPEG(file){
 
-
-return new Promise((resolve)=>{
+return new Promise((resolve,reject)=>{
 
 
 const img = new Image();
 
 
-
-img.onload = ()=>{
-
-
-const canvas =
-document.createElement("canvas");
+img.onload=function(){
 
 
-canvas.width = img.width;
-
-canvas.height = img.height;
+const canvas=document.createElement("canvas");
 
 
+canvas.width=this.naturalWidth;
 
-const ctx =
-canvas.getContext("2d");
+canvas.height=this.naturalHeight;
 
+
+const ctx=canvas.getContext("2d");
 
 
 ctx.drawImage(
-img,
+this,
 0,
 0
 );
@@ -225,19 +208,32 @@ img,
 
 
 canvas.toBlob(
-
 (blob)=>{
+
+if(blob){
 
 resolve(blob);
 
+}
+else{
+
+reject("Conversion failed");
+
+}
+
 },
-
 "image/jpeg",
-
 0.90
-
 );
 
+
+
+};
+
+
+img.onerror=function(){
+
+reject("Image loading failed");
 
 };
 
@@ -252,7 +248,6 @@ URL.createObjectURL(file);
 
 
 }
-
 
 
 

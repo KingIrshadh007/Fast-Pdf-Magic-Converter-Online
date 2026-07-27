@@ -1,250 +1,68 @@
-// ===============================
-// COMPRESS PDF TOOL
-// ===============================
+// ======================================
+// FAST MAGIC PDF - COMPRESS PDF TOOL
+// ======================================
 
 
-function loadCompressPDF(){
+let selectedPDF = null;
 
-    const content = document.getElementById("dynamicContent");
 
+// Select PDF file
+document
+.getElementById("pdfFile")
+.addEventListener("change", function () {
 
-    content.innerHTML = `
 
-    <h1>Compress PDF</h1>
+    selectedPDF = this.files[0];
 
 
-    <div class="dropzone" id="compressDropzone">
+    if(selectedPDF){
 
-        <h3>Upload PDF</h3>
 
-        <p>
-        Click or drag & drop PDF here
-        </p>
+        document.getElementById("status").innerHTML = `
 
+        Selected File:
 
-        <div class="formats">
-        Supported: PDF files only
-        </div>
+        <b>${selectedPDF.name}</b>
 
+        <br>
 
-    </div>
+        Original Size:
 
+        ${(selectedPDF.size / 1024 / 1024).toFixed(2)} MB
 
-    <input 
-    type="file"
-    id="compressFile"
-    accept="application/pdf"
-    >
+        `;
 
 
+    }
 
-    <div id="compressInfo"></div>
 
+});
 
 
-    <div class="options">
 
-        <label>
-        Compression Level
-        </label>
 
 
-        <select id="compressionLevel">
-
-            <option value="high">
-            High Compression
-            </option>
-
-
-            <option value="medium" selected>
-            Medium Compression
-            </option>
-
-
-            <option value="low">
-            Low Compression
-            </option>
-
-        </select>
-
-
-    </div>
-
-
-
-    <button 
-    class="convert-btn"
-    onclick="compressPDF()">
-
-    Compress & Download PDF
-
-    </button>
-
-
-
-    <div id="compressStatus"></div>
-
-
-    `;
-
-
-
-    initializeCompressPDF();
-
-}
-
-
-
-
-let compressSelectedFile = null;
-
-
-
-function initializeCompressPDF(){
-
-
-    const input =
-    document.getElementById("compressFile");
-
-
-    const dropzone =
-    document.getElementById("compressDropzone");
-
-
-
-    dropzone.onclick = () => {
-
-        input.click();
-
-    };
-
-
-
-
-    input.addEventListener(
-        "change",
-        function(){
-
-            compressSelectedFile=this.files[0];
-
-            showCompressFile();
-
-        }
-    );
-
-
-
-
-    dropzone.addEventListener(
-        "dragover",
-        function(e){
-
-            e.preventDefault();
-
-            dropzone.classList.add(
-                "dragover"
-            );
-
-        }
-    );
-
-
-
-    dropzone.addEventListener(
-        "dragleave",
-        function(){
-
-            dropzone.classList.remove(
-                "dragover"
-            );
-
-        }
-    );
-
-
-
-
-    dropzone.addEventListener(
-        "drop",
-        function(e){
-
-            e.preventDefault();
-
-
-            compressSelectedFile =
-            e.dataTransfer.files[0];
-
-
-            showCompressFile();
-
-
-        }
-    );
-
-}
-
-
-
-
-function showCompressFile(){
-
-
-    if(!compressSelectedFile)
-    return;
-
-
-
-    document.getElementById(
-        "compressInfo"
-    ).innerHTML = `
-
-
-    <div class="file-item">
-
-    📄 ${compressSelectedFile.name}
-
-    <br>
-
-    Original Size:
-
-    ${(compressSelectedFile.size / 1024 / 1024)
-    .toFixed(2)} MB
-
-
-    </div>
-
-
-    `;
-
-
-}
-
-
-
-
+// Compress PDF Function
 
 async function compressPDF(){
 
 
 
-    if(!compressSelectedFile){
+    if(!selectedPDF){
 
 
-        alert(
-        "Please select a PDF file"
-        );
-
+        alert("Please select a PDF file first");
 
         return;
+
 
     }
 
 
 
+
     const status =
-    document.getElementById(
-    "compressStatus"
-    );
+    document.getElementById("status");
 
 
 
@@ -253,15 +71,18 @@ async function compressPDF(){
 
 
 
-
     try{
 
 
+        // Read PDF file
+
         const pdfBytes =
-        await compressSelectedFile.arrayBuffer();
+        await selectedPDF.arrayBuffer();
 
 
 
+
+        // Load PDF
 
         const pdfDoc =
         await PDFLib.PDFDocument.load(
@@ -271,60 +92,72 @@ async function compressPDF(){
 
 
 
-        const level =
-        document.getElementById(
-        "compressionLevel"
-        ).value;
+        /*
+        PDF optimization
+
+        Removes unnecessary objects
+        and compresses streams
+        */
 
 
-
-        let saveOptions={
+        const compressedBytes =
+        await pdfDoc.save({
 
             useObjectStreams:true
 
-        };
-
-
-
-        if(level==="high"){
-
-
-            saveOptions={
-
-                useObjectStreams:true,
-
-                addDefaultPage:false
-
-            };
-
-
-        }
+        });
 
 
 
 
-        const compressedPDF =
-        await pdfDoc.save(
-            saveOptions
+
+        // Create download file
+
+        const blob =
+        new Blob(
+            [compressedBytes],
+            {
+                type:"application/pdf"
+            }
         );
 
 
 
+        const url =
+        URL.createObjectURL(blob);
 
-        downloadCompressedPDF(
-            compressedPDF
-        );
+
+
+
+        const download =
+        document.createElement("a");
+
+
+        download.href=url;
+
+
+        download.download =
+        "compressed.pdf";
+
+
+        download.click();
+
+
+
+
+        URL.revokeObjectURL(url);
+
 
 
 
 
         const oldSize =
-        compressSelectedFile.size;
+        selectedPDF.size;
 
 
 
         const newSize =
-        compressedPDF.length;
+        compressedBytes.length;
 
 
 
@@ -333,20 +166,28 @@ async function compressPDF(){
 
         ✅ Compression Completed
 
+
         <br><br>
 
-        Original:
 
-        ${(oldSize/1024/1024)
-        .toFixed(2)} MB
+        Original Size:
+
+        ${(oldSize / 1024 / 1024).toFixed(2)} MB
 
 
         <br>
 
-        New Size:
 
-        ${(newSize/1024/1024)
-        .toFixed(2)} MB
+        Compressed Size:
+
+        ${(newSize / 1024 / 1024).toFixed(2)} MB
+
+
+        <br><br>
+
+
+        File downloaded:
+        <b>compressed.pdf</b>
 
 
         `;
@@ -357,62 +198,18 @@ async function compressPDF(){
     catch(error){
 
 
-        console.error(error);
+
+        console.error(
+            error
+        );
+
 
 
         status.innerHTML =
-        "❌ Compression failed";
+        "❌ Compression failed. Try another PDF.";
 
 
     }
-
-
-
-}
-
-
-
-
-
-function downloadCompressedPDF(bytes){
-
-
-
-    const blob =
-    new Blob(
-        [bytes],
-        {
-            type:"application/pdf"
-        }
-    );
-
-
-
-    const url =
-    URL.createObjectURL(
-        blob
-    );
-
-
-
-    const link =
-    document.createElement(
-        "a"
-    );
-
-
-    link.href=url;
-
-
-    link.download =
-    "compressed.pdf";
-
-
-    link.click();
-
-
-
-    URL.revokeObjectURL(url);
 
 
 }

@@ -292,28 +292,24 @@ progressBar.style.width="50%";
 
 
 
-const pdfDoc =
-await PDFLib.PDFDocument.load(bytes);
-
-
-
-
-
-/*
-PDF Optimization
-
-Note:
-pdf-lib performs optimization,
-not deep image compression.
-*/
+const level =
+document.getElementById("compressionLevel").value;
 
 
 const compressedPDF =
-await pdfDoc.save({
+await compressPDFEngine(
+    selectedPDF,
+    level,
+    function(progress){
 
-useObjectStreams:true
+        progressBar.style.width =
+        (progress + "%");
 
-});
+        progressText.innerHTML =
+        "Compressing: " + progress + "%";
+
+    }
+);
 
 
 

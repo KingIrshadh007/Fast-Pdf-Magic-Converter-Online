@@ -452,38 +452,6 @@ ${reduction}%
 
 `;
 
-<br>
-
-
-Original Size:
-
-<b>
-${formatSize(selectedPDF.size)}
-</b>
-
-
-<br>
-
-
-New Size:
-
-<b>
-${formatSize(compressedPDF.length)}
-</b>
-
-
-<br><br>
-
-
-File downloaded:
-<b>
-compressed.pdf
-</b>
-
-
-`;
-
-
 
 
 }

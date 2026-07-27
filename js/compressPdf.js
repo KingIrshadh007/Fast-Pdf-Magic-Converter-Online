@@ -374,7 +374,22 @@ downloadBtn.onclick=function(){
 
 
 
-URL.revokeObjectURL(url);
+downloadBtn.onclick=function(){
+
+    const link=document.createElement("a");
+
+    link.href=downloadURL;
+
+    link.download="compressed.pdf";
+
+    link.click();
+
+
+    setTimeout(()=>{
+        URL.revokeObjectURL(downloadURL);
+    },1000);
+
+};
 
 
 

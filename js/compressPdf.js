@@ -349,24 +349,27 @@ URL.createObjectURL(blob);
 
 
 
-const link =
-document.createElement("a");
+let downloadURL = url;
 
 
-link.href=url;
+downloadBtn.style.display="block";
 
 
-link.download="compressed.pdf";
+downloadBtn.onclick=function(){
+
+    const link =
+    document.createElement("a");
 
 
-document.body.appendChild(link);
+    link.href=downloadURL;
 
 
-link.click();
+    link.download="compressed.pdf";
 
 
-document.body.removeChild(link);
+    link.click();
 
+};
 
 
 
@@ -387,13 +390,67 @@ progressText.innerHTML =
 
 
 
-result.innerHTML = `
+const originalMB =
+selectedPDF.size /
+(1024*1024);
 
+
+const compressedMB =
+compressedPDF.length /
+(1024*1024);
+
+
+
+const reduction =
+(
+((originalMB-compressedMB)
+/
+originalMB)
+*100
+)
+.toFixed(2);
+
+
+
+compressionStats.innerHTML = `
+
+<div class="stats-card">
 
 <h3>
-✅ Compression Finished
+✅ Compression Completed
 </h3>
 
+
+Original Size:
+
+<b>
+${originalMB.toFixed(2)} MB
+</b>
+
+
+<br>
+
+
+Compressed Size:
+
+<b>
+${compressedMB.toFixed(2)} MB
+</b>
+
+
+<br>
+
+
+Saved:
+
+<b>
+${reduction}%
+</b>
+
+
+</div>
+
+`;
 
 <br>
 
@@ -434,14 +491,25 @@ compressed.pdf
 catch(error){
 
 
-console.error(error);
+console.error(
+"Compression Error:",
+error
+);
 
 
-result.innerHTML =
-`
-❌ Compression failed.
-<br>
-Try another PDF file.
+
+compressionStats.innerHTML = `
+
+<div class="stats-card">
+
+❌ Something went wrong.
+
+<br><br>
+
+Please try another PDF file.
+
+</div>
+
 `;
 
 

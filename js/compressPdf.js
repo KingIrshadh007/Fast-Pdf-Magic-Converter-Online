@@ -260,7 +260,11 @@ document.getElementById("progressText");
 
 const result =
 document.getElementById("result");
+const compressionStats =
+document.getElementById("compressionStats");
 
+const downloadBtn =
+document.getElementById("downloadBtn");
 
 
 

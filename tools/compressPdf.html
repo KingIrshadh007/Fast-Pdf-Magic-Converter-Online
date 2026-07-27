@@ -1,11 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 
-<title>Compress PDF - Fast Magic PDF</title>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Compress PDF Online - Fast Magic PDF</title>
+
 
 <link rel="stylesheet" href="../css/style.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
 </head>
 
@@ -13,15 +21,44 @@
 <body>
 
 
+<header class="site-header">
+
+<div class="logo">
+⚡ Fast Magic PDF
+</div>
+
+
+<nav>
+
+<a href="../index.html">
+Home
+</a>
+
+
+<a href="compressPdf.html">
+Compress PDF
+</a>
+
+
+</nav>
+
+
+</header>
+
+
+
+<div class="page-wrapper">
+
+
 <div class="container">
 
 
 <h1>
-📦 Compress PDF
+Compress PDF Online
 </h1>
 
 
-<div class="dropzone">
+<div class="dropzone" id="dropzone">
 
 
 <h3>
@@ -30,51 +67,23 @@ Upload PDF
 
 
 <p>
-Select your PDF file
+Click or drag PDF here
 </p>
 
 
 </div>
 
 
+
 <input 
 type="file"
-id="compressFile"
-accept=".pdf">
+id="pdfFile"
+accept="application/pdf"
+>
 
 
 
-<br><br>
-
-
-<select id="quality">
-
-
-<option value="high">
-High Quality
-</option>
-
-
-<option value="medium">
-Medium Quality
-</option>
-
-
-<option value="low">
-Low Quality
-</option>
-
-
-</select>
-
-
-
-<br><br>
-
-
-
-<button 
-onclick="compressPDF()">
+<button class="convert-btn" onclick="compressPDF()">
 
 Compress PDF
 
@@ -88,8 +97,19 @@ Compress PDF
 </div>
 
 
+</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+
+<footer class="site-footer">
+
+<p>
+© 2026 Fast Magic PDF
+</p>
+
+</footer>
+
+
 
 <script src="../js/compressPdf.js"></script>
 

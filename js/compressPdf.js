@@ -2,214 +2,128 @@
 // FAST MAGIC PDF - COMPRESS PDF TOOL
 // ======================================
 
-
 let selectedPDF = null;
 
+window.addEventListener("DOMContentLoaded", () => {
 
-// Select PDF file
-document
-.getElementById("pdfFile")
-.addEventListener("change", function () {
+    const pdfInput = document.getElementById("pdfFile");
+    const dropzone = document.getElementById("dropzone");
+    const status = document.getElementById("status");
 
-
-    selectedPDF = this.files[0];
-
-
-    if(selectedPDF){
-
-
-        document.getElementById("status").innerHTML = `
-
-        Selected File:
-
-        <b>${selectedPDF.name}</b>
-
-        <br>
-
-        Original Size:
-
-        ${(selectedPDF.size / 1024 / 1024).toFixed(2)} MB
-
-        `;
-
-
+    if (!pdfInput || !dropzone || !status) {
+        console.error("Required HTML elements not found.");
+        return;
     }
 
+    // Click upload area
+    dropzone.addEventListener("click", () => {
+        pdfInput.click();
+    });
+
+    // File selected
+    pdfInput.addEventListener("change", function () {
+
+        if (this.files.length === 0) return;
+
+        selectedPDF = this.files[0];
+
+        status.innerHTML = `
+            <b>Selected File:</b><br>
+            ${selectedPDF.name}<br><br>
+
+            <b>Original Size:</b><br>
+            ${(selectedPDF.size / 1024 / 1024).toFixed(2)} MB
+        `;
+    });
+
+    // Drag Over
+    dropzone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropzone.classList.add("dragover");
+    });
+
+    // Drag Leave
+    dropzone.addEventListener("dragleave", () => {
+        dropzone.classList.remove("dragover");
+    });
+
+    // Drop
+    dropzone.addEventListener("drop", (e) => {
+
+        e.preventDefault();
+
+        dropzone.classList.remove("dragover");
+
+        if (e.dataTransfer.files.length === 0) return;
+
+        selectedPDF = e.dataTransfer.files[0];
+
+        status.innerHTML = `
+            <b>Selected File:</b><br>
+            ${selectedPDF.name}<br><br>
+
+            <b>Original Size:</b><br>
+            ${(selectedPDF.size / 1024 / 1024).toFixed(2)} MB
+        `;
+    });
 
 });
 
+async function compressPDF() {
 
-
-
-
-// Compress PDF Function
-
-async function compressPDF(){
-
-
-
-    if(!selectedPDF){
-
-
-        alert("Please select a PDF file first");
-
+    if (!selectedPDF) {
+        alert("Please select a PDF first.");
         return;
-
-
     }
 
+    const status = document.getElementById("status");
 
+    status.innerHTML = "⏳ Compressing PDF...";
 
+    try {
 
-    const status =
-    document.getElementById("status");
+        const bytes = await selectedPDF.arrayBuffer();
 
+        const pdfDoc = await PDFLib.PDFDocument.load(bytes);
 
-
-    status.innerHTML =
-    "⏳ Compressing PDF...";
-
-
-
-    try{
-
-
-        // Read PDF file
-
-        const pdfBytes =
-        await selectedPDF.arrayBuffer();
-
-
-
-
-        // Load PDF
-
-        const pdfDoc =
-        await PDFLib.PDFDocument.load(
-            pdfBytes
-        );
-
-
-
-
-        /*
-        PDF optimization
-
-        Removes unnecessary objects
-        and compresses streams
-        */
-
-
-        const compressedBytes =
-        await pdfDoc.save({
-
-            useObjectStreams:true
-
+        const compressedBytes = await pdfDoc.save({
+            useObjectStreams: true
         });
 
+        const blob = new Blob([compressedBytes], {
+            type: "application/pdf"
+        });
 
+        const url = URL.createObjectURL(blob);
 
+        const link = document.createElement("a");
 
-
-        // Create download file
-
-        const blob =
-        new Blob(
-            [compressedBytes],
-            {
-                type:"application/pdf"
-            }
-        );
-
-
-
-        const url =
-        URL.createObjectURL(blob);
-
-
-
-
-        const download =
-        document.createElement("a");
-
-
-        download.href=url;
-
-
-        download.download =
-        "compressed.pdf";
-
-
-        download.click();
-
-
-
+        link.href = url;
+        link.download = "compressed.pdf";
+        link.click();
 
         URL.revokeObjectURL(url);
 
-
-
-
-
-        const oldSize =
-        selectedPDF.size;
-
-
-
-        const newSize =
-        compressedBytes.length;
-
-
-
         status.innerHTML = `
+            <h3>✅ Compression Completed</h3>
 
+            Original Size:
+            ${(selectedPDF.size / 1024 / 1024).toFixed(2)} MB
 
-        ✅ Compression Completed
+            <br><br>
 
-
-        <br><br>
-
-
-        Original Size:
-
-        ${(oldSize / 1024 / 1024).toFixed(2)} MB
-
-
-        <br>
-
-
-        Compressed Size:
-
-        ${(newSize / 1024 / 1024).toFixed(2)} MB
-
-
-        <br><br>
-
-
-        File downloaded:
-        <b>compressed.pdf</b>
-
-
+            New Size:
+            ${(compressedBytes.length / 1024 / 1024).toFixed(2)} MB
         `;
 
-
-
     }
-    catch(error){
+    catch (err) {
 
-
-
-        console.error(
-            error
-        );
-
-
+        console.error(err);
 
         status.innerHTML =
-        "❌ Compression failed. Try another PDF.";
-
+            "❌ Compression Failed.";
 
     }
-
 
 }

@@ -9,7 +9,7 @@
 
 
 <title>
-Protect PDF Online - Fast Magic PDF
+Protect PDF - Fast Magic PDF
 </title>
 
 
@@ -18,7 +18,8 @@ Protect PDF Online - Fast Magic PDF
 <link rel="stylesheet" href="../css/protectPdf.css">
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<!-- ZIP Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 
 </head>
@@ -31,8 +32,11 @@ Protect PDF Online - Fast Magic PDF
 
 
 <div class="logo">
+
 ⚡ Fast Magic PDF
+
 </div>
+
 
 
 <nav>
@@ -51,11 +55,15 @@ Protect PDF
 
 
 <button id="themeToggle">
+
 🌙 Dark Mode
+
 </button>
 
 
 </header>
+
+
 
 
 
@@ -75,7 +83,7 @@ Protect PDF With Password
 
 <p class="tool-description">
 
-Secure your PDF document with password protection.
+Create a password protected ZIP containing your PDF.
 
 </p>
 
@@ -85,13 +93,11 @@ Secure your PDF document with password protection.
 
 
 
-<div 
-class="protect-dropzone"
-id="dropzone">
+<div class="protect-dropzone" id="dropzone">
 
 
 <h2>
-🔒 Upload PDF
+📄 Upload PDF
 </h2>
 
 
@@ -107,10 +113,15 @@ or click to browse
 
 
 <input
+
 type="file"
+
 id="pdfFile"
+
 accept="application/pdf"
+
 hidden
+
 >
 
 
@@ -122,9 +133,7 @@ hidden
 
 
 
-<div 
-id="pdfInfo"
-class="pdf-info">
+<div id="fileInfo" class="file-info">
 
 </div>
 
@@ -143,9 +152,13 @@ Enter Password
 
 
 <input
+
 type="password"
+
 id="pdfPassword"
+
 placeholder="Enter password"
+
 >
 
 
@@ -157,9 +170,11 @@ placeholder="Enter password"
 
 
 
-<button 
-id="protectBtn"
-class="protect-btn">
+<button
+
+class="protect-btn"
+
+onclick="protectPDF()">
 
 Protect PDF
 
@@ -171,23 +186,11 @@ Protect PDF
 
 
 
-<div class="progress-container">
-
-<div id="progressBar">
-
-</div>
-
-</div>
-
-
-
-
-
-
-
 <p id="status">
 
 </p>
+
+
 
 
 
@@ -210,15 +213,18 @@ Protect PDF
 
 
 
+
 <footer class="site-footer">
 
-
 <p>
+
 © 2026 Fast Magic PDF
+
 </p>
 
-
 </footer>
+
+
 
 
 

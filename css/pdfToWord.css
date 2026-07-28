@@ -1,0 +1,365 @@
+/* ==========================================
+   FAST MAGIC PDF - PDF TO WORD CSS
+========================================== */
+
+
+/* DESCRIPTION */
+
+.tool-description{
+
+    text-align:center;
+
+    color:#6b7280;
+
+    margin-bottom:30px;
+
+    font-size:16px;
+
+}
+
+
+
+
+
+
+/* UPLOAD AREA */
+
+.word-dropzone{
+
+    min-height:220px;
+
+    border:3px dashed #2563eb;
+
+    border-radius:20px;
+
+    background:#eff6ff;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    padding:30px;
+
+    transition:.3s;
+
+}
+
+
+
+
+
+.word-dropzone:hover{
+
+    background:#dbeafe;
+
+    transform:translateY(-3px);
+
+}
+
+
+
+
+
+.word-dropzone.dragover{
+
+    background:#bfdbfe;
+
+    border-color:#1d4ed8;
+
+}
+
+
+
+
+
+.word-dropzone h2{
+
+    margin-bottom:10px;
+
+}
+
+
+
+
+
+.word-dropzone p{
+
+    color:#4b5563;
+
+}
+
+
+
+
+
+.word-dropzone span{
+
+    margin-top:10px;
+
+    color:#2563eb;
+
+    font-weight:bold;
+
+}
+
+
+
+
+
+
+
+/* PDF INFORMATION */
+
+.pdf-info{
+
+    display:none;
+
+    margin-top:20px;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    background:#f9fafb;
+
+    border:1px solid #ddd;
+
+    text-align:center;
+
+}
+
+
+
+
+
+
+
+
+/* BUTTON */
+
+.word-btn{
+
+
+    width:100%;
+
+
+    margin-top:25px;
+
+
+    padding:15px;
+
+
+    border:none;
+
+
+    border-radius:12px;
+
+
+    background:#2563eb;
+
+
+    color:white;
+
+
+    font-size:18px;
+
+
+    font-weight:bold;
+
+
+    cursor:pointer;
+
+
+}
+
+
+
+.word-btn:hover{
+
+    background:#1d4ed8;
+
+}
+
+
+
+
+
+
+
+
+/* PROGRESS */
+
+.progress-container{
+
+    width:100%;
+
+    height:18px;
+
+    margin-top:25px;
+
+    background:#e5e7eb;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+
+
+
+
+#progressBar{
+
+    width:0%;
+
+    height:100%;
+
+    background:#16a34a;
+
+    transition:.3s;
+
+}
+
+
+
+
+
+
+
+
+/* DOWNLOAD BUTTON */
+
+.download-btn{
+
+    width:100%;
+
+    margin-top:20px;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#16a34a;
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+
+
+
+
+.download-btn:hover{
+
+    background:#15803d;
+
+}
+
+
+
+
+
+
+
+
+#status{
+
+    text-align:center;
+
+    margin-top:15px;
+
+    font-weight:bold;
+
+}
+
+
+
+
+
+
+
+
+/* DARK MODE */
+
+.dark-mode .word-dropzone{
+
+    background:#1e3a8a;
+
+    border-color:#60a5fa;
+
+}
+
+
+
+
+.dark-mode .word-dropzone p{
+
+    color:white;
+
+}
+
+
+
+
+.dark-mode .pdf-info{
+
+    background:#374151;
+
+    border-color:#4b5563;
+
+}
+
+
+
+
+
+.dark-mode .progress-container{
+
+    background:#374151;
+
+}
+
+
+
+
+
+
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+
+.word-dropzone{
+
+    min-height:160px;
+
+}
+
+
+.word-btn{
+
+    font-size:16px;
+
+}
+
+
+}

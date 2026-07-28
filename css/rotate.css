@@ -1,0 +1,356 @@
+/* ==========================================
+   FAST MAGIC PDF - ROTATE PDF TOOL CSS
+========================================== */
+
+
+/* DESCRIPTION */
+
+.tool-description{
+
+    text-align:center;
+    color:#6b7280;
+    margin-bottom:30px;
+    font-size:16px;
+
+}
+
+
+
+/* UPLOAD BOX */
+
+.rotate-dropzone{
+
+    min-height:220px;
+
+    border:3px dashed #2563eb;
+
+    border-radius:20px;
+
+    background:#eff6ff;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    padding:30px;
+
+    transition:0.3s;
+
+}
+
+
+
+.rotate-dropzone:hover{
+
+    background:#dbeafe;
+
+    transform:translateY(-3px);
+
+}
+
+
+
+.rotate-dropzone.dragover{
+
+    background:#bfdbfe;
+
+    border-color:#1d4ed8;
+
+}
+
+
+
+.rotate-dropzone h2{
+
+    margin-bottom:10px;
+
+}
+
+
+
+.rotate-dropzone p{
+
+    color:#4b5563;
+
+}
+
+
+
+.rotate-dropzone span{
+
+    color:#2563eb;
+
+    font-weight:bold;
+
+    margin-top:10px;
+
+}
+
+
+
+
+
+/* PDF INFORMATION */
+
+.pdf-info{
+
+    display:none;
+
+    margin-top:20px;
+
+    padding:15px;
+
+    background:#f9fafb;
+
+    border:1px solid #ddd;
+
+    border-radius:12px;
+
+    text-align:center;
+
+}
+
+
+
+
+
+/* ROTATION OPTIONS */
+
+.rotate-options{
+
+    margin-top:25px;
+
+}
+
+
+
+.rotate-options label{
+
+    display:block;
+
+    font-weight:bold;
+
+    margin-bottom:8px;
+
+}
+
+
+
+.rotate-options select{
+
+    width:100%;
+
+    padding:14px;
+
+    border-radius:10px;
+
+    border:1px solid #ccc;
+
+    font-size:16px;
+
+}
+
+
+
+
+
+/* BUTTON */
+
+.rotate-btn{
+
+    width:100%;
+
+    margin-top:25px;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+
+
+.rotate-btn:hover{
+
+    background:#1d4ed8;
+
+}
+
+
+
+
+
+/* PROGRESS */
+
+.progress-container{
+
+    width:100%;
+
+    height:18px;
+
+    background:#e5e7eb;
+
+    border-radius:20px;
+
+    margin-top:25px;
+
+    overflow:hidden;
+
+}
+
+
+
+#progressBar{
+
+    width:0%;
+
+    height:100%;
+
+    background:#16a34a;
+
+    transition:0.3s;
+
+}
+
+
+
+
+
+/* DOWNLOAD BUTTON */
+
+.download-btn{
+
+    width:100%;
+
+    margin-top:20px;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#16a34a;
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+
+
+
+
+/* STATUS */
+
+#status{
+
+    text-align:center;
+
+    margin-top:15px;
+
+    font-weight:bold;
+
+}
+
+
+
+
+
+/* DARK MODE */
+
+.dark-mode .rotate-dropzone{
+
+    background:#1e3a8a;
+
+    border-color:#60a5fa;
+
+}
+
+
+
+.dark-mode .rotate-dropzone p{
+
+    color:white;
+
+}
+
+
+
+.dark-mode .pdf-info{
+
+    background:#374151;
+
+    border-color:#4b5563;
+
+}
+
+
+
+.dark-mode .rotate-options select{
+
+    background:#1f2937;
+
+    color:white;
+
+    border-color:#4b5563;
+
+}
+
+
+
+.dark-mode .progress-container{
+
+    background:#374151;
+
+}
+
+
+
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+
+.rotate-dropzone{
+
+    min-height:160px;
+
+}
+
+
+.rotate-btn{
+
+    font-size:16px;
+
+}
+
+
+}

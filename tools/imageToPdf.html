@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>
+JPG To PDF Converter - Fast Magic PDF
+</title>
+
+
+<link rel="stylesheet" href="../css/style.css">
+
+<link rel="stylesheet" href="../css/imageToPdf.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+
+</head>
+
+
+<body>
+
+
+<header class="site-header">
+
+
+<div class="logo">
+⚡ Fast Magic PDF
+</div>
+
+
+
+<nav>
+
+<a href="../index.html">
+Home
+</a>
+
+
+<a href="imageToPdf.html">
+JPG → PDF
+</a>
+
+
+</nav>
+
+
+<button id="themeToggle">
+🌙 Dark Mode
+</button>
+
+
+</header>
+
+
+
+
+
+<div class="page-wrapper">
+
+
+<div class="container">
+
+
+<h1>
+JPG To PDF Converter
+</h1>
+
+
+<p class="tool-description">
+
+Convert images into a professional PDF document.
+
+</p>
+
+
+
+
+
+
+<div 
+class="image-dropzone"
+id="dropzone">
+
+
+<h2>
+🖼 Upload Images
+</h2>
+
+
+<p>
+Drag & Drop images here
+</p>
+
+
+<span>
+or click to browse
+</span>
+
+
+
+<input
+type="file"
+id="imageFiles"
+accept="image/*"
+multiple
+hidden
+>
+
+
+</div>
+
+
+
+
+
+
+
+<div id="imagePreview">
+
+</div>
+
+
+
+
+
+
+
+
+<div class="options">
+
+
+<label>
+PDF Page Size
+</label>
+
+
+<select id="pageSize">
+
+
+<option value="A4">
+A4 Standard
+</option>
+
+
+<option value="LETTER">
+Letter
+</option>
+
+
+<option value="A3">
+A3 Large
+</option>
+
+
+</select>
+
+
+
+</div>
+
+
+
+
+
+
+
+<div class="options">
+
+
+<label>
+Image Quality
+</label>
+
+
+<select id="imageQuality">
+
+
+<option value="0.9">
+High Quality
+</option>
+
+
+<option value="0.7">
+Medium Quality
+</option>
+
+
+<option value="0.5">
+Small Size
+</option>
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+
+
+
+<button 
+id="createBtn"
+class="create-btn">
+
+Create PDF
+
+</button>
+
+
+
+
+
+
+
+<div class="progress-container">
+
+<div id="progressBar">
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+<p id="status">
+
+</p>
+
+
+
+
+
+<div id="downloadArea">
+
+</div>
+
+
+
+
+
+</div>
+
+</div>
+
+
+
+
+
+
+<footer class="site-footer">
+
+
+<p>
+© 2026 Fast Magic PDF
+</p>
+
+
+</footer>
+
+
+
+
+
+<script src="../js/imageToPdf.js"></script>
+
+
+</body>
+
+</html>

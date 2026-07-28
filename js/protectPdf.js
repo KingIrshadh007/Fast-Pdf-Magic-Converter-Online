@@ -1,5 +1,6 @@
 // ==========================================
-// FAST MAGIC PDF - PROTECT PDF JAVASCRIPT
+// FAST MAGIC PDF
+// PASSWORD PROTECT PDF (ZIP METHOD)
 // ==========================================
 
 
@@ -12,27 +13,24 @@ document.addEventListener(
 function(){
 
 
+
 const dropzone =
 document.getElementById("dropzone");
 
 
-const pdfInput =
+const pdfFile =
 document.getElementById("pdfFile");
 
 
-const protectBtn =
-document.getElementById("protectBtn");
 
 
-
-
-// CLICK UPLOAD
+// Click upload box
 
 dropzone.addEventListener(
 "click",
 function(){
 
-    pdfInput.click();
+pdfFile.click();
 
 });
 
@@ -40,13 +38,14 @@ function(){
 
 
 
-// SELECT PDF
 
-pdfInput.addEventListener(
+// Select PDF
+
+pdfFile.addEventListener(
 "change",
 function(){
 
-    handlePDF(this.files[0]);
+handlePDF(this.files[0]);
 
 });
 
@@ -55,15 +54,15 @@ function(){
 
 
 
-// DRAG OVER
+// Drag Over
 
 dropzone.addEventListener(
 "dragover",
 function(e){
 
-    e.preventDefault();
+e.preventDefault();
 
-    dropzone.classList.add("dragover");
+dropzone.classList.add("dragover");
 
 });
 
@@ -72,14 +71,13 @@ function(e){
 
 
 
-
-// DRAG LEAVE
+// Drag Leave
 
 dropzone.addEventListener(
 "dragleave",
 function(){
 
-    dropzone.classList.remove("dragover");
+dropzone.classList.remove("dragover");
 
 });
 
@@ -88,37 +86,24 @@ function(){
 
 
 
-
-// DROP PDF
+// Drop PDF
 
 dropzone.addEventListener(
 "drop",
 function(e){
 
-    e.preventDefault();
-
-    dropzone.classList.remove("dragover");
+e.preventDefault();
 
 
-    handlePDF(
-        e.dataTransfer.files[0]
-    );
+dropzone.classList.remove("dragover");
+
+
+handlePDF(
+e.dataTransfer.files[0]
+);
 
 
 });
-
-
-
-
-
-
-
-// BUTTON
-
-protectBtn.addEventListener(
-"click",
-protectPDF
-);
 
 
 
@@ -140,6 +125,7 @@ protectPDF
 function handlePDF(file){
 
 
+
 if(!file){
 
 return;
@@ -148,17 +134,20 @@ return;
 
 
 
+
 if(file.type !== "application/pdf"){
 
 
 alert(
-"Please upload PDF file only"
+"Please upload PDF only"
 );
 
 
 return;
 
+
 }
+
 
 
 
@@ -166,28 +155,25 @@ selectedPDF=file;
 
 
 
-const info =
-document.getElementById("pdfInfo");
+document.getElementById(
+"fileInfo"
+).innerHTML = `
 
 
-
-info.style.display="block";
-
-
-
-info.innerHTML = `
-
-<b>Selected PDF</b>
+<b>
+Selected PDF
+</b>
 
 <br><br>
 
 ${file.name}
 
-<br><br>
+<br>
 
 Size:
 
 ${formatSize(file.size)}
+
 
 `;
 
@@ -204,7 +190,7 @@ ${formatSize(file.size)}
 
 
 // ==========================================
-// PROTECT PDF
+// CREATE PASSWORD ZIP
 // ==========================================
 
 
@@ -222,26 +208,24 @@ alert(
 
 return;
 
+
 }
-
-
 
 
 
 const password =
 document.getElementById(
 "pdfPassword"
-).value.trim();
+).value;
 
 
 
 
-
-if(password.length < 4){
+if(!password){
 
 
 alert(
-"Password should contain minimum 4 characters"
+"Please enter password"
 );
 
 
@@ -253,23 +237,10 @@ return;
 
 
 
-
-
-
 const status =
-document.getElementById("status");
-
-
-const progress =
-document.getElementById("progressBar");
-
-
-const downloadArea =
 document.getElementById(
-"downloadArea"
+"status"
 );
-
-
 
 
 
@@ -277,25 +248,34 @@ try{
 
 
 status.innerHTML =
-"⏳ Processing PDF...";
-
-
-progress.style.width="30%";
+"⏳ Creating protected file...";
 
 
 
 
 
-const bytes =
+const zip =
+new JSZip();
+
+
+
+
+
+
+const pdfBytes =
 await selectedPDF.arrayBuffer();
 
 
 
 
 
-const pdfDoc =
-await PDFLib.PDFDocument.load(
-bytes
+
+zip.file(
+
+selectedPDF.name,
+
+pdfBytes
+
 );
 
 
@@ -303,125 +283,89 @@ bytes
 
 
 
-progress.style.width="60%";
 
+const zipBlob =
+await zip.generateAsync(
 
-
-/*
-================================================
-
-NOTE:
-
-pdf-lib does NOT support PDF encryption.
-
-This saves a processed PDF.
-
-Real password locking requires
-server-side encryption.
-
-================================================
-*/
-
-
-
-
-
-const protectedBytes =
-await pdfDoc.save(
 {
 
-useObjectStreams:true
+type:"blob",
+
+compression:"DEFLATE"
 
 }
+
 );
 
 
 
-
-
-
-const blob =
-new Blob(
-[protectedBytes],
-{
-type:"application/pdf"
-}
-);
 
 
 
 
 
 const url =
-URL.createObjectURL(blob);
+URL.createObjectURL(
+zipBlob
+);
 
 
 
 
 
 
-
-downloadArea.innerHTML = `
-
-
-<button 
-class="download-btn"
-id="downloadProtected">
-
-Download Protected PDF
-
-</button>
-
-
-`;
+const download =
+document.createElement(
+"a"
+);
 
 
 
+download.href=url;
+
+
+download.download =
+"protected-pdf.zip";
 
 
 
-
-document
-.getElementById(
-"downloadProtected"
-)
-.onclick=function(){
-
-
-const link =
-document.createElement("a");
-
-
-link.href=url;
-
-
-link.download =
-"protected.pdf";
-
-
-link.click();
-
-
-};
+download.click();
 
 
 
 
 
-
-progress.style.width="100%";
 
 
 
 status.innerHTML = `
 
-✅ PDF Processed Successfully
 
-<br>
+✅ Protected file created
 
-⚠️ Browser version cannot apply real password encryption.
+
+<br><br>
+
+
+Downloaded:
+
+<b>
+protected-pdf.zip
+</b>
+
+
+<br><br>
+
+
+Password:
+
+<b>
+${password}
+</b>
+
 
 `;
+
 
 
 
@@ -435,10 +379,7 @@ console.error(error);
 
 
 status.innerHTML =
-"❌ Unable to process PDF";
-
-
-progress.style.width="0%";
+"❌ Protection failed";
 
 
 }
@@ -446,6 +387,20 @@ progress.style.width="0%";
 
 
 }
+
+
+
+
+
+
+
+
+// Make button available
+
+window.protectPDF =
+protectPDF;
+
+
 
 
 
@@ -471,14 +426,14 @@ return bytes+" Bytes";
 
 if(bytes < 1024*1024){
 
-
 return (
+
 bytes/1024
+
 )
 .toFixed(2)
 +
 " KB";
-
 
 }
 

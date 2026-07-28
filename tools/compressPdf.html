@@ -4,274 +4,136 @@
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Compress PDF - Fast Magic PDF</title>
 
-<title>
-Compress PDF Online - Fast Magic PDF
-</title>
-
-
-<!-- Main Website CSS -->
 <link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/compressPdf.css">
 
-
-<!-- Compress Tool CSS -->
-<link rel="stylesheet" href="../css/compress.css">
-
-
-<!-- PDF Library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-
 
 </head>
 
-
-
 <body>
-
-
-<!-- HEADER -->
 
 <header class="site-header">
 
-    <div class="logo">
-        ⚡ Fast Magic PDF
-    </div>
+<div class="logo">
+⚡ Fast Magic PDF
+</div>
 
+<nav>
+<a href="../index.html">Home</a>
+<a href="compressPdf.html">Compress PDF</a>
+</nav>
 
-    <nav>
-
-        <a href="../index.html">
-            Home
-        </a>
-
-
-        <a href="compressPdf.html">
-            Compress PDF
-        </a>
-
-
-        <a href="#">
-            All Tools
-        </a>
-
-    </nav>
-
-
-    <button id="themeToggle">
-        🌙 Dark Mode
-    </button>
-
+<button id="themeToggle">
+🌙 Dark Mode
+</button>
 
 </header>
 
-
-
-
-<!-- MAIN CONTENT -->
-
 <div class="page-wrapper">
-
 
 <div class="container">
 
-
-<h1>
-Compress PDF Online
-</h1>
-
+<h1>Compress PDF</h1>
 
 <p class="tool-description">
-
-Reduce PDF file size quickly.
-Your files are processed securely.
-
+Reduce PDF size directly in your browser.
 </p>
 
+<div id="dropzone" class="dropzone">
 
+<h2>📄 Upload PDF</h2>
 
+<p>Drag & Drop PDF here</p>
 
-<!-- UPLOAD AREA -->
+<span>or click to browse</span>
 
-<div 
-class="compress-dropzone"
-id="dropzone">
-
-
-<h2>
-📄 Upload PDF
-</h2>
-
-
-<p>
-Drag & Drop your PDF here
-</p>
-
-
-<span>
-or click to browse
-</span>
-
-
-<input 
+<input
 type="file"
 id="pdfFile"
 accept="application/pdf"
-hidden
->
-
+hidden>
 
 </div>
 
-
-
-
-
-<!-- FILE INFORMATION -->
-
-<div 
+<div
 id="fileInfo"
 class="file-info">
-
 </div>
 
-
-
-
-
-
-<!-- COMPRESSION OPTIONS -->
-
-<div class="compression-options">
-
+<div class="settings">
 
 <label>
+
 Compression Level
+
 </label>
 
-
 <select id="compressionLevel">
-
-
-<option value="high">
-High Compression
-</option>
-
-
-<option value="medium" selected>
-Medium Compression
-</option>
-
 
 <option value="low">
 Low Compression
 </option>
 
+<option value="medium" selected>
+Medium Compression
+</option>
+
+<option value="high">
+High Compression
+</option>
 
 </select>
 
+</div>
+
+<button
+id="compressBtn"
+class="compress-btn">
+
+Compress PDF
+
+</button>
+
+<div class="progress">
+
+<div id="progressBar">
 
 </div>
 
-
-
-
-
-<!-- PROGRESS -->
-
-<div class="progress-box">
-
-
-<div 
-class="progress-bar"
-id="progressBar">
-
-
 </div>
-
-
-</div>
-
 
 <p id="progressText">
 
 </p>
 
-
-
-
-
-<!-- BUTTON -->
-
-<button
-class="compress-btn"
-id="compressBtn">
-
-
-Compress PDF
-
-
-</button>
-
-
-
-
-
-<!-- RESULT -->
-
-<div 
-id="result"
-class="result">
-
-
-<div id="compressionStats"></div>
-
-
-<button 
-id="downloadBtn"
-class="download-btn"
-style="display:none;">
-
-Download Compressed PDF
-
-</button>
-
+<div
+id="compressionStats">
 
 </div>
 
-
-
+<div
+id="downloadArea">
 
 </div>
 
 </div>
 
-
-
-
-
-<!-- FOOTER -->
+</div>
 
 <footer class="site-footer">
 
-
 <p>
+
 © 2026 Fast Magic PDF
+
 </p>
 
-
 </footer>
-
-
-
-
-
-<!-- JAVASCRIPT -->
-
-<script src="../js/pdfCompressor.js"></script>
 
 <script src="../js/compressPdf.js"></script>
 

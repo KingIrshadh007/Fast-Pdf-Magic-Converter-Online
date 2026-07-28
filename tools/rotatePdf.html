@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>
+Rotate PDF Online - Fast Magic PDF
+</title>
+
+
+<link rel="stylesheet" href="../css/style.css">
+
+<link rel="stylesheet" href="../css/rotate.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+
+</head>
+
+
+<body>
+
+
+<header class="site-header">
+
+<div class="logo">
+⚡ Fast Magic PDF
+</div>
+
+
+<nav>
+
+<a href="../index.html">
+Home
+</a>
+
+
+<a href="rotatePdf.html">
+Rotate PDF
+</a>
+
+
+</nav>
+
+
+<button id="themeToggle">
+🌙 Dark Mode
+</button>
+
+
+</header>
+
+
+
+
+
+<div class="page-wrapper">
+
+
+<div class="container">
+
+
+<h1>
+Rotate PDF Online
+</h1>
+
+
+<p class="tool-description">
+
+Rotate your PDF pages quickly in your browser.
+
+</p>
+
+
+
+
+
+<div 
+class="rotate-dropzone"
+id="dropzone">
+
+
+<h2>
+📄 Upload PDF
+</h2>
+
+
+<p>
+Drag & Drop PDF here
+</p>
+
+
+<span>
+or click to browse
+</span>
+
+
+<input
+type="file"
+id="pdfFile"
+accept="application/pdf"
+hidden
+>
+
+
+</div>
+
+
+
+
+
+<div 
+id="pdfInfo"
+class="pdf-info">
+
+</div>
+
+
+
+
+
+<div class="rotate-options">
+
+
+<label>
+Select Rotation Angle
+</label>
+
+
+<select id="rotationAngle">
+
+
+<option value="90">
+90° Clockwise
+</option>
+
+
+<option value="180">
+180°
+</option>
+
+
+<option value="270">
+270° Clockwise
+</option>
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+
+<button 
+id="rotateBtn"
+class="rotate-btn">
+
+Rotate PDF
+
+</button>
+
+
+
+
+
+<div class="progress-container">
+
+
+<div id="progressBar">
+
+</div>
+
+
+</div>
+
+
+
+
+
+<p id="status">
+
+</p>
+
+
+
+
+<div id="downloadArea">
+
+</div>
+
+
+
+</div>
+
+</div>
+
+
+
+
+
+<footer class="site-footer">
+
+<p>
+© 2026 Fast Magic PDF
+</p>
+
+</footer>
+
+
+
+
+
+<script src="../js/rotatePdf.js"></script>
+
+
+</body>
+
+</html>

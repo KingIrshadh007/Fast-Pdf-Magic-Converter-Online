@@ -1,0 +1,421 @@
+/* ==========================================
+   FAST MAGIC PDF - DELETE PDF PAGES CSS
+========================================== */
+
+
+/* DESCRIPTION */
+
+.tool-description{
+
+    text-align:center;
+
+    color:#6b7280;
+
+    margin-bottom:30px;
+
+    font-size:16px;
+
+}
+
+
+
+/* UPLOAD AREA */
+
+.delete-dropzone{
+
+    min-height:220px;
+
+    border:3px dashed #2563eb;
+
+    border-radius:20px;
+
+    background:#eff6ff;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    padding:30px;
+
+    transition:0.3s;
+
+}
+
+
+
+.delete-dropzone:hover{
+
+    background:#dbeafe;
+
+    transform:translateY(-3px);
+
+}
+
+
+
+.delete-dropzone.dragover{
+
+    background:#bfdbfe;
+
+    border-color:#1d4ed8;
+
+}
+
+
+
+.delete-dropzone h2{
+
+    margin-bottom:10px;
+
+}
+
+
+
+.delete-dropzone p{
+
+    color:#4b5563;
+
+}
+
+
+
+.delete-dropzone span{
+
+    color:#2563eb;
+
+    font-weight:bold;
+
+    margin-top:10px;
+
+}
+
+
+
+
+/* PDF INFORMATION */
+
+.pdf-info{
+
+    display:none;
+
+    margin-top:20px;
+
+    padding:15px;
+
+    background:#f9fafb;
+
+    border:1px solid #ddd;
+
+    border-radius:12px;
+
+    text-align:center;
+
+}
+
+
+
+
+
+/* PAGE LIST */
+
+#pageList{
+
+    margin-top:20px;
+
+    display:grid;
+
+    grid-template-columns:
+
+    repeat(auto-fill,minmax(120px,1fr));
+
+    gap:15px;
+
+}
+
+
+
+
+.page-card{
+
+    border:1px solid #ddd;
+
+    border-radius:12px;
+
+    padding:15px;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    background:white;
+
+    transition:.3s;
+
+}
+
+
+
+
+.page-card:hover{
+
+    transform:translateY(-3px);
+
+}
+
+
+
+
+.page-card input{
+
+    margin-bottom:10px;
+
+}
+
+
+
+
+.page-number{
+
+    font-weight:bold;
+
+}
+
+
+
+
+
+
+
+/* DELETE BUTTON */
+
+.delete-btn{
+
+
+    width:100%;
+
+
+    margin-top:25px;
+
+
+    padding:15px;
+
+
+    border:none;
+
+
+    border-radius:12px;
+
+
+    background:#dc2626;
+
+
+    color:white;
+
+
+    font-size:18px;
+
+
+    font-weight:bold;
+
+
+    cursor:pointer;
+
+
+}
+
+
+
+.delete-btn:hover{
+
+    background:#b91c1c;
+
+}
+
+
+
+
+
+
+
+/* PROGRESS */
+
+.progress-container{
+
+    width:100%;
+
+    height:18px;
+
+    margin-top:25px;
+
+    background:#e5e7eb;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+
+
+#progressBar{
+
+    width:0%;
+
+    height:100%;
+
+    background:#16a34a;
+
+    transition:.3s;
+
+}
+
+
+
+
+
+/* DOWNLOAD BUTTON */
+
+.download-btn{
+
+    width:100%;
+
+    margin-top:20px;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+
+
+.download-btn:hover{
+
+    background:#1d4ed8;
+
+}
+
+
+
+
+
+#status{
+
+    text-align:center;
+
+    margin-top:15px;
+
+    font-weight:bold;
+
+}
+
+
+
+
+
+/* DARK MODE */
+
+.dark-mode .delete-dropzone{
+
+    background:#1e3a8a;
+
+    border-color:#60a5fa;
+
+}
+
+
+
+.dark-mode .delete-dropzone p{
+
+    color:white;
+
+}
+
+
+
+.dark-mode .pdf-info{
+
+    background:#374151;
+
+    border-color:#4b5563;
+
+}
+
+
+
+.dark-mode .page-card{
+
+    background:#374151;
+
+    border-color:#4b5563;
+
+}
+
+
+
+
+
+
+.dark-mode .progress-container{
+
+    background:#374151;
+
+}
+
+
+
+
+
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+
+.delete-dropzone{
+
+    min-height:160px;
+
+}
+
+
+
+#pageList{
+
+    grid-template-columns:
+
+    repeat(2,1fr);
+
+}
+
+
+
+.delete-btn{
+
+    font-size:16px;
+
+}
+
+
+}

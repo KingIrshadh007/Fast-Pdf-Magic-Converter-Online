@@ -1,6 +1,6 @@
 // ==========================================
 // FAST MAGIC PDF
-// REAL PASSWORD ZIP PROTECTION
+// PROTECT PDF - ZIP PASSWORD VERSION
 // ==========================================
 
 
@@ -10,48 +10,192 @@ let selectedPDF = null;
 
 document.addEventListener(
 "DOMContentLoaded",
-()=>{
+function(){
 
 
-const input =
+const dropzone =
+document.getElementById("dropzone");
+
+
+const pdfInput =
 document.getElementById("pdfFile");
 
 
-input.addEventListener(
+
+// CLICK UPLOAD BOX
+
+dropzone.addEventListener(
+"click",
+function(){
+
+    pdfInput.click();
+
+});
+
+
+
+
+// FILE SELECT
+
+pdfInput.addEventListener(
 "change",
 function(){
 
-selectedPDF=this.files[0];
+    handlePDF(this.files[0]);
+
+});
 
 
-document.getElementById("fileInfo").innerHTML =
 
-`
-<b>${selectedPDF.name}</b>
+
+// DRAG OVER
+
+dropzone.addEventListener(
+"dragover",
+function(e){
+
+    e.preventDefault();
+
+    dropzone.classList.add("dragover");
+
+});
+
+
+
+
+// DRAG LEAVE
+
+dropzone.addEventListener(
+"dragleave",
+function(){
+
+    dropzone.classList.remove("dragover");
+
+});
+
+
+
+
+// DROP FILE
+
+dropzone.addEventListener(
+"drop",
+function(e){
+
+    e.preventDefault();
+
+
+    dropzone.classList.remove("dragover");
+
+
+    handlePDF(
+        e.dataTransfer.files[0]
+    );
+
+
+});
+
+
+
+});
+
+
+
+
+
+
+
+
+// ==========================================
+// HANDLE PDF
+// ==========================================
+
+
+function handlePDF(file){
+
+
+if(!file){
+
+return;
+
+}
+
+
+
+if(file.type !== "application/pdf"){
+
+
+alert(
+"Please upload PDF file only"
+);
+
+
+return;
+
+}
+
+
+
+selectedPDF = file;
+
+
+
+document.getElementById(
+"fileInfo"
+).innerHTML = `
+
+
+<b>
+Selected PDF
+</b>
+
+<br><br>
+
+
+${file.name}
+
+
 <br>
-${formatSize(selectedPDF.size)}
+
+
+Size:
+
+${formatSize(file.size)}
+
+
 `;
 
-});
 
 
-});
+}
 
 
 
 
+
+
+
+
+
+// ==========================================
+// CREATE PASSWORD ZIP
+// ==========================================
 
 
 async function protectPDF(){
 
 
+
 if(!selectedPDF){
+
 
 alert(
 "Please upload PDF first"
 );
 
+
 return;
+
 
 }
 
@@ -67,18 +211,24 @@ document.getElementById(
 
 if(!password){
 
+
 alert(
-"Enter password"
+"Please enter password"
 );
 
+
 return;
+
 
 }
 
 
 
 const status =
-document.getElementById("status");
+document.getElementById(
+"status"
+);
+
 
 
 
@@ -86,13 +236,13 @@ try{
 
 
 status.innerHTML =
-"⏳ Encrypting PDF...";
+"⏳ Creating protected file...";
 
 
 
 
 
-const pdfData =
+const pdfBytes =
 await selectedPDF.arrayBuffer();
 
 
@@ -100,22 +250,14 @@ await selectedPDF.arrayBuffer();
 
 
 
-const blobWriter =
+const zip =
+new zip.ZipWriter(
 new zip.BlobWriter(
 "application/zip"
-);
-
-
-
-
-
-
-const writer =
-new zip.ZipWriter(
-blobWriter,
+),
 {
 
-password:password
+password: password
 
 }
 
@@ -126,10 +268,15 @@ password:password
 
 
 
-await writer.add(
+
+await zip.add(
+
 selectedPDF.name,
+
 new zip.Uint8ArrayReader(
-new Uint8Array(pdfData)
+
+new Uint8Array(pdfBytes)
+
 )
 
 );
@@ -139,15 +286,15 @@ new Uint8Array(pdfData)
 
 
 
-await writer.close();
+await zip.close();
 
 
 
 
 
 
-const zipBlob =
-await blobWriter.getData();
+const blob =
+await zip.getData();
 
 
 
@@ -155,41 +302,47 @@ await blobWriter.getData();
 
 
 const url =
-URL.createObjectURL(zipBlob);
+URL.createObjectURL(blob);
 
 
 
 
 
-const link =
+
+const download =
 document.createElement("a");
 
 
 
-link.href=url;
+download.href=url;
 
 
-link.download =
+download.download =
 "protected-pdf.zip";
 
 
-
-link.click();
-
+download.click();
 
 
 
 
 
-status.innerHTML =
 
-`
-✅ Password protected ZIP created
+status.innerHTML = `
+
+
+✅ Protected file created
+
 
 <br><br>
 
-File:
-<b>protected-pdf.zip</b>
+
+Downloaded:
+
+<b>
+protected-pdf.zip
+</b>
+
 
 `;
 
@@ -204,7 +357,7 @@ console.error(error);
 
 
 status.innerHTML =
-"❌ Failed creating protected file";
+"❌ Failed";
 
 
 }
@@ -212,6 +365,7 @@ status.innerHTML =
 
 
 }
+
 
 
 
@@ -226,18 +380,42 @@ protectPDF;
 
 
 
+
+// ==========================================
+// SIZE FORMAT
+// ==========================================
+
+
 function formatSize(bytes){
 
 
-if(bytes < 1024)
+if(bytes < 1024){
+
 return bytes+" Bytes";
 
-
-if(bytes < 1024*1024)
-return (bytes/1024).toFixed(2)+" KB";
+}
 
 
-return (bytes/(1024*1024)).toFixed(2)+" MB";
+if(bytes < 1024*1024){
+
+return (
+bytes/1024
+)
+.toFixed(2)
++
+" KB";
+
+}
+
+
+return (
+
+bytes/(1024*1024)
+
+)
+.toFixed(2)
++
+" MB";
 
 
 }

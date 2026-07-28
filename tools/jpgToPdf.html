@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>
+JPG To PDF - Fast Magic PDF
+</title>
+
+
+<link rel="stylesheet" href="../css/style.css">
+
+<link rel="stylesheet" href="../css/jpgToPdf.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+
+</head>
+
+
+
+<body>
+
+
+
+<header class="site-header">
+
+
+<div class="logo">
+
+⚡ Fast Magic PDF
+
+</div>
+
+
+<nav>
+
+<a href="../index.html">
+Home
+</a>
+
+
+<a href="jpgToPdf.html">
+JPG To PDF
+</a>
+
+
+</nav>
+
+
+
+<button id="themeToggle">
+
+🌙 Dark Mode
+
+</button>
+
+
+</header>
+
+
+
+
+
+
+
+<div class="page-wrapper">
+
+
+<div class="container">
+
+
+<h1>
+JPG To PDF Converter
+</h1>
+
+
+<p class="tool-description">
+
+Convert images into PDF document.
+
+</p>
+
+
+
+
+
+
+
+<div 
+class="jpg-dropzone"
+id="dropzone">
+
+
+<h2>
+🖼 Upload Images
+</h2>
+
+
+<p>
+Drag & Drop images here
+</p>
+
+
+<span>
+JPG PNG WEBP supported
+</span>
+
+
+<input
+
+type="file"
+
+id="imageInput"
+
+accept="image/*"
+
+multiple
+
+hidden
+
+>
+
+
+</div>
+
+
+
+
+
+
+
+
+<div 
+id="previewArea"
+class="preview-area">
+
+</div>
+
+
+
+
+
+
+
+<div class="settings">
+
+
+<label>
+PDF Page Size
+</label>
+
+
+<select id="pageSize">
+
+
+<option value="A4">
+A4
+</option>
+
+
+<option value="LETTER">
+Letter
+</option>
+
+
+<option value="A3">
+A3
+</option>
+
+
+</select>
+
+
+</div>
+
+
+
+
+
+
+
+
+<button
+
+id="convertBtn"
+
+class="jpg-btn">
+
+Convert To PDF
+
+</button>
+
+
+
+
+
+
+
+<p id="status">
+
+</p>
+
+
+
+
+
+
+
+<div id="downloadArea">
+
+</div>
+
+
+
+
+
+
+</div>
+
+</div>
+
+
+
+
+
+
+
+
+<footer class="site-footer">
+
+
+<p>
+
+© 2026 Fast Magic PDF
+
+</p>
+
+
+</footer>
+
+
+
+
+
+
+
+<script src="../js/jpgToPdf.js"></script>
+
+
+</body>
+
+</html>

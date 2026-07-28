@@ -1,0 +1,417 @@
+/* ==========================================
+   FAST MAGIC PDF - SIGN PDF CSS
+========================================== */
+
+
+/* DESCRIPTION */
+
+.tool-description{
+
+    text-align:center;
+
+    color:#6b7280;
+
+    margin-bottom:30px;
+
+    font-size:16px;
+
+}
+
+
+
+
+/* UPLOAD AREA */
+
+.sign-dropzone{
+
+    min-height:220px;
+
+    border:3px dashed #2563eb;
+
+    border-radius:20px;
+
+    background:#eff6ff;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    padding:30px;
+
+    transition:.3s;
+
+}
+
+
+
+
+.sign-dropzone:hover{
+
+    background:#dbeafe;
+
+    transform:translateY(-3px);
+
+}
+
+
+
+
+.sign-dropzone.dragover{
+
+    background:#bfdbfe;
+
+    border-color:#1d4ed8;
+
+}
+
+
+
+
+
+.sign-dropzone h2{
+
+    margin-bottom:10px;
+
+}
+
+
+
+.sign-dropzone p{
+
+    color:#4b5563;
+
+}
+
+
+
+.sign-dropzone span{
+
+    margin-top:10px;
+
+    color:#2563eb;
+
+    font-weight:bold;
+
+}
+
+
+
+
+
+
+/* PDF INFO */
+
+.pdf-info{
+
+    display:none;
+
+    margin-top:20px;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    background:#f9fafb;
+
+    border:1px solid #ddd;
+
+    text-align:center;
+
+}
+
+
+
+
+
+
+/* SIGNATURE CANVAS */
+
+#signaturePad{
+
+    display:block;
+
+    width:100%;
+
+    max-width:500px;
+
+    height:200px;
+
+    margin:20px auto;
+
+    border:2px solid #333;
+
+    border-radius:12px;
+
+    background:white;
+
+    cursor:crosshair;
+
+}
+
+
+
+
+
+/* BUTTONS */
+
+.clear-btn{
+
+    width:100%;
+
+    padding:14px;
+
+    margin-top:10px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#dc2626;
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+
+
+.clear-btn:hover{
+
+    background:#b91c1c;
+
+}
+
+
+
+
+
+.sign-btn{
+
+    width:100%;
+
+    padding:15px;
+
+    margin-top:20px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+
+
+.sign-btn:hover{
+
+    background:#1d4ed8;
+
+}
+
+
+
+
+
+
+
+/* PROGRESS */
+
+.progress-container{
+
+    width:100%;
+
+    height:18px;
+
+    margin-top:25px;
+
+    background:#e5e7eb;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+}
+
+
+
+
+
+#progressBar{
+
+    width:0%;
+
+    height:100%;
+
+    background:#16a34a;
+
+    transition:.3s;
+
+}
+
+
+
+
+
+
+
+/* DOWNLOAD BUTTON */
+
+.download-btn{
+
+    width:100%;
+
+    margin-top:20px;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#16a34a;
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+
+
+.download-btn:hover{
+
+    background:#15803d;
+
+}
+
+
+
+
+
+
+
+#status{
+
+    text-align:center;
+
+    margin-top:15px;
+
+    font-weight:bold;
+
+}
+
+
+
+
+
+
+
+/* DARK MODE */
+
+.dark-mode .sign-dropzone{
+
+    background:#1e3a8a;
+
+    border-color:#60a5fa;
+
+}
+
+
+
+.dark-mode .sign-dropzone p{
+
+    color:white;
+
+}
+
+
+
+.dark-mode .pdf-info{
+
+    background:#374151;
+
+    border-color:#4b5563;
+
+}
+
+
+
+.dark-mode #signaturePad{
+
+    background:white;
+
+}
+
+
+
+
+
+
+.dark-mode .progress-container{
+
+    background:#374151;
+
+}
+
+
+
+
+
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+
+.sign-dropzone{
+
+    min-height:160px;
+
+}
+
+
+
+#signaturePad{
+
+    height:150px;
+
+}
+
+
+
+.sign-btn,
+.clear-btn{
+
+    font-size:16px;
+
+}
+
+
+}

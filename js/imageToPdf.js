@@ -1,82 +1,229 @@
-let selectedImages=[];
+// ==========================================
+// FAST MAGIC PDF - IMAGE TO PDF JAVASCRIPT
+// ==========================================
 
 
-const imageInput=document.getElementById("images");
-
-const imageDropzone=document.getElementById("dropzone");
-
-const imageFileList=document.getElementById("fileList");
-
-
-
-if(imageDropzone){
-
-
-imageDropzone.onclick=()=>{
-
-imageInput.click();
-
-};
-
-
-}
+let selectedImages = [];
 
 
 
-if(imageInput){
+document.addEventListener(
+"DOMContentLoaded",
+function(){
 
 
-imageInput.addEventListener("change",()=>{
+const dropzone =
+document.getElementById("dropzone");
 
 
-selectedImages=[
-...selectedImages,
-...imageInput.files
-];
+const imageInput =
+document.getElementById("imageFiles");
 
 
-displayImages();
+const createBtn =
+document.getElementById("createBtn");
+
+
+
+
+// CLICK UPLOAD
+
+dropzone.addEventListener(
+"click",
+function(){
+
+    imageInput.click();
+
+});
+
+
+
+
+// SELECT IMAGES
+
+imageInput.addEventListener(
+"change",
+function(){
+
+    addImages(this.files);
+
+});
+
+
+
+
+// DRAG OVER
+
+dropzone.addEventListener(
+"dragover",
+function(e){
+
+    e.preventDefault();
+
+    dropzone.classList.add("dragover");
+
+});
+
+
+
+
+// DRAG LEAVE
+
+dropzone.addEventListener(
+"dragleave",
+function(){
+
+    dropzone.classList.remove("dragover");
+
+});
+
+
+
+
+// DROP IMAGES
+
+dropzone.addEventListener(
+"drop",
+function(e){
+
+    e.preventDefault();
+
+    dropzone.classList.remove("dragover");
+
+
+    addImages(
+        e.dataTransfer.files
+    );
+
+});
+
+
+
+
+// CREATE PDF
+
+createBtn.addEventListener(
+"click",
+createPDF
+);
 
 
 });
 
 
+
+
+
+
+
+// ==========================================
+// ADD IMAGES
+// ==========================================
+
+
+function addImages(files){
+
+
+Array.from(files).forEach(
+(file)=>{
+
+
+if(file.type.startsWith("image/")){
+
+
+selectedImages.push(file);
+
+
+}
+
+
+});
+
+
+renderPreview();
+
+
 }
 
 
 
 
-function displayImages(){
 
 
-if(!imageFileList)
-return;
+
+// ==========================================
+// IMAGE PREVIEW
+// ==========================================
 
 
-imageFileList.innerHTML="";
+function renderPreview(){
 
 
-selectedImages.forEach((file,index)=>{
+const preview =
+document.getElementById("imagePreview");
 
 
-let div=document.createElement("div");
+preview.innerHTML="";
 
 
-div.className="file-item";
+
+selectedImages.forEach(
+(file,index)=>{
 
 
-div.innerHTML=`
+const reader =
+new FileReader();
 
-<span>${file.name}</span>
 
-<button onclick="removeImage(${index})">
-❌
+
+reader.onload=function(e){
+
+
+const div =
+document.createElement("div");
+
+
+div.className =
+"image-card";
+
+
+
+div.innerHTML = `
+
+
+<button 
+class="remove-image"
+onclick="removeImage(${index})">
+
+×
+
 </button>
+
+
+<img src="${e.target.result}">
+
+
+<div class="image-name">
+
+${file.name}
+
+</div>
+
 
 `;
 
 
-imageFileList.appendChild(div);
+
+preview.appendChild(div);
+
+
+
+};
+
+
+
+reader.readAsDataURL(file);
+
 
 
 });
@@ -85,14 +232,53 @@ imageFileList.appendChild(div);
 }
 
 
+
+
+
+
+
+// ==========================================
+// REMOVE IMAGE
+// ==========================================
 
 
 function removeImage(index){
 
 
-selectedImages.splice(index,1);
+selectedImages.splice(
+index,
+1
+);
 
-displayImages();
+
+renderPreview();
+
+
+}
+
+
+
+
+
+
+// ==========================================
+// CREATE PDF
+// ==========================================
+
+
+async function createPDF(){
+
+
+
+if(selectedImages.length===0){
+
+
+alert(
+"Please select images first"
+);
+
+
+return;
 
 
 }
@@ -100,202 +286,238 @@ displayImages();
 
 
 
-const convertBtn=document.getElementById("convertBtn");
+
+const status =
+document.getElementById("status");
 
 
-if(convertBtn){
+const progress =
+document.getElementById("progressBar");
 
 
-convertBtn.onclick=createImagePDF;
+
+try{
 
 
-}
-
-async function createImagePDF(){
-
-    if(selectedImages.length === 0){
-
-        alert("Select images first");
-        return;
-
-    }
+status.innerHTML =
+"⏳ Creating PDF...";
 
 
-    const pdfDoc = await PDFLib.PDFDocument.create();
+progress.style.width="10%";
 
 
-    for(const file of selectedImages){
 
 
-        const jpegBlob = await convertToJPEG(file);
+
+const pdfDoc =
+await PDFLib.PDFDocument.create();
 
 
-        const bytes = await jpegBlob.arrayBuffer();
 
 
-        const image = await pdfDoc.embedJpg(bytes);
+
+const size =
+document.getElementById(
+"pageSize"
+).value;
 
 
-        const size = document.getElementById("pageSize").value;
+
 
 
 let pageWidth = 595;
+
 let pageHeight = 842;
 
 
-// A4
-if(size === "A4"){
-
-    pageWidth = 595;
-    pageHeight = 842;
-
-}
 
 
-// Letter
-else if(size === "LETTER"){
 
-    pageWidth = 612;
-    pageHeight = 792;
-
-}
+if(size==="LETTER"){
 
 
-// A3
-else if(size === "A3"){
+pageWidth=612;
 
-    pageWidth = 842;
-    pageHeight = 1191;
+pageHeight=792;
+
 
 }
 
 
 
-const page = pdfDoc.addPage([
-    pageWidth,
-    pageHeight
-]);
+if(size==="A3"){
 
 
-        const imgWidth = image.width;
-        const imgHeight = image.height;
+pageWidth=842;
 
+pageHeight=1191;
 
-        const scale = Math.min(
-    (pageWidth - 80) / imgWidth,
-    (pageHeight - 80) / imgHeight
-);
-
-
-        const width = imgWidth * scale;
-        const height = imgHeight * scale;
-
-
-        page.drawImage(
-            image,
-            {
-               x:(pageWidth - width) / 2,
-               y:(pageHeight - height) / 2,
-                width:width,
-                height:height
-            }
-        );
-
-
-    }
-
-
-    const pdfBytes = await pdfDoc.save();
-
-
-    downloadPDF(
-        pdfBytes,
-        "images.pdf"
-    );
 
 }
 
-function convertToJPEG(file){
-
-return new Promise((resolve,reject)=>{
 
 
-const img = new Image();
 
 
-img.onload=function(){
 
-
-const canvas=document.createElement("canvas");
-
-
-canvas.width=this.naturalWidth;
-
-canvas.height=this.naturalHeight;
-
-
-const ctx=canvas.getContext("2d");
-
-
-ctx.drawImage(
-this,
-0,
-0
+const quality =
+parseFloat(
+document.getElementById(
+"imageQuality"
+).value
 );
 
 
 
-canvas.toBlob(
-(blob)=>{
 
-if(blob){
 
-resolve(blob);
+
+for(
+let i=0;
+i<selectedImages.length;
+i++
+){
+
+
+
+const file =
+selectedImages[i];
+
+
+
+
+const imageBytes =
+await file.arrayBuffer();
+
+
+
+
+
+let image;
+
+
+
+if(
+file.type==="image/png"
+){
+
+
+image =
+await pdfDoc.embedPng(
+imageBytes
+);
+
 
 }
 else{
 
-reject("Conversion failed");
+
+image =
+await pdfDoc.embedJpg(
+imageBytes
+);
+
 
 }
 
-},
-"image/jpeg",
-0.90
+
+
+
+
+
+
+const page =
+pdfDoc.addPage(
+[
+pageWidth,
+pageHeight
+]
 );
 
 
 
-};
-
-
-img.onerror=function(){
-
-reject("Image loading failed");
-
-};
 
 
 
-img.src =
-URL.createObjectURL(file);
+const scale =
+Math.min(
+pageWidth / image.width,
+pageHeight / image.height
+);
 
+
+
+
+
+
+page.drawImage(
+image,
+{
+
+x:
+(pageWidth -
+image.width * scale)
+/2,
+
+
+y:
+(pageHeight -
+image.height * scale)
+/2,
+
+
+width:
+image.width * scale,
+
+
+height:
+image.height * scale
 
 
 });
 
 
+
+
+
+
+
+progress.style.width =
+(
+((i+1)
+/selectedImages.length)
+*80
++
+"%"
+);
+
+
+
 }
 
 
 
 
-function downloadPDF(bytes,name){
 
 
-const blob=
+const pdfBytes =
+await pdfDoc.save(
+{
+
+useObjectStreams:true
+
+}
+);
+
+
+
+
+
+
+
+const blob =
 new Blob(
-[bytes],
+[pdfBytes],
 {
 type:"application/pdf"
 }
@@ -303,22 +525,123 @@ type:"application/pdf"
 
 
 
-const url=
+
+
+const url =
 URL.createObjectURL(blob);
 
 
 
-const a=document.createElement("a");
 
 
-a.href=url;
+const area =
+document.getElementById(
+"downloadArea"
+);
 
-a.download=name;
-
-a.click();
 
 
-URL.revokeObjectURL(url);
+area.innerHTML = `
+
+
+<button
+class="download-btn"
+id="downloadPDF">
+
+Download PDF
+
+</button>
+
+
+`;
+
+
+
+
+
+
+document
+.getElementById("downloadPDF")
+.onclick=function(){
+
+
+const link =
+document.createElement("a");
+
+
+link.href=url;
+
+
+link.download =
+"images.pdf";
+
+
+link.click();
+
+
+};
+
+
+
+
+
+
+progress.style.width="100%";
+
+
+status.innerHTML =
+"✅ PDF Created Successfully";
+
+
+
+}
+
+catch(error){
+
+
+console.error(error);
+
+
+status.innerHTML =
+"❌ Unable to create PDF";
+
+
+progress.style.width="0%";
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+// ==========================================
+// SIZE FORMAT
+// ==========================================
+
+
+function formatSize(bytes){
+
+
+if(bytes < 1024){
+
+return bytes+" Bytes";
+
+}
+
+
+return (
+bytes/(1024*1024)
+)
+.toFixed(2)
++
+" MB";
 
 
 }

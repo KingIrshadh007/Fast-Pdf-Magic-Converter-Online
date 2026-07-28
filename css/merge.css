@@ -1,0 +1,472 @@
+/* ==========================================
+   FAST MAGIC PDF - MERGE PDF TOOL CSS
+========================================== */
+
+
+/* DESCRIPTION */
+
+.tool-description{
+
+    text-align:center;
+    color:#6b7280;
+    margin-bottom:30px;
+    font-size:16px;
+
+}
+
+
+
+/* UPLOAD BOX */
+
+.merge-dropzone{
+
+    min-height:220px;
+
+    border:3px dashed #2563eb;
+
+    border-radius:20px;
+
+    background:#eff6ff;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    align-items:center;
+
+    text-align:center;
+
+    cursor:pointer;
+
+    padding:30px;
+
+    transition:0.3s;
+
+}
+
+
+
+.merge-dropzone:hover{
+
+    background:#dbeafe;
+
+    transform:translateY(-3px);
+
+}
+
+
+
+.merge-dropzone.dragover{
+
+    background:#bfdbfe;
+
+    border-color:#1d4ed8;
+
+}
+
+
+
+.merge-dropzone h2{
+
+    margin-bottom:10px;
+
+}
+
+
+
+.merge-dropzone p{
+
+    color:#4b5563;
+
+}
+
+
+
+.merge-dropzone span{
+
+    color:#2563eb;
+
+    font-weight:bold;
+
+    margin-top:10px;
+
+}
+
+
+
+
+
+/* FILE LIST */
+
+#fileList{
+
+    margin-top:25px;
+
+}
+
+
+
+
+
+.file-card{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:15px;
+
+    margin-bottom:12px;
+
+    background:#f9fafb;
+
+    border:1px solid #ddd;
+
+    border-radius:12px;
+
+}
+
+
+
+
+
+.file-details{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    overflow:hidden;
+
+}
+
+
+
+.file-name{
+
+    font-weight:bold;
+
+    word-break:break-word;
+
+}
+
+
+
+.file-size{
+
+    color:#6b7280;
+
+    font-size:13px;
+
+}
+
+
+
+
+
+.file-buttons{
+
+    display:flex;
+
+    gap:8px;
+
+}
+
+
+
+.file-buttons button{
+
+    border:none;
+
+    padding:8px 10px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+}
+
+
+
+
+
+.move-btn{
+
+    background:#2563eb;
+
+    color:white;
+
+}
+
+
+
+.remove-btn{
+
+    background:#dc2626;
+
+    color:white;
+
+}
+
+
+
+
+
+/* ACTION BUTTONS */
+
+
+.merge-actions{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:25px;
+
+}
+
+
+
+.merge-btn,
+.clear-btn{
+
+
+    flex:1;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+
+
+.merge-btn{
+
+    background:#16a34a;
+
+    color:white;
+
+}
+
+
+
+.merge-btn:hover{
+
+    background:#15803d;
+
+}
+
+
+
+.clear-btn{
+
+    background:#ef4444;
+
+    color:white;
+
+}
+
+
+
+.clear-btn:hover{
+
+    background:#dc2626;
+
+}
+
+
+
+
+
+/* PROGRESS BAR */
+
+
+.progress-container{
+
+    width:100%;
+
+    height:18px;
+
+    background:#e5e7eb;
+
+    border-radius:20px;
+
+    margin-top:25px;
+
+    overflow:hidden;
+
+}
+
+
+
+#progressBar{
+
+    width:0%;
+
+    height:100%;
+
+    background:#2563eb;
+
+    transition:0.3s;
+
+}
+
+
+
+
+
+/* STATUS */
+
+
+#status{
+
+    text-align:center;
+
+    margin-top:15px;
+
+    font-weight:bold;
+
+}
+
+
+
+
+
+/* DOWNLOAD */
+
+
+.download-btn{
+
+    width:100%;
+
+    margin-top:20px;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+
+
+
+
+/* DARK MODE */
+
+
+.dark-mode .merge-dropzone{
+
+    background:#1e3a8a;
+
+    border-color:#60a5fa;
+
+}
+
+
+
+.dark-mode .merge-dropzone p{
+
+    color:white;
+
+}
+
+
+
+.dark-mode .file-card{
+
+    background:#374151;
+
+    border-color:#4b5563;
+
+}
+
+
+
+.dark-mode .file-size{
+
+    color:#d1d5db;
+
+}
+
+
+
+.dark-mode .progress-container{
+
+    background:#374151;
+
+}
+
+
+
+
+
+/* MOBILE */
+
+
+@media(max-width:768px){
+
+
+.merge-actions{
+
+    flex-direction:column;
+
+}
+
+
+
+.file-card{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+}
+
+
+
+.file-buttons{
+
+    width:100%;
+
+}
+
+
+
+.file-buttons button{
+
+    flex:1;
+
+}
+
+
+
+}

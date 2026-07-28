@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<title>
+Split PDF Online - Fast Magic PDF
+</title>
+
+
+<link rel="stylesheet" href="../css/style.css">
+
+<link rel="stylesheet" href="../css/split.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+
+</head>
+
+
+<body>
+
+
+<header class="site-header">
+
+<div class="logo">
+⚡ Fast Magic PDF
+</div>
+
+
+<nav>
+
+<a href="../index.html">
+Home
+</a>
+
+
+<a href="splitPdf.html">
+Split PDF
+</a>
+
+</nav>
+
+
+<button id="themeToggle">
+🌙 Dark Mode
+</button>
+
+
+</header>
+
+
+
+
+
+<div class="page-wrapper">
+
+
+<div class="container">
+
+
+<h1>
+Split PDF Online
+</h1>
+
+
+<p class="tool-description">
+
+Extract selected pages from your PDF file.
+
+</p>
+
+
+
+
+
+<div 
+class="split-dropzone"
+id="dropzone">
+
+
+<h2>
+📄 Upload PDF
+</h2>
+
+
+<p>
+Drag & Drop your PDF here
+</p>
+
+
+<span>
+or click to browse
+</span>
+
+
+<input
+type="file"
+id="pdfFile"
+accept="application/pdf"
+hidden
+>
+
+
+</div>
+
+
+
+
+
+<div 
+id="pdfInfo"
+class="pdf-info">
+
+</div>
+
+
+
+
+
+<div class="page-input">
+
+
+<label>
+Pages to Extract
+</label>
+
+
+<input 
+type="text"
+id="pageNumbers"
+placeholder="Example: 1-3,5,8"
+>
+
+
+<p>
+Example: 1-3 extracts pages 1 to 3
+</p>
+
+
+</div>
+
+
+
+
+
+<button
+id="splitBtn"
+class="split-btn">
+
+Split PDF
+
+</button>
+
+
+
+
+
+<div class="progress-container">
+
+
+<div id="progressBar">
+
+</div>
+
+
+</div>
+
+
+
+
+
+<p id="status">
+
+</p>
+
+
+
+
+
+<div id="downloadArea">
+
+</div>
+
+
+
+</div>
+
+</div>
+
+
+
+
+
+<footer class="site-footer">
+
+<p>
+© 2026 Fast Magic PDF
+</p>
+
+</footer>
+
+
+
+
+
+<script src="../js/splitPdf.js"></script>
+
+
+</body>
+
+</html>

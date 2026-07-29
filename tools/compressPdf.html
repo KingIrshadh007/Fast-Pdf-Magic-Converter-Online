@@ -7,10 +7,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-
-<title>
-Compress PDF - Fast Magic PDF
-</title>
+<title>Compress PDF - Fast Magic PDF</title>
 
 
 <link rel="stylesheet" href="../css/style.css">
@@ -18,16 +15,12 @@ Compress PDF - Fast Magic PDF
 <link rel="stylesheet" href="../css/compressPdf.css">
 
 
-<!-- PDF Renderer -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
-
-<!-- PDF Creator -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
 
 </head>
-
 
 
 <body>
@@ -35,46 +28,19 @@ Compress PDF - Fast Magic PDF
 
 <header class="site-header">
 
-
 <div class="logo">
-
 ⚡ Fast Magic PDF
-
 </div>
 
-
-
-<nav>
 
 <a href="../index.html">
 Home
 </a>
 
 
-<a href="compressPdf.html">
-Compress PDF
-</a>
-
-</nav>
-
-
-
-<button id="themeToggle">
-
-🌙 Dark Mode
-
-</button>
-
-
 </header>
 
 
-
-
-
-
-
-<div class="page-wrapper">
 
 
 <div class="container">
@@ -85,22 +51,13 @@ Compress PDF
 </h1>
 
 
-<p class="tool-description">
-
-Reduce PDF size while maintaining quality.
-
+<p>
+Reduce PDF size while keeping quality.
 </p>
 
 
 
-
-
-
-
-
-<div 
-class="dropzone"
-id="dropzone">
+<div class="dropzone" id="dropzone">
 
 
 <h2>
@@ -109,24 +66,19 @@ id="dropzone">
 
 
 <p>
-Drag & Drop PDF here
+Drag and drop PDF here
 </p>
 
 
 <span>
-or click to browse
+Click to select
 </span>
 
 
-
 <input
-
 type="file"
-
 id="pdfFile"
-
 accept="application/pdf"
-
 hidden>
 
 
@@ -135,12 +87,7 @@ hidden>
 
 
 
-
-
-
-<div 
-id="fileInfo"
-class="file-info">
+<div id="fileInfo" class="file-info">
 
 </div>
 
@@ -148,44 +95,33 @@ class="file-info">
 
 
 
-
-
-<div class="compression-settings">
+<div class="settings">
 
 
 <label>
-Compression Quality
+Compression Level
 </label>
 
 
 <select id="compressionLevel">
 
-
 <option value="extreme">
-
-🔥 Extreme Compression
-
+Extreme
 </option>
 
 
 <option value="high">
-
-⚡ High Compression
-
+High
 </option>
 
 
 <option value="medium" selected>
-
-⭐ Medium Compression
-
+Medium
 </option>
 
 
 <option value="low">
-
-✨ Low Compression (Best Quality)
-
+Low
 </option>
 
 
@@ -198,17 +134,9 @@ Compression Quality
 
 
 
-
-
-<button
-
-id="compressBtn"
-
-class="compress-btn">
-
+<button id="compressBtn">
 
 Compress PDF
-
 
 </button>
 
@@ -216,26 +144,17 @@ Compress PDF
 
 
 
-
-
 <div class="progress">
-
 
 <div id="progressBar">
 
 </div>
 
-
 </div>
 
 
 
-<p id="progressText">
-
-</p>
-
-
-
+<p id="progressText"></p>
 
 
 
@@ -246,39 +165,13 @@ Compress PDF
 
 
 
-
-
-
-
 <div id="downloadArea">
 
 </div>
 
 
 
-
-
 </div>
-
-</div>
-
-
-
-
-
-
-
-<footer class="site-footer">
-
-<p>
-
-© 2026 Fast Magic PDF
-
-</p>
-
-</footer>
-
-
 
 
 

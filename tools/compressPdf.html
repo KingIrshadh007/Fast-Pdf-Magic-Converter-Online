@@ -1,23 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
 
-<meta charset="UTF-8">
+<title>
+Fast Magic PDF Compressor
+</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Compress PDF - Fast Magic PDF</title>
-
-
-<link rel="stylesheet" href="../css/style.css">
 
 <link rel="stylesheet" href="../css/compressPdf.css">
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
 
 </head>
@@ -26,110 +17,59 @@
 <body>
 
 
-<header class="site-header">
-
-<div class="logo">
-⚡ Fast Magic PDF
-</div>
-
-
-<a href="../index.html">
-Home
-</a>
-
-
-</header>
-
-
-
-
 <div class="container">
 
 
 <h1>
-Compress PDF
+⚡ Compress PDF
 </h1>
 
 
-<p>
-Reduce PDF size while keeping quality.
-</p>
-
-
-
-<div class="dropzone" id="dropzone">
+<div id="dropzone">
 
 
 <h2>
-📄 Upload PDF
+Upload PDF
 </h2>
-
-
-<p>
-Drag and drop PDF here
-</p>
-
-
-<span>
-Click to select
-</span>
 
 
 <input
 type="file"
 id="pdfFile"
-accept="application/pdf"
-hidden>
+accept="application/pdf">
 
 
 </div>
 
 
 
-
-<div id="fileInfo" class="file-info">
-
-</div>
-
-
-
-
-
-<div class="settings">
-
-
-<label>
-Compression Level
-</label>
+<br>
 
 
 <select id="compressionLevel">
 
+
 <option value="extreme">
-Extreme
+🔥 Extreme (Maximum Compression)
 </option>
 
 
 <option value="high">
-High
+⚡ High
 </option>
 
 
 <option value="medium" selected>
-Medium
+⭐ Medium
 </option>
 
 
 <option value="low">
-Low
+✨ Low (Best Quality)
 </option>
 
 
 </select>
-
-
-</div>
-
 
 
 
@@ -142,32 +82,10 @@ Compress PDF
 
 
 
+<div id="status"></div>
 
 
-<div class="progress">
-
-<div id="progressBar">
-
-</div>
-
-</div>
-
-
-
-<p id="progressText"></p>
-
-
-
-
-<div id="compressionStats">
-
-</div>
-
-
-
-<div id="downloadArea">
-
-</div>
+<div id="result"></div>
 
 
 
@@ -176,6 +94,8 @@ Compress PDF
 
 
 
+
+<script src="../wasm/mupdf.js"></script>
 
 <script src="../js/compressPdf.js"></script>
 

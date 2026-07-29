@@ -8,73 +8,115 @@ let compressedPDFBlob = null;
 
 
 // ===============================
-// INITIALIZE
+// START
 // ===============================
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    const dropzone = document.getElementById("dropzone");
-    const input = document.getElementById("pdfFile");
-    const button = document.getElementById("compressBtn");
+
+    const dropzone =
+    document.getElementById("dropzone");
 
 
-    dropzone.onclick = () => {
-        input.click();
-    };
+    const input =
+    document.getElementById("pdfFile");
 
 
-    input.onchange = () => {
-
-        if(input.files.length){
-
-            handlePDF(input.files[0]);
-
-        }
-
-    };
+    const button =
+    document.getElementById("compressBtn");
 
 
-    dropzone.ondragover = (e)=>{
 
-        e.preventDefault();
-
-        dropzone.classList.add("dragover");
-
-    };
+    dropzone.addEventListener(
+        "click",
+        () => input.click()
+    );
 
 
-    dropzone.ondragleave = ()=>{
 
-        dropzone.classList.remove("dragover");
+    input.addEventListener(
+        "change",
+        () => {
 
-    };
+            if(input.files.length){
 
+                handlePDF(input.files[0]);
 
-    dropzone.ondrop = (e)=>{
-
-        e.preventDefault();
-
-        dropzone.classList.remove("dragover");
-
-
-        if(e.dataTransfer.files.length){
-
-            handlePDF(e.dataTransfer.files[0]);
+            }
 
         }
+    );
 
-    };
 
 
-    button.onclick = compressPDF;
+    dropzone.addEventListener(
+        "dragover",
+        (e)=>{
+
+            e.preventDefault();
+
+            dropzone.classList.add(
+                "dragover"
+            );
+
+        }
+    );
+
+
+
+    dropzone.addEventListener(
+        "dragleave",
+        ()=>{
+
+            dropzone.classList.remove(
+                "dragover"
+            );
+
+        }
+    );
+
+
+
+    dropzone.addEventListener(
+        "drop",
+        (e)=>{
+
+            e.preventDefault();
+
+
+            dropzone.classList.remove(
+                "dragover"
+            );
+
+
+            if(e.dataTransfer.files.length){
+
+                handlePDF(
+                    e.dataTransfer.files[0]
+                );
+
+            }
+
+        }
+    );
+
+
+
+    button.addEventListener(
+        "click",
+        compressPDF
+    );
 
 
 });
 
 
 
+
+
+
 // ===============================
-// SELECT PDF
+// FILE SELECT
 // ===============================
 
 
@@ -83,30 +125,42 @@ function handlePDF(file){
 
     if(file.type !== "application/pdf"){
 
-        alert("Please upload PDF file");
+
+        alert(
+            "Please upload PDF only"
+        );
+
 
         return;
 
     }
 
 
-    selectedPDF=file;
+
+    selectedPDF = file;
 
 
-    const info=document.getElementById("fileInfo");
+
+    const info =
+    document.getElementById(
+        "fileInfo"
+    );
+
 
 
     info.style.display="block";
 
 
-    info.innerHTML=`
+
+    info.innerHTML = `
 
     <b>${file.name}</b>
 
     <br><br>
 
-    Size:
-    ${formatSize(file.size)}
+    Original Size:
+
+    <b>${formatSize(file.size)}</b>
 
     `;
 
@@ -118,8 +172,10 @@ function handlePDF(file){
 
 
 
+
+
 // ===============================
-// MAIN COMPRESS FUNCTION
+// MAIN COMPRESS
 // ===============================
 
 
@@ -128,9 +184,14 @@ async function compressPDF(){
 
 if(!selectedPDF){
 
-alert("Upload PDF first");
+
+alert(
+"Please upload PDF first"
+);
+
 
 return;
+
 
 }
 
@@ -146,14 +207,29 @@ updateProgress(
 
 
 
-const buffer =
+// IMPORTANT
+// Create separate buffers
+
+const originalBuffer =
 await selectedPDF.arrayBuffer();
 
 
 
-// Check page count
+const pdfForReader =
+originalBuffer.slice(0);
 
-let pageCount=0;
+
+
+const pdfForProcessor =
+originalBuffer.slice(0);
+
+
+
+
+
+
+let pages = 0;
+
 
 
 try{
@@ -162,13 +238,15 @@ try{
 const pdf =
 await pdfjsLib.getDocument(
 {
-data:buffer
+data:pdfForReader
 }
 ).promise;
 
 
-pageCount =
+
+pages =
 pdf.numPages;
+
 
 
 }
@@ -177,7 +255,7 @@ catch(e){
 
 
 console.log(
-"Page detection skipped"
+"Page count skipped"
 );
 
 
@@ -186,26 +264,28 @@ console.log(
 
 
 
+
+
 console.log(
 "Pages:",
-pageCount
+pages
 );
 
 
 
 
 
-// LARGE PDF MODE
+
+// Large PDF
 
 if(
-pageCount > 200
-||
-selectedPDF.size > 50*1024*1024
+pages > 200 ||
+selectedPDF.size > 50 * 1024 * 1024
 ){
 
 
 await optimizeLargePDF(
-buffer
+pdfForProcessor
 );
 
 
@@ -214,8 +294,8 @@ buffer
 else{
 
 
-await compressImagePDF(
-buffer
+await compressSmallPDF(
+pdfForProcessor
 );
 
 
@@ -229,25 +309,22 @@ catch(error){
 
 
 console.error(
-"FULL COMPRESSION ERROR:",
+"Compression Error:",
 error
 );
 
 
+
 updateProgress(
 0,
-"❌ Compression failed: " + error.message
+"❌ Compression failed: "
++
+error.message
 );
 
-
-alert(
-"Compression Error:\n\n" + error.message
-);
 
 
 }
-
-
 
 }
 
@@ -259,11 +336,12 @@ alert(
 
 
 // ===============================
-// LARGE PDF OPTIMIZATION
+// LARGE PDF MODE
 // ===============================
 
 
 async function optimizeLargePDF(buffer){
+
 
 
 updateProgress(
@@ -289,13 +367,16 @@ useObjectStreams:true
 
 
 
-let result;
+
+let output;
+
 
 
 if(bytes.length < selectedPDF.size){
 
 
-result =
+
+output =
 new Blob(
 [
 bytes
@@ -306,11 +387,12 @@ type:"application/pdf"
 );
 
 
+
 }
 else{
 
 
-result =
+output =
 selectedPDF;
 
 
@@ -318,13 +400,17 @@ selectedPDF;
 
 
 
-compressedPDFBlob=result;
+
+
+
+compressedPDFBlob =
+output;
 
 
 
 showResult(
 selectedPDF.size,
-result.size,
+output.size,
 "Large PDF optimization completed"
 );
 
@@ -350,17 +436,18 @@ createDownloadButton();
 
 
 
+
 // ===============================
-// IMAGE COMPRESSION
+// SMALL PDF IMAGE MODE
 // ===============================
 
 
-async function compressImagePDF(buffer){
+async function compressSmallPDF(buffer){
 
 
 updateProgress(
 20,
-"Rendering pages..."
+"Rendering PDF pages..."
 );
 
 
@@ -374,13 +461,15 @@ data:buffer
 
 
 
-const newPdf =
+const newPDF =
 await PDFLib.PDFDocument.create();
 
 
 
 const quality =
 getQuality();
+
+
 
 
 
@@ -393,9 +482,16 @@ i++
 
 
 updateProgress(
-20+(i/pdf.numPages)*60,
-`Compressing page ${i}/${pdf.numPages}`
+20+
+(
+i/pdf.numPages
+)*60,
+
+`Processing page ${i}/${pdf.numPages}`
+
 );
+
+
 
 
 
@@ -404,12 +500,14 @@ await pdf.getPage(i);
 
 
 
+
 const viewport =
 page.getViewport(
 {
-scale:1.3
+scale:1.2
 }
 );
+
 
 
 
@@ -431,18 +529,27 @@ canvas.width =
 viewport.width;
 
 
+
 canvas.height =
 viewport.height;
 
 
 
+
+
 await page.render(
 {
+
 canvasContext:ctx,
+
 viewport:viewport
+
 }
 )
 .promise;
+
+
+
 
 
 
@@ -454,15 +561,19 @@ quality
 
 
 
+
+
 const jpg =
-await newPdf.embedJpg(
+await newPDF.embedJpg(
 image
 );
 
 
 
+
+
 const newPage =
-newPdf.addPage(
+newPDF.addPage(
 [
 viewport.width,
 viewport.height
@@ -471,14 +582,22 @@ viewport.height
 
 
 
+
+
 newPage.drawImage(
 jpg,
 {
+
 x:0,
+
 y:0,
+
 width:viewport.width,
+
 height:viewport.height
+
 }
+
 );
 
 
@@ -487,18 +606,25 @@ height:viewport.height
 
 
 
+
+
+
+
 const bytes =
-await newPdf.save();
+await newPDF.save();
 
 
 
-let result;
+
+
+let output;
+
 
 
 if(bytes.length < selectedPDF.size){
 
 
-result =
+output =
 new Blob(
 [
 bytes
@@ -510,10 +636,11 @@ type:"application/pdf"
 
 
 }
+
 else{
 
 
-result =
+output =
 selectedPDF;
 
 
@@ -521,13 +648,17 @@ selectedPDF;
 
 
 
-compressedPDFBlob=result;
+
+
+
+compressedPDFBlob =
+output;
 
 
 
 showResult(
 selectedPDF.size,
-result.size,
+output.size,
 "Compression completed"
 );
 
@@ -552,8 +683,10 @@ createDownloadButton();
 
 
 
+
+
 // ===============================
-// QUALITY SETTINGS
+// QUALITY
 // ===============================
 
 
@@ -567,19 +700,35 @@ document.getElementById(
 
 
 
-if(level==="extreme")
+switch(level){
+
+
+case "extreme":
+
 return 0.35;
 
 
-if(level==="high")
+case "high":
+
 return 0.55;
 
 
-if(level==="medium")
+case "medium":
+
 return 0.75;
 
 
+case "low":
+
 return 0.90;
+
+
+default:
+
+return 0.75;
+
+
+}
 
 
 }
@@ -603,39 +752,72 @@ message
 ){
 
 
+
 let saved =
-((oldSize-newSize)/oldSize)*100;
+(
+(oldSize-newSize)
+/oldSize
+)
+*100;
 
 
-if(saved<0)
+
+if(saved<0){
+
 saved=0;
+
+}
+
 
 
 
 document.getElementById(
 "compressionStats"
-).innerHTML=`
+).innerHTML = `
+
 
 <div class="stats-card">
 
-<h3>${message}</h3>
+
+<h3>
+${message}
+</h3>
+
 
 Original:
-<b>${formatSize(oldSize)}</b>
+
+<b>
+${formatSize(oldSize)}
+</b>
+
 
 <br>
+
 
 Final:
-<b>${formatSize(newSize)}</b>
+
+<b>
+${formatSize(newSize)}
+</b>
+
 
 <br>
 
+
 Saved:
-<b>${saved.toFixed(2)}%</b>
+
+<b>
+${saved.toFixed(2)}%
+</b>
+
+
 
 </div>
 
+
 `;
+
+
 
 }
 
@@ -654,25 +836,33 @@ Saved:
 function createDownloadButton(){
 
 
+
 document.getElementById(
 "downloadArea"
-).innerHTML=`
+).innerHTML = `
+
 
 <button
+
 class="download-btn"
+
 id="downloadBtn">
 
 ⬇ Download Compressed PDF
 
 </button>
 
+
 `;
+
+
 
 
 
 document.getElementById(
 "downloadBtn"
-).onclick=()=>{
+)
+.onclick = ()=>{
 
 
 const url =
@@ -682,27 +872,37 @@ compressedPDFBlob
 
 
 
-const a =
-document.createElement("a");
-
-
-a.href=url;
-
-
-a.download="compressed.pdf";
-
-
-a.click();
+const link =
+document.createElement(
+"a"
+);
 
 
 
-URL.revokeObjectURL(url);
+link.href=url;
+
+
+
+link.download =
+"compressed.pdf";
+
+
+
+link.click();
+
+
+
+URL.revokeObjectURL(
+url
+);
+
 
 
 };
 
 
 }
+
 
 
 
@@ -721,18 +921,24 @@ percent,
 text
 ){
 
+
 document.getElementById(
 "progressBar"
 ).style.width =
 percent+"%";
 
 
+
 document.getElementById(
 "progressText"
-).innerHTML=text;
+).innerHTML =
+text;
 
 
 }
+
+
+
 
 
 
@@ -740,14 +946,24 @@ function formatSize(bytes){
 
 
 if(bytes < 1024)
+
 return bytes+" Bytes";
 
 
+
 if(bytes < 1024*1024)
-return (bytes/1024).toFixed(2)+" KB";
+
+return (
+bytes/1024
+).toFixed(2)
++" KB";
 
 
-return (bytes/1024/1024).toFixed(2)+" MB";
+
+return (
+bytes/1024/1024
+).toFixed(2)
++" MB";
 
 
 }

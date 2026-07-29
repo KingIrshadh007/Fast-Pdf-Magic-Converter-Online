@@ -228,12 +228,20 @@ buffer
 catch(error){
 
 
-console.error(error);
+console.error(
+"FULL COMPRESSION ERROR:",
+error
+);
 
 
 updateProgress(
 0,
-"❌ Compression failed"
+"❌ Compression failed: " + error.message
+);
+
+
+alert(
+"Compression Error:\n\n" + error.message
 );
 
 

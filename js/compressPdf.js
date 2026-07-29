@@ -148,48 +148,84 @@ downloadPDF(result);
 
 };
 
+async function compressWithMuPDF(file, settings){
+
+
+if(!window.mupdf){
+
+throw new Error(
+"MuPDF engine not loaded"
+);
+
+}
+
+
+
+const bytes =
+new Uint8Array(
+await file.arrayBuffer()
+);
+
+
+
+// Open PDF
+
+const doc =
+mupdf.Document.openDocument(
+bytes,
+"application/pdf"
+);
+
+
+
+const pageCount =
+doc.countPages();
+
+
+
+console.log(
+"Pages:",
+pageCount
+);
 
 
 
 
+// Compression options
+
+let dpi =
+settings.dpi;
+
+
+let quality =
+settings.quality;
 
 
 
-async function compressWithMuPDF(
-file,
-settings
-){
+// Export optimized PDF
+
+const output =
+doc.saveToBuffer(
+{
+
+garbage:4,
+
+deflate:true,
+
+linear:true
+
+}
+);
 
 
-/*
-
-MuPDF WASM compression engine
-
-Input:
-PDF
-
-Output:
-Compressed PDF
-
-
-*/
-
-
-const buffer =
-await file.arrayBuffer();
-
-
-
-// MuPDF WASM API call goes here
 
 
 return new Blob(
 [
-buffer
+output.asUint8Array()
 ],
 {
-type:
-"application/pdf"
+type:"application/pdf"
 }
 );
 

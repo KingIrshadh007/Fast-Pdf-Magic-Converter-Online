@@ -124,6 +124,11 @@ function formatSize(bytes){
 // ==========================================
 
 
+// ==========================================
+// IMPROVED COMPRESS PDF FUNCTION
+// ==========================================
+
+
 async function compressPDF(){
 
 
@@ -146,32 +151,38 @@ async function compressPDF(){
 
 
 
-        const pdfBytes =
+        const bytes =
         await selectedPDF.arrayBuffer();
+
+
 
 
 
         updateProgress(
             30,
-            "Loading PDF..."
+            "Opening PDF..."
         );
+
+
 
 
 
         const pdfDoc =
         await PDFLib.PDFDocument.load(
-            pdfBytes,
-            {
-                ignoreEncryption:true
-            }
+            bytes
         );
+
+
 
 
 
         updateProgress(
             60,
-            "Optimizing PDF..."
+            "Optimizing PDF objects..."
         );
+
+
+
 
 
 
@@ -182,14 +193,24 @@ async function compressPDF(){
 
 
 
-        let options = {};
+
+
+
+        let saveOptions = {
+
+            useObjectStreams:true
+
+        };
+
+
+
 
 
 
         if(level === "low"){
 
 
-            options = {
+            saveOptions = {
 
                 useObjectStreams:false
 
@@ -200,28 +221,17 @@ async function compressPDF(){
 
 
 
-        if(level === "medium"){
-
-
-            options = {
-
-                useObjectStreams:true
-
-            };
-
-
-        }
 
 
 
         if(level === "high"){
 
 
-            options = {
+            saveOptions = {
 
                 useObjectStreams:true,
 
-                addDefaultPage:false
+                objectsPerTick:50
 
             };
 
@@ -231,55 +241,58 @@ async function compressPDF(){
 
 
 
-        const optimizedPDF =
+
+
+        const result =
         await pdfDoc.save(
-            options
+            saveOptions
         );
+
+
+
 
 
 
 
         updateProgress(
             85,
-            "Comparing sizes..."
+            "Checking compression..."
         );
 
 
 
 
 
-        let finalFile;
+
+
+        let outputBlob;
+
+        let statusMessage;
 
 
 
-        let message = "";
 
 
 
 
-        if(
-            optimizedPDF.length <
-            selectedPDF.size
-        ){
+        if(result.length < selectedPDF.size){
 
 
-            finalFile =
+            outputBlob =
             new Blob(
-
                 [
-                    optimizedPDF
+                    result
                 ],
-
                 {
-                    type:
-                    "application/pdf"
+                    type:"application/pdf"
                 }
-
             );
 
 
-            message =
-            "✅ PDF optimized successfully";
+
+            statusMessage =
+            "✅ PDF size reduced";
+
 
 
         }
@@ -287,13 +300,14 @@ async function compressPDF(){
         else{
 
 
-            finalFile =
+            outputBlob =
             selectedPDF;
 
 
 
-            message =
-            "ℹ️ PDF is already optimized. Original file kept.";
+            statusMessage =
+            "ℹ️ This PDF cannot be reduced with browser compression. Original kept.";
+
 
         }
 
@@ -302,7 +316,12 @@ async function compressPDF(){
 
 
 
-        compressedBlob = finalFile;
+
+        compressedBlob =
+        outputBlob;
+
+
+
 
 
 
@@ -317,14 +336,24 @@ async function compressPDF(){
 
 
         showCompressionResult(
+
             selectedPDF.size,
-            finalFile.size,
-            message
+
+            outputBlob.size,
+
+            statusMessage
+
         );
 
 
 
+
+
+
+
         createDownloadButton();
+
+
 
 
 
@@ -335,15 +364,13 @@ async function compressPDF(){
 
 
         console.error(
-            "Compression Error:",
             error
         );
 
 
-
         updateProgress(
             0,
-            "❌ Compression failed"
+            "❌ Error processing PDF"
         );
 
 

@@ -1,230 +1,114 @@
 // ==========================================
 // FAST MAGIC PDF
-// IMAGE BASED PDF COMPRESSOR
-// Part 1/3
+// SMART PDF COMPRESSOR
 // ==========================================
-
 
 let selectedPDF = null;
 let compressedPDFBlob = null;
 
 
+// ===============================
+// INITIALIZE
+// ===============================
 
-document.addEventListener(
-"DOMContentLoaded",
-()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
-
-const dropzone =
-document.getElementById("dropzone");
-
-
-const pdfInput =
-document.getElementById("pdfFile");
+    const dropzone = document.getElementById("dropzone");
+    const input = document.getElementById("pdfFile");
+    const button = document.getElementById("compressBtn");
 
 
-const compressBtn =
-document.getElementById("compressBtn");
+    dropzone.onclick = () => {
+        input.click();
+    };
 
 
+    input.onchange = () => {
+
+        if(input.files.length){
+
+            handlePDF(input.files[0]);
+
+        }
+
+    };
 
 
-// Click upload area
+    dropzone.ondragover = (e)=>{
 
-dropzone.addEventListener(
-"click",
-()=>{
+        e.preventDefault();
 
-pdfInput.click();
+        dropzone.classList.add("dragover");
 
-});
+    };
 
 
+    dropzone.ondragleave = ()=>{
+
+        dropzone.classList.remove("dragover");
+
+    };
 
 
+    dropzone.ondrop = (e)=>{
 
-// File select
+        e.preventDefault();
 
-pdfInput.addEventListener(
-"change",
-()=>{
-
-if(pdfInput.files.length){
-
-handlePDF(
-pdfInput.files[0]
-);
-
-}
-
-});
+        dropzone.classList.remove("dragover");
 
 
+        if(e.dataTransfer.files.length){
+
+            handlePDF(e.dataTransfer.files[0]);
+
+        }
+
+    };
 
 
-
-
-// Drag over
-
-dropzone.addEventListener(
-"dragover",
-(e)=>{
-
-e.preventDefault();
-
-dropzone.classList.add(
-"dragover"
-);
-
-});
-
-
-
-
-
-
-
-// Drag leave
-
-dropzone.addEventListener(
-"dragleave",
-()=>{
-
-dropzone.classList.remove(
-"dragover"
-);
-
-});
-
-
-
-
-
-
-
-// Drop file
-
-dropzone.addEventListener(
-"drop",
-(e)=>{
-
-
-e.preventDefault();
-
-
-dropzone.classList.remove(
-"dragover"
-);
-
-
-
-if(e.dataTransfer.files.length){
-
-handlePDF(
-e.dataTransfer.files[0]
-);
-
-}
+    button.onclick = compressPDF;
 
 
 });
 
 
 
-
-
-
-
-compressBtn.addEventListener(
-"click",
-compressPDF
-);
-
-
-
-});
-
-
-
-
-
-
-
-
-
-// ==========================================
+// ===============================
 // SELECT PDF
-// ==========================================
+// ===============================
 
 
 function handlePDF(file){
 
 
+    if(file.type !== "application/pdf"){
 
-if(!file){
+        alert("Please upload PDF file");
 
-return;
+        return;
 
-}
-
-
-
+    }
 
 
-if(file.type !== "application/pdf"){
+    selectedPDF=file;
 
 
-alert(
-"Please upload PDF only"
-);
+    const info=document.getElementById("fileInfo");
 
 
-return;
+    info.style.display="block";
 
 
-}
+    info.innerHTML=`
 
+    <b>${file.name}</b>
 
+    <br><br>
 
+    Size:
+    ${formatSize(file.size)}
 
-
-selectedPDF=file;
-
-
-
-
-document.getElementById(
-"fileInfo"
-).style.display="block";
-
-
-
-
-
-document.getElementById(
-"fileInfo"
-).innerHTML=
-
-`
-
-<b>
-Selected PDF
-</b>
-
-<br><br>
-
-${file.name}
-
-<br>
-
-Size:
-
-<b>
-${formatSize(file.size)}
-</b>
-
-`;
-
+    `;
 
 
 }
@@ -234,93 +118,9 @@ ${formatSize(file.size)}
 
 
 
-
-
-
-// ==========================================
-// PROGRESS
-// ==========================================
-
-
-function updateProgress(
-percent,
-message
-){
-
-
-
-document.getElementById(
-"progressBar"
-).style.width =
-percent+"%";
-
-
-
-
-document.getElementById(
-"progressText"
-).innerHTML =
-message;
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// ==========================================
-// SIZE FORMAT
-// ==========================================
-
-
-function formatSize(bytes){
-
-
-if(bytes < 1024){
-
-return bytes+" Bytes";
-
-}
-
-
-
-if(bytes < 1024*1024){
-
-return (
-
-bytes/1024
-
-)
-.toFixed(2)
-+
-" KB";
-
-}
-
-
-
-return (
-
-bytes/(1024*1024)
-
-)
-.toFixed(2)
-+
-" MB";
-
-
-}
-
-// ==========================================
-// IMAGE COMPRESSION ENGINE
-// Part 2/3
-// ==========================================
+// ===============================
+// MAIN COMPRESS FUNCTION
+// ===============================
 
 
 async function compressPDF(){
@@ -328,7 +128,7 @@ async function compressPDF(){
 
 if(!selectedPDF){
 
-alert("Please upload PDF first");
+alert("Upload PDF first");
 
 return;
 
@@ -341,159 +141,44 @@ try{
 
 updateProgress(
 10,
-"Loading PDF..."
+"Reading PDF..."
 );
 
 
 
-const arrayBuffer =
+const buffer =
 await selectedPDF.arrayBuffer();
 
+
+
+// Check page count
+
+let pageCount=0;
+
+
+try{
 
 
 const pdf =
 await pdfjsLib.getDocument(
 {
-data:arrayBuffer
+data:buffer
 }
 ).promise;
 
 
+pageCount =
+pdf.numPages;
 
-const newPdf =
-await PDFLib.PDFDocument.create();
-
-
-
-const quality =
-getCompressionQuality();
-
-
-
-for(
-let pageNumber = 1;
-pageNumber <= pdf.numPages;
-pageNumber++
-){
-
-
-updateProgress(
-
-20 + 
-(
-pageNumber /
-pdf.numPages
-)
-* 60,
-
-`Compressing page ${pageNumber} of ${pdf.numPages}`
-
-);
-
-
-
-
-const page =
-await pdf.getPage(
-pageNumber
-);
-
-
-
-const viewport =
-page.getViewport(
-{
-scale:1.5
-}
-);
-
-
-
-const canvas =
-document.createElement(
-"canvas"
-);
-
-
-
-const context =
-canvas.getContext(
-"2d"
-);
-
-
-
-canvas.width =
-viewport.width;
-
-
-canvas.height =
-viewport.height;
-
-
-
-await page.render(
-{
-
-canvasContext:context,
-
-viewport:viewport
 
 }
-)
-.promise;
+
+catch(e){
 
 
-
-
-
-
-const imageData =
-canvas.toDataURL(
-"image/jpeg",
-quality
+console.log(
+"Page detection skipped"
 );
-
-
-
-
-
-
-const jpgImage =
-await newPdf.embedJpg(
-imageData
-);
-
-
-
-
-
-
-const newPage =
-newPdf.addPage(
-[
-viewport.width,
-viewport.height
-]
-);
-
-
-
-newPage.drawImage(
-jpgImage,
-{
-
-x:0,
-
-y:0,
-
-width:viewport.width,
-
-height:viewport.height
-
-}
-);
-
 
 
 }
@@ -501,51 +186,27 @@ height:viewport.height
 
 
 
-
-updateProgress(
-90,
-"Creating compressed PDF..."
+console.log(
+"Pages:",
+pageCount
 );
 
 
 
 
-const pdfBytes =
-await newPdf.save();
 
-
-
-const compressedSize =
-pdfBytes.length;
-
-
-
-let finalBlob;
-
-let message;
-
-
+// LARGE PDF MODE
 
 if(
-compressedSize <
-selectedPDF.size
+pageCount > 200
+||
+selectedPDF.size > 50*1024*1024
 ){
 
 
-finalBlob =
-new Blob(
-[
-pdfBytes
-],
-{
-type:
-"application/pdf"
-}
+await optimizeLargePDF(
+buffer
 );
-
-
-message =
-"✅ Compression successful";
 
 
 }
@@ -553,53 +214,21 @@ message =
 else{
 
 
-finalBlob =
-selectedPDF;
-
-
-message =
-"ℹ️ Original PDF is already smaller";
+await compressImagePDF(
+buffer
+);
 
 
 }
 
 
 
-
-
-compressedPDFBlob =
-finalBlob;
-
-
-
-updateProgress(
-100,
-"Completed"
-);
-
-
-
-showResult(
-selectedPDF.size,
-finalBlob.size,
-message
-);
-
-
-
-createDownloadButton();
-
-
-
 }
-
 
 catch(error){
 
 
-console.error(
-error
-);
+console.error(error);
 
 
 updateProgress(
@@ -620,12 +249,307 @@ updateProgress(
 
 
 
-// ==========================================
-// COMPRESSION QUALITY
-// ==========================================
+
+// ===============================
+// LARGE PDF OPTIMIZATION
+// ===============================
 
 
-function getCompressionQuality(){
+async function optimizeLargePDF(buffer){
+
+
+updateProgress(
+40,
+"Optimizing large PDF..."
+);
+
+
+
+const pdfDoc =
+await PDFLib.PDFDocument.load(
+buffer
+);
+
+
+
+const bytes =
+await pdfDoc.save(
+{
+useObjectStreams:true
+}
+);
+
+
+
+let result;
+
+
+if(bytes.length < selectedPDF.size){
+
+
+result =
+new Blob(
+[
+bytes
+],
+{
+type:"application/pdf"
+}
+);
+
+
+}
+else{
+
+
+result =
+selectedPDF;
+
+
+}
+
+
+
+compressedPDFBlob=result;
+
+
+
+showResult(
+selectedPDF.size,
+result.size,
+"Large PDF optimization completed"
+);
+
+
+
+updateProgress(
+100,
+"Completed"
+);
+
+
+
+createDownloadButton();
+
+
+
+}
+
+
+
+
+
+
+
+
+// ===============================
+// IMAGE COMPRESSION
+// ===============================
+
+
+async function compressImagePDF(buffer){
+
+
+updateProgress(
+20,
+"Rendering pages..."
+);
+
+
+
+const pdf =
+await pdfjsLib.getDocument(
+{
+data:buffer
+}
+).promise;
+
+
+
+const newPdf =
+await PDFLib.PDFDocument.create();
+
+
+
+const quality =
+getQuality();
+
+
+
+for(
+let i=1;
+i<=pdf.numPages;
+i++
+){
+
+
+
+updateProgress(
+20+(i/pdf.numPages)*60,
+`Compressing page ${i}/${pdf.numPages}`
+);
+
+
+
+const page =
+await pdf.getPage(i);
+
+
+
+const viewport =
+page.getViewport(
+{
+scale:1.3
+}
+);
+
+
+
+const canvas =
+document.createElement(
+"canvas"
+);
+
+
+
+const ctx =
+canvas.getContext(
+"2d"
+);
+
+
+
+canvas.width =
+viewport.width;
+
+
+canvas.height =
+viewport.height;
+
+
+
+await page.render(
+{
+canvasContext:ctx,
+viewport:viewport
+}
+)
+.promise;
+
+
+
+const image =
+canvas.toDataURL(
+"image/jpeg",
+quality
+);
+
+
+
+const jpg =
+await newPdf.embedJpg(
+image
+);
+
+
+
+const newPage =
+newPdf.addPage(
+[
+viewport.width,
+viewport.height
+]
+);
+
+
+
+newPage.drawImage(
+jpg,
+{
+x:0,
+y:0,
+width:viewport.width,
+height:viewport.height
+}
+);
+
+
+
+}
+
+
+
+const bytes =
+await newPdf.save();
+
+
+
+let result;
+
+
+if(bytes.length < selectedPDF.size){
+
+
+result =
+new Blob(
+[
+bytes
+],
+{
+type:"application/pdf"
+}
+);
+
+
+}
+else{
+
+
+result =
+selectedPDF;
+
+
+}
+
+
+
+compressedPDFBlob=result;
+
+
+
+showResult(
+selectedPDF.size,
+result.size,
+"Compression completed"
+);
+
+
+
+updateProgress(
+100,
+"Completed"
+);
+
+
+
+createDownloadButton();
+
+
+
+}
+
+
+
+
+
+
+
+// ===============================
+// QUALITY SETTINGS
+// ===============================
+
+
+function getQuality(){
 
 
 const level =
@@ -635,128 +559,75 @@ document.getElementById(
 
 
 
-switch(level){
-
-
-case "extreme":
-
+if(level==="extreme")
 return 0.35;
 
 
-
-case "high":
-
+if(level==="high")
 return 0.55;
 
 
-
-case "medium":
-
+if(level==="medium")
 return 0.75;
 
-
-
-case "low":
 
 return 0.90;
 
 
-
-default:
-
-return 0.75;
-
-
 }
 
 
 
-}
 
-// ==========================================
-// RESULT DISPLAY
-// Part 3/3
-// ==========================================
+
+
+
+
+// ===============================
+// RESULT
+// ===============================
 
 
 function showResult(
-originalSize,
-compressedSize,
+oldSize,
+newSize,
 message
 ){
 
 
 let saved =
-
-(
-(
-originalSize - compressedSize
-)
-/
-originalSize
-)
-*
-100;
+((oldSize-newSize)/oldSize)*100;
 
 
-
-if(saved < 0){
-
-saved = 0;
-
-}
-
+if(saved<0)
+saved=0;
 
 
 
 document.getElementById(
 "compressionStats"
-).innerHTML = `
-
+).innerHTML=`
 
 <div class="stats-card">
 
+<h3>${message}</h3>
 
-<h3>
-${message}
-</h3>
-
-
-
-Original Size:
-
-<b>
-${formatSize(originalSize)}
-</b>
-
+Original:
+<b>${formatSize(oldSize)}</b>
 
 <br>
 
-
-Final Size:
-
-<b>
-${formatSize(compressedSize)}
-</b>
-
-
+Final:
+<b>${formatSize(newSize)}</b>
 
 <br>
-
 
 Saved:
-
-<b>
-${saved.toFixed(2)}%
-</b>
-
+<b>${saved.toFixed(2)}%</b>
 
 </div>
 
-
 `;
-
-
 
 }
 
@@ -767,45 +638,33 @@ ${saved.toFixed(2)}%
 
 
 
-
-// ==========================================
-// DOWNLOAD BUTTON
-// ==========================================
+// ===============================
+// DOWNLOAD
+// ===============================
 
 
 function createDownloadButton(){
 
 
-
 document.getElementById(
 "downloadArea"
-).innerHTML = `
-
+).innerHTML=`
 
 <button
-
 class="download-btn"
-
-id="downloadCompressedBtn">
-
+id="downloadBtn">
 
 ⬇ Download Compressed PDF
 
-
 </button>
-
 
 `;
 
 
 
-
-
 document.getElementById(
-"downloadCompressedBtn"
-)
-.onclick = function(){
-
+"downloadBtn"
+).onclick=()=>{
 
 
 const url =
@@ -815,45 +674,72 @@ compressedPDFBlob
 
 
 
-const link =
-document.createElement(
-"a"
-);
+const a =
+document.createElement("a");
+
+
+a.href=url;
+
+
+a.download="compressed.pdf";
+
+
+a.click();
 
 
 
-link.href = url;
-
-
-link.download =
-"compressed.pdf";
-
-
-
-document.body.appendChild(
-link
-);
-
-
-
-link.click();
-
-
-
-document.body.removeChild(
-link
-);
-
-
-
-URL.revokeObjectURL(
-url
-);
-
+URL.revokeObjectURL(url);
 
 
 };
 
+
+}
+
+
+
+
+
+
+
+
+// ===============================
+// HELPERS
+// ===============================
+
+
+function updateProgress(
+percent,
+text
+){
+
+document.getElementById(
+"progressBar"
+).style.width =
+percent+"%";
+
+
+document.getElementById(
+"progressText"
+).innerHTML=text;
+
+
+}
+
+
+
+function formatSize(bytes){
+
+
+if(bytes < 1024)
+return bytes+" Bytes";
+
+
+if(bytes < 1024*1024)
+return (bytes/1024).toFixed(2)+" KB";
+
+
+return (bytes/1024/1024).toFixed(2)+" MB";
 
 
 }

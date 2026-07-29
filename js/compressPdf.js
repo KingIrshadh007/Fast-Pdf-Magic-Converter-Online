@@ -672,3 +672,188 @@ return 0.75;
 
 
 }
+
+// ==========================================
+// RESULT DISPLAY
+// Part 3/3
+// ==========================================
+
+
+function showResult(
+originalSize,
+compressedSize,
+message
+){
+
+
+let saved =
+
+(
+(
+originalSize - compressedSize
+)
+/
+originalSize
+)
+*
+100;
+
+
+
+if(saved < 0){
+
+saved = 0;
+
+}
+
+
+
+
+document.getElementById(
+"compressionStats"
+).innerHTML = `
+
+
+<div class="stats-card">
+
+
+<h3>
+${message}
+</h3>
+
+
+
+Original Size:
+
+<b>
+${formatSize(originalSize)}
+</b>
+
+
+<br>
+
+
+Final Size:
+
+<b>
+${formatSize(compressedSize)}
+</b>
+
+
+
+<br>
+
+
+Saved:
+
+<b>
+${saved.toFixed(2)}%
+</b>
+
+
+</div>
+
+
+`;
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================================
+// DOWNLOAD BUTTON
+// ==========================================
+
+
+function createDownloadButton(){
+
+
+
+document.getElementById(
+"downloadArea"
+).innerHTML = `
+
+
+<button
+
+class="download-btn"
+
+id="downloadCompressedBtn">
+
+
+⬇ Download Compressed PDF
+
+
+</button>
+
+
+`;
+
+
+
+
+
+document.getElementById(
+"downloadCompressedBtn"
+)
+.onclick = function(){
+
+
+
+const url =
+URL.createObjectURL(
+compressedPDFBlob
+);
+
+
+
+const link =
+document.createElement(
+"a"
+);
+
+
+
+link.href = url;
+
+
+link.download =
+"compressed.pdf";
+
+
+
+document.body.appendChild(
+link
+);
+
+
+
+link.click();
+
+
+
+document.body.removeChild(
+link
+);
+
+
+
+URL.revokeObjectURL(
+url
+);
+
+
+
+};
+
+
+
+}

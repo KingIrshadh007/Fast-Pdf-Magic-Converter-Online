@@ -196,3 +196,12 @@ h1{
 }
 
 }
+
+#analysisCard{
+    display:none;
+    margin-top:20px;
+}
+
+#analysisCard p{
+    margin-top:8px;
+}

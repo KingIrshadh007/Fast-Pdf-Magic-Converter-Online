@@ -111,22 +111,6 @@ function formatSize(bytes){
 
 }
 
-// ----------------------------
-// Compress Button
-// ----------------------------
-document.getElementById("compressBtn")
-.addEventListener("click", () => {
-
-    if(!selectedPDF){
-
-        alert("Please choose a PDF first.");
-
-        return;
-
-    }
-
-    alert(
-        "✅ Upload system is working!\n\nCompression engine will be added in Part 4."
-    );
-
-});
+document
+.getElementById("compressBtn")
+.addEventListener("click", analyzePDF);

@@ -114,3 +114,96 @@ function formatSize(bytes){
 document
 .getElementById("compressBtn")
 .addEventListener("click", analyzePDF);
+
+async function analyzePDF(){
+
+    if(!selectedPDF){
+
+        alert("Please choose a PDF first.");
+
+        return;
+
+    }
+
+    try{
+
+        progressText.innerHTML = "Reading PDF...";
+
+        const buffer = await selectedPDF.arrayBuffer();
+
+        const pdf = await pdfjsLib
+            .getDocument({data:buffer})
+            .promise;
+
+        const pages = pdf.numPages;
+
+        let imagePages = 0;
+        let textPages = 0;
+
+        const checkPages = Math.min(pages,10);
+
+        for(let i=1;i<=checkPages;i++){
+
+            progressText.innerHTML =
+                "Analyzing page " + i + " of " + checkPages;
+
+            const page = await pdf.getPage(i);
+
+            const operatorList =
+                await page.getOperatorList();
+
+            let hasImage = false;
+
+            for(const op of operatorList.fnArray){
+
+                if(
+                    op===pdfjsLib.OPS.paintImageXObject ||
+                    op===pdfjsLib.OPS.paintInlineImageXObject
+                ){
+                    hasImage = true;
+                    break;
+                }
+
+            }
+
+            if(hasImage)
+                imagePages++;
+            else
+                textPages++;
+
+        }
+
+        let type = "Mixed PDF";
+        let method = "Hybrid Compression";
+
+        if(imagePages===checkPages){
+
+            type="Image PDF";
+            method="Image Compression";
+
+        }
+        else if(textPages===checkPages){
+
+            type="Text PDF";
+            method="Structure Optimization";
+
+        }
+
+        document.getElementById("analysisCard").style.display="block";
+
+        document.getElementById("pageCount").textContent = pages;
+        document.getElementById("pdfType").textContent = type;
+        document.getElementById("compressMethod").textContent = method;
+
+        progressText.innerHTML = "✅ Analysis Completed";
+
+    }
+    catch(error){
+
+        console.error(error);
+
+        progressText.innerHTML = "❌ Failed to analyze PDF";
+
+    }
+
+}

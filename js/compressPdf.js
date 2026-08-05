@@ -1,265 +1,132 @@
-let file=null;
+// ============================================
+// FAST MAGIC PDF
+// COMPRESS PDF
+// PART 3 - FILE UPLOAD
+// ============================================
 
+let selectedPDF = null;
 
+// Elements
+const dropZone = document.getElementById("dropZone");
+const pdfInput = document.getElementById("pdfInput");
+const browseBtn = document.getElementById("browseBtn");
+const fileCard = document.getElementById("fileCard");
+const fileName = document.getElementById("fileName");
+const fileSize = document.getElementById("fileSize");
+const progressText = document.getElementById("progressText");
 
-document
-.getElementById("pdfFile")
-.onchange=e=>{
+// ----------------------------
+// Browse Button
+// ----------------------------
+browseBtn.addEventListener("click", () => {
+    pdfInput.click();
+});
 
+// ----------------------------
+// File Selected
+// ----------------------------
+pdfInput.addEventListener("change", (e) => {
 
-file=e.target.files[0];
+    if (!e.target.files.length) return;
 
+    loadPDF(e.target.files[0]);
 
-};
+});
 
+// ----------------------------
+// Drag Over
+// ----------------------------
+dropZone.addEventListener("dragover", (e) => {
 
+    e.preventDefault();
 
+    dropZone.classList.add("dragover");
 
+});
 
+// ----------------------------
+// Drag Leave
+// ----------------------------
+dropZone.addEventListener("dragleave", () => {
 
-document
-.getElementById("compressBtn")
-.onclick=async()=>{
+    dropZone.classList.remove("dragover");
 
+});
 
-if(!file){
+// ----------------------------
+// Drop
+// ----------------------------
+dropZone.addEventListener("drop", (e) => {
 
-alert(
-"Upload PDF first"
-);
+    e.preventDefault();
 
-return;
+    dropZone.classList.remove("dragover");
 
-}
+    if (!e.dataTransfer.files.length) return;
 
+    loadPDF(e.dataTransfer.files[0]);
 
+});
 
-document
-.getElementById("status")
-.innerHTML=
-"Preparing compressor...";
+// ----------------------------
+// Load PDF
+// ----------------------------
+function loadPDF(file){
 
+    if(file.type !== "application/pdf"){
 
+        alert("Please select a PDF file.");
 
+        return;
 
+    }
 
-const level=
-document
-.getElementById("compressionLevel")
-.value;
+    selectedPDF = file;
 
+    fileCard.style.display = "block";
 
+    fileName.innerHTML =
+        "<b>File:</b> " + file.name;
 
+    fileSize.innerHTML =
+        "<b>Size:</b> " + formatSize(file.size);
 
-
-let settings={};
-
-
-
-if(level==="extreme"){
-
-
-settings={
-
-dpi:72,
-
-quality:35
-
-};
-
-
-}
-
-
-
-if(level==="high"){
-
-
-settings={
-
-dpi:100,
-
-quality:50
-
-};
-
-
-}
-
-
-
-if(level==="medium"){
-
-
-settings={
-
-dpi:150,
-
-quality:65
-
-};
-
+    progressText.innerHTML =
+        "✅ PDF Ready for Compression";
 
 }
 
+// ----------------------------
+// Size Formatter
+// ----------------------------
+function formatSize(bytes){
 
+    if(bytes < 1024)
+        return bytes + " Bytes";
 
-if(level==="low"){
+    if(bytes < 1024 * 1024)
+        return (bytes / 1024).toFixed(2) + " KB";
 
-
-settings={
-
-dpi:200,
-
-quality:90
-
-};
-
-
-}
-
-
-
-
-
-document
-.getElementById("status")
-.innerHTML=
-"Compressing PDF...";
-
-
-
-
-// MuPDF WASM processing will run here
-
-
-const result =
-await compressWithMuPDF(
-file,
-settings
-);
-
-
-
-
-downloadPDF(result);
-
-
-
-};
-
-async function compressWithMuPDF(file, settings){
-
-
-if(!window.mupdf){
-
-throw new Error(
-"MuPDF engine not loaded"
-);
+    return (bytes / (1024 * 1024)).toFixed(2) + " MB";
 
 }
 
+// ----------------------------
+// Compress Button
+// ----------------------------
+document.getElementById("compressBtn")
+.addEventListener("click", () => {
 
+    if(!selectedPDF){
 
-const bytes =
-new Uint8Array(
-await file.arrayBuffer()
-);
+        alert("Please choose a PDF first.");
 
+        return;
 
+    }
 
-// Open PDF
+    alert(
+        "✅ Upload system is working!\n\nCompression engine will be added in Part 4."
+    );
 
-const doc =
-mupdf.Document.openDocument(
-bytes,
-"application/pdf"
-);
-
-
-
-const pageCount =
-doc.countPages();
-
-
-
-console.log(
-"Pages:",
-pageCount
-);
-
-
-
-
-// Compression options
-
-let dpi =
-settings.dpi;
-
-
-let quality =
-settings.quality;
-
-
-
-// Export optimized PDF
-
-const output =
-doc.saveToBuffer(
-{
-
-garbage:4,
-
-deflate:true,
-
-linear:true
-
-}
-);
-
-
-
-
-return new Blob(
-[
-output.asUint8Array()
-],
-{
-type:"application/pdf"
-}
-);
-
-
-
-}
-
-
-
-
-
-
-
-
-function downloadPDF(blob){
-
-
-const url =
-URL.createObjectURL(blob);
-
-
-const a =
-document.createElement("a");
-
-
-a.href=url;
-
-
-a.download=
-"compressed.pdf";
-
-
-a.click();
-
-
-
-}
+});

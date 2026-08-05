@@ -1,78 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 
-<title>
-Fast Magic PDF Compressor
-</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Compress PDF | Fast Magic PDF</title>
 
+<link rel="stylesheet" href="../css/style.css">
 <link rel="stylesheet" href="../css/compressPdf.css">
 
+<!-- PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<!-- PDF-Lib -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 
 </head>
 
-
 <body>
-
 
 <div class="container">
 
+<h1>📄 Compress PDF</h1>
 
-<h1>
-⚡ Compress PDF
-</h1>
+<p class="subtitle">
+Reduce PDF file size while maintaining the best possible quality.
+</p>
 
+<div id="dropZone" class="drop-zone">
 
-<div id="dropzone">
+<div class="upload-icon">📁</div>
 
+<h2>Drag & Drop PDF Here</h2>
 
-<h2>
-Upload PDF
-</h2>
+<p>or</p>
 
+<button id="browseBtn" type="button">
+Choose PDF
+</button>
 
 <input
 type="file"
-id="pdfFile"
-accept="application/pdf">
-
+id="pdfInput"
+accept=".pdf"
+hidden>
 
 </div>
 
+<div id="fileCard" class="file-card" style="display:none;">
 
+<h3>Selected File</h3>
 
-<br>
+<p id="fileName"></p>
 
+<p id="fileSize"></p>
+
+</div>
+
+<div class="options">
+
+<label for="compressionLevel">
+
+Compression Level
+
+</label>
 
 <select id="compressionLevel">
 
-
 <option value="extreme">
-🔥 Extreme (Maximum Compression)
+🔥 Extreme
 </option>
-
 
 <option value="high">
 ⚡ High
 </option>
 
-
 <option value="medium" selected>
 ⭐ Medium
 </option>
 
-
 <option value="low">
-✨ Low (Best Quality)
+✨ Low
 </option>
-
 
 </select>
 
-
-
+</div>
 
 <button id="compressBtn">
 
@@ -80,28 +95,31 @@ Compress PDF
 
 </button>
 
+<div class="progress-container">
 
-
-<div id="status"></div>
-
-
-<div id="result"></div>
-
-
+<div id="progressBar">
 
 </div>
 
+</div>
 
+<p id="progressText">
 
+Waiting...
 
+</p>
 
-<script src="../wasm/mupdf.js"></script>
-<script>
-window.mupdfReady = true;
-</script>
+<div id="result">
+
+</div>
+
+<div id="downloadArea">
+
+</div>
+
+</div>
 
 <script src="../js/compressPdf.js"></script>
-
 
 </body>
 
